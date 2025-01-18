@@ -13,7 +13,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -32,7 +36,9 @@ import org.littletonrobotics.urcl.URCL;
  */
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
-  //private RobotContainer robotContainer;
+  // private RobotContainer robotContainer;
+  private AddressableLED m_led;
+  private AddressableLEDBuffer m_ledBuffer;
 
   public Robot() {
     // Record metadata
@@ -83,7 +89,13 @@ public class Robot extends LoggedRobot {
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
-    //robotContainer = new RobotContainer();
+    // robotContainer = new RobotContainer();
+    // value for AdressableLED() is just a placeholder, supposed to be PWM(only PWM) port number
+    m_led = new AddressableLED(0);
+    m_ledBuffer = new AddressableLEDBuffer(60);
+    m_led.setLength(m_ledBuffer.getLength());
+    m_led.setData(m_ledBuffer);
+    m_led.start();
   }
 
   /** This function is called periodically during all modes. */
@@ -101,6 +113,15 @@ public class Robot extends LoggedRobot {
 
     // Return to normal thread priority
     Threads.setCurrentThreadPriority(false, 10);
+
+    // AddressableLEDBuffer m_buffer = new AddressableLEDBuffer(120);
+    // AddressableLEDBufferView m_left = m_buffer.createView(0, 59);
+    // AddressableLEDBufferView m_right = m_buffer.createView(60, 119).reversed();
+
+    LEDPattern gradient =
+        LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kRed, Color.kBlue);
+    gradient.applyTo(m_ledBuffer);
+    m_led.setData(m_ledBuffer);
   }
 
   /** This function is called once when the robot is disabled. */
@@ -114,7 +135,7 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    //autonomousCommand = robotContainer.getAutonomousCommand();
+    // autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
