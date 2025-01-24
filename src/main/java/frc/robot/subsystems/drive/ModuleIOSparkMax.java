@@ -36,6 +36,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
 
@@ -65,6 +66,8 @@ public class ModuleIOSparkMax implements ModuleIO {
   // Connection debouncers
   private final Debouncer driveConnectedDebounce = new Debouncer(0.5);
   private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
+
+  private final String moduleName;
 
   public ModuleIOSparkMax(int module) {
     zeroRotation =
@@ -108,11 +111,12 @@ public class ModuleIOSparkMax implements ModuleIO {
             });
     driveController = driveSpark.getClosedLoopController();
     turnController = turnSpark.getClosedLoopController();
-    
-    // Setup encoders and PID controllers for the driving and turning SPARKS. 
+
+    // Setup encoders and PID controllers for the driving and turning SPARKS.
     MagnetSensorConfigs canCoderConfig = new MagnetSensorConfigs();
     canCoderConfig = canCoderConfig.withAbsoluteSensorDiscontinuityPoint(1);
-    canCoderConfig = canCoderConfig.withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
+    canCoderConfig =
+        canCoderConfig.withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
     turnEncoder.getConfigurator().apply(canCoderConfig);
 
     // Configure drive motor
@@ -157,20 +161,27 @@ public class ModuleIOSparkMax implements ModuleIO {
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(turnMotorCurrentLimit)
         .voltageCompensation(12.0);
-    //TODO: add relative encoder config
+    // TODO: add relative encoder config
+    turnConfig
+        .encoder
+        // .inverted(turnEncoderInverted)
+        .positionConversionFactor(turnEncoderPositionFactor)
+        .velocityConversionFactor(turnEncoderVelocityFactor)
+        .uvwMeasurementPeriod(10)
+        .uvwAverageDepth(2);
     turnConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .positionWrappingEnabled(true)
         .positionWrappingInputRange(turnPIDMinInput, turnPIDMaxInput)
         .pidf(turnKp, 0.0, turnKd, 0.0);
-    //TODO: add relative encoder config
+    // TODO: add relative encoder config
     turnConfig
         .signals
-        .absoluteEncoderPositionAlwaysOn(true)
-        .absoluteEncoderPositionPeriodMs((int) (1000.0 / odometryFrequency))
-        .absoluteEncoderVelocityAlwaysOn(true)
-        .absoluteEncoderVelocityPeriodMs(20)
+        .primaryEncoderPositionAlwaysOn(true)
+        .primaryEncoderPositionPeriodMs((int) (1000.0 / odometryFrequency))
+        .primaryEncoderVelocityAlwaysOn(true)
+        .primaryEncoderVelocityPeriodMs(20)
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
@@ -190,6 +201,15 @@ public class ModuleIOSparkMax implements ModuleIO {
             .registerSignal(turnSpark, this::getTurningEncoderPosition);
 
     syncTurningEncoders();
+
+    moduleName =
+        switch (module) {
+          case 0 -> "frontLeft";
+          case 1 -> "frontRight";
+          case 2 -> "backLeft";
+          case 3 -> "backRight";
+          default -> "hey :)";
+        };
   }
 
   @Override
@@ -204,6 +224,10 @@ public class ModuleIOSparkMax implements ModuleIO {
         (values) -> inputs.driveAppliedVolts = values[0] * values[1]);
     ifOk(driveSpark, driveSpark::getOutputCurrent, (value) -> inputs.driveCurrentAmps = value);
     inputs.driveConnected = driveConnectedDebounce.calculate(!sparkStickyFault);
+
+    SmartDashboard.putNumber(moduleName + "Turn relative", relativeTurnEncoder.getPosition());
+    SmartDashboard.putNumber(moduleName + "Turn absolute", turnEncoder.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber(moduleName + "Drive relative", driveEncoder.getPosition());
 
     // Update turn inputs
     sparkStickyFault = false;
@@ -270,14 +294,14 @@ public class ModuleIOSparkMax implements ModuleIO {
   }
 
   private double getTurningEncoderVelocity() {
-    return turnEncoder.getVelocity().getValueAsDouble()  * 60.0;
+    return turnEncoder.getVelocity().getValueAsDouble() * 60.0;
   }
 
   public void syncTurningEncoders() {
     double absolutePosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * (2 * Math.PI);
     double adjustedPosition = absolutePosition - zeroRotation.getRadians();
     if (adjustedPosition < 0) {
-        adjustedPosition = (2 * Math.PI) - Math.abs(adjustedPosition);
+      adjustedPosition = (2 * Math.PI) - Math.abs(adjustedPosition);
     }
 
     relativeTurnEncoder.setPosition(adjustedPosition);
