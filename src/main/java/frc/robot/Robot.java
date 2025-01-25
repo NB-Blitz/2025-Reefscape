@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.Threads;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -39,6 +38,8 @@ public class Robot extends LoggedRobot {
   // private RobotContainer robotContainer;
   private AddressableLED m_led;
   private AddressableLEDBuffer m_ledBuffer;
+  private double led_num = 0;
+  private int count = 0;
 
   public Robot() {
     // Record metadata
@@ -95,6 +96,8 @@ public class Robot extends LoggedRobot {
     m_ledBuffer = new AddressableLEDBuffer(60);
     m_led.setLength(m_ledBuffer.getLength());
     m_led.setData(m_ledBuffer);
+    //    LEDPattern.progressMaskLayer(LEDPattern.progressMaskLayer, Color.kPurple, Color.kGray);
+
     m_led.start();
   }
 
@@ -118,12 +121,26 @@ public class Robot extends LoggedRobot {
     // AddressableLEDBufferView m_left = m_buffer.createView(0, 59);
     // AddressableLEDBufferView m_right = m_buffer.createView(60, 119).reversed();
 
-    LEDPattern gradient =
-        LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kRed, Color.kBlue);
-    gradient.applyTo(m_ledBuffer);
+    /*  LEDPattern gradient =
+          LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kPurple, Color.kGray);
+      gradient.applyTo(m_ledBuffer);
+      m_led.setData(m_ledBuffer);
+    } */
+
+    LEDPattern pattern = LEDPattern.progressMaskLayer(() -> led_num / 60.0);
+
+    if (count % 15 == 0 && led_num < 60) {
+      led_num++;
+      if (count % 15 == 0 && led_num >= 0) {
+
+        led_num--;
+      }
+    }
+    count++;
+
+    pattern.applyTo(m_ledBuffer);
     m_led.setData(m_ledBuffer);
   }
-
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {}
