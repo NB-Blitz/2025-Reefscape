@@ -26,8 +26,8 @@ public class Hand {
     private final double coralIntakeSpeed = 0.1;
     private final double coralExpelSpeed = 0.1;
     private final double algaeIntakeSpeed = 0.1;
-    private final double algaeExpelHighSpeed = -0.1;
-    private final double algaeExpelLowSpeed = -0.1;
+    private final double algaeExpelNetSpeed = -0.1;
+    private final double algaeExpelProcessorSpeed = -0.1;
 
     private final boolean motorInverted = true;
 
@@ -87,7 +87,7 @@ public class Hand {
     }
 
     public void intakeCoral() {
-        if(coralBackSwitch.get() == false) {
+        if(coralBackSwitch.get() == false && algaeInPosition() == false) {
             leftMotor.set(coralIntakeSpeed);
             rightMotor.set(coralIntakeSpeed);
         }
@@ -129,14 +129,14 @@ public class Hand {
         }
     }
 
-    public void expelAlgaeHigh() {
-        leftMotor.set(algaeExpelHighSpeed);
-        rightMotor.set(algaeExpelHighSpeed);
+    public void expelAlgaeNet() {
+        leftMotor.set(algaeExpelNetSpeed);
+        rightMotor.set(algaeExpelNetSpeed);
     }
 
-    public void expelAlgaeLow() {
-        leftMotor.set(algaeExpelLowSpeed);
-        rightMotor.set(algaeExpelLowSpeed);
+    public void expelAlgaeProcessor() {
+        leftMotor.set(algaeExpelProcessorSpeed);
+        rightMotor.set(algaeExpelProcessorSpeed);
     }
 
     public boolean algaeInPosition() {
