@@ -226,7 +226,8 @@ public class ModuleIOSparkMax implements ModuleIO {
     inputs.driveConnected = driveConnectedDebounce.calculate(!sparkStickyFault);
 
     SmartDashboard.putNumber(moduleName + "Turn relative", relativeTurnEncoder.getPosition());
-    SmartDashboard.putNumber(moduleName + "Turn absolute", turnEncoder.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber(
+        moduleName + "Turn absolute", turnEncoder.getPosition().getValueAsDouble());
     SmartDashboard.putNumber(moduleName + "Drive relative", driveEncoder.getPosition());
 
     // Update turn inputs
