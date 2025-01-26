@@ -122,6 +122,7 @@ public class ModuleIOSparkMax implements ModuleIO {
     // Configure drive motor
     var driveConfig = new SparkMaxConfig();
     driveConfig
+        // TODO Max Add inverted if deemed necessary
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(driveMotorCurrentLimit)
         .voltageCompensation(12.0);
@@ -137,6 +138,7 @@ public class ModuleIOSparkMax implements ModuleIO {
         .pidf(
             driveKp, 0.0,
             driveKd, 0.0);
+        // TODO Max Last year we were setting output range -1 to 1
     driveConfig
         .signals
         .primaryEncoderPositionAlwaysOn(true)
@@ -161,10 +163,8 @@ public class ModuleIOSparkMax implements ModuleIO {
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(turnMotorCurrentLimit)
         .voltageCompensation(12.0);
-    // TODO: add relative encoder config
     turnConfig
         .encoder
-        // .inverted(turnEncoderInverted)
         .positionConversionFactor(turnEncoderPositionFactor)
         .velocityConversionFactor(turnEncoderVelocityFactor)
         .uvwMeasurementPeriod(10)
@@ -172,10 +172,11 @@ public class ModuleIOSparkMax implements ModuleIO {
     turnConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        // TODO Max This was false in last year's code
         .positionWrappingEnabled(true)
         .positionWrappingInputRange(turnPIDMinInput, turnPIDMaxInput)
         .pidf(turnKp, 0.0, turnKd, 0.0);
-    // TODO: add relative encoder config
+        //TODO Max Last year we were setting output range -1 to 1
     turnConfig
         .signals
         .primaryEncoderPositionAlwaysOn(true)
@@ -196,12 +197,14 @@ public class ModuleIOSparkMax implements ModuleIO {
     timestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
     drivePositionQueue =
         SparkOdometryThread.getInstance().registerSignal(driveSpark, driveEncoder::getPosition);
+    // TODO Max Fix this since we are now syncing the relative to absolute
     turnPositionQueue =
         SparkOdometryThread.getInstance()
             .registerSignal(turnSpark, this::getTurningEncoderPosition);
 
     syncTurningEncoders();
 
+    // Module name for logging
     moduleName =
         switch (module) {
           case 0 -> "frontLeft";
@@ -234,10 +237,12 @@ public class ModuleIOSparkMax implements ModuleIO {
     sparkStickyFault = false;
     ifOk(
         turnSpark,
+        // TODO Max This can be reverted since we are syncing rel and abs
         this::getTurningEncoderPosition,
         (value) -> inputs.turnPosition = new Rotation2d(value).minus(zeroRotation));
     ifOk(
         turnSpark,
+        // TODO Max This can be reverted since we are syncing rel and abs
         this::getTurningEncoderVelocity,
         (value) -> inputs.turnVelocityRadPerSec = value);
     ifOk(
@@ -290,16 +295,20 @@ public class ModuleIOSparkMax implements ModuleIO {
     turnController.setReference(setpoint, ControlType.kPosition);
   }
 
+  // TODO Max This is not required since we are syncing rel and abs
   private double getTurningEncoderPosition() {
     return turnEncoder.getAbsolutePosition().getValueAsDouble();
   }
 
+  // TODO Max This is not required since we are syncing rel and abs
   private double getTurningEncoderVelocity() {
     return turnEncoder.getVelocity().getValueAsDouble() * 60.0;
   }
 
   public void syncTurningEncoders() {
     double absolutePosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * (2 * Math.PI);
+    // TODO Max Not sure that we need to account for the calibration when syncing as the PID control
+    // accounts for the calibration when updating PID target position in setTurnPosition above.
     double adjustedPosition = absolutePosition - zeroRotation.getRadians();
     if (adjustedPosition < 0) {
       adjustedPosition = (2 * Math.PI) - Math.abs(adjustedPosition);
