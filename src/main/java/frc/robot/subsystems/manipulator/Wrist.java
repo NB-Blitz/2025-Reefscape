@@ -16,7 +16,6 @@ import static frc.robot.util.SparkUtil.*;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-@SuppressWarnings("unused") // TODO: remove this when finished
 public class Wrist 
 {
     
@@ -30,20 +29,19 @@ public class Wrist
     private SparkBase wristMotor;
     private DigitalInput wristLimitSwitch; // triggered = true
     private RelativeEncoder wristEncoder;
+    private SparkClosedLoopController PIDController = wristMotor.getClosedLoopController();
 
-    private final SparkClosedLoopController PIDController = wristMotor.getClosedLoopController();
     private final double wristP = 0.5;
     private final double wristI = 0.0;
     private final double wristD = 0.0;
     private final double wristFF = 0.0;
-    private final double odometryFrequency = 100.0;
     private final double gearRatio = 12/38;
     private final double wristEncoderPositionFactor = 2 * Math.PI / gearRatio; // Rotor Rotations -> Wheel Radians
     private final double wristEncoderVelocityFactor = (2 * Math.PI) / 60.0 / gearRatio;
     private final int currentLimit = 40;
     private final double wristAngleMax = 120.0;
-    private final int wristMotorCANID = 37;         //TODO: fix the can ids
-    private final int wristLimitSwitchCANID = 2763;
+    private final int wristMotorCANID = 314159;         //TODO: fix the can ids
+    private final int wristLimitSwitchCANID = 271817181;
 
     public Wrist()
     {
@@ -71,7 +69,7 @@ public class Wrist
         driveConfig
             .signals
             .primaryEncoderPositionAlwaysOn(true)
-            .primaryEncoderPositionPeriodMs((int) (1000.0 / odometryFrequency))
+            .primaryEncoderPositionPeriodMs((int) (1000.0 / 100.0))
             .primaryEncoderVelocityAlwaysOn(true)
             .primaryEncoderVelocityPeriodMs(20)
             .appliedOutputPeriodMs(20)
@@ -107,12 +105,11 @@ public class Wrist
         targetAngle = angle;
     }
 
-    public void updateWrist()
+    public void updateWrist() 
     {
         if(wristLimitSwitch.get())
         {
             resetEncoder(0.0);
-
         }
         PIDController.setReference(targetAngle, ControlType.kPosition);
     }
