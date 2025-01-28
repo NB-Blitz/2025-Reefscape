@@ -40,6 +40,7 @@ public class Robot extends LoggedRobot {
   private AddressableLEDBuffer m_ledBuffer;
   private double led_num = 0;
   private int count = 0;
+  private boolean LEDUp;
 
   public Robot() {
     // Record metadata
@@ -126,15 +127,16 @@ public class Robot extends LoggedRobot {
       gradient.applyTo(m_ledBuffer);
       m_led.setData(m_ledBuffer);
     } */
-
     LEDPattern pattern = LEDPattern.progressMaskLayer(() -> led_num / 60.0);
-
-    if (count % 15 == 0 && led_num < 60) {
+    if (led_num == 60) {
+      LEDUp = false;
+    } else if (led_num == 0) {
+      LEDUp = true;
+    }
+    if (count % 2 == 0 && LEDUp) {
       led_num++;
-      if (count % 15 == 0 && led_num >= 0) {
-
-        led_num--;
-      }
+    } else if (count % 2 == 0 && !LEDUp) {
+      led_num--;
     }
     count++;
 
