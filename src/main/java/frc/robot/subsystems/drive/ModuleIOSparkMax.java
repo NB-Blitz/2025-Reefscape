@@ -114,7 +114,7 @@ public class ModuleIOSparkMax implements ModuleIO {
 
     // Setup encoders and PID controllers for the driving and turning SPARKS.
     MagnetSensorConfigs canCoderConfig = new MagnetSensorConfigs();
-    canCoderConfig = canCoderConfig.withAbsoluteSensorDiscontinuityPoint(1);
+    // canCoderConfig = canCoderConfig.withAbsoluteSensorDiscontinuityPoint(1);
     canCoderConfig =
         canCoderConfig.withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
     turnEncoder.getConfigurator().apply(canCoderConfig);
@@ -123,6 +123,7 @@ public class ModuleIOSparkMax implements ModuleIO {
     var driveConfig = new SparkMaxConfig();
     driveConfig
         // TODO Max Add inverted if deemed necessary
+        .inverted(driveInverted)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(driveMotorCurrentLimit)
         .voltageCompensation(12.0);
@@ -138,7 +139,7 @@ public class ModuleIOSparkMax implements ModuleIO {
         .pidf(
             driveKp, 0.0,
             driveKd, 0.0);
-        // TODO Max Last year we were setting output range -1 to 1
+    // TODO Max Last year we were setting output range -1 to 1
     driveConfig
         .signals
         .primaryEncoderPositionAlwaysOn(true)
@@ -176,7 +177,7 @@ public class ModuleIOSparkMax implements ModuleIO {
         .positionWrappingEnabled(true)
         .positionWrappingInputRange(turnPIDMinInput, turnPIDMaxInput)
         .pidf(turnKp, 0.0, turnKd, 0.0);
-        //TODO Max Last year we were setting output range -1 to 1
+    // TODO Max Last year we were setting output range -1 to 1
     turnConfig
         .signals
         .primaryEncoderPositionAlwaysOn(true)
@@ -192,6 +193,12 @@ public class ModuleIOSparkMax implements ModuleIO {
         () ->
             turnSpark.configure(
                 turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+    tryUntilOk(
+        turnSpark,
+        5,
+        () ->
+            relativeTurnEncoder.setPosition(
+                turnEncoder.getPosition().getValueAsDouble() * 2 * Math.PI));
 
     // Create odometry queues
     timestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
@@ -200,9 +207,9 @@ public class ModuleIOSparkMax implements ModuleIO {
     // TODO Max Fix this since we are now syncing the relative to absolute
     turnPositionQueue =
         SparkOdometryThread.getInstance()
-            .registerSignal(turnSpark, this::getTurningEncoderPosition);
+            .registerSignal(turnSpark, relativeTurnEncoder::getPosition);
 
-    syncTurningEncoders();
+    // syncTurningEncoders();
 
     // Module name for logging
     moduleName =
@@ -230,7 +237,7 @@ public class ModuleIOSparkMax implements ModuleIO {
 
     SmartDashboard.putNumber(moduleName + "Turn relative", relativeTurnEncoder.getPosition());
     SmartDashboard.putNumber(
-        moduleName + "Turn absolute", turnEncoder.getPosition().getValueAsDouble());
+        moduleName + "Turn absolute", turnEncoder.getPosition().getValueAsDouble() * 2 * Math.PI);
     SmartDashboard.putNumber(moduleName + "Drive relative", driveEncoder.getPosition());
 
     // Update turn inputs
@@ -238,12 +245,12 @@ public class ModuleIOSparkMax implements ModuleIO {
     ifOk(
         turnSpark,
         // TODO Max This can be reverted since we are syncing rel and abs
-        this::getTurningEncoderPosition,
+        relativeTurnEncoder::getPosition,
         (value) -> inputs.turnPosition = new Rotation2d(value).minus(zeroRotation));
     ifOk(
         turnSpark,
         // TODO Max This can be reverted since we are syncing rel and abs
-        this::getTurningEncoderVelocity,
+        relativeTurnEncoder::getVelocity,
         (value) -> inputs.turnVelocityRadPerSec = value);
     ifOk(
         turnSpark,

@@ -54,15 +54,18 @@ public class DriveConstants {
 
   // Drive motor configuration
   // TODO Max Last year's code had driving motor inverted.
+  public static final boolean driveInverted = true;
   public static final int driveMotorCurrentLimit = 40;
   public static final double wheelRadiusMeters = Units.inchesToMeters(2);
   public static final double driveMotorReduction =
       8.14; // MAXSwerve with 14 pinion teeth and 22 spur teeth
-  // TODO Max Check this. Last year code does not use this. This is being used by Path plannner and simulation
+  // TODO Max Check this. Last year code does not use this. This is being used by Path plannner and
+  // simulation
   public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);
 
   // Drive encoder configuration
-  // TODO Max Check these. Last year code uses Wheel Diameter * PI need to check if wheel diameter is factored into calculations later
+  // TODO Max Check these. Last year code uses Wheel Diameter * PI need to check if wheel diameter
+  // is factored into calculations later
   public static final double driveEncoderPositionFactor =
       2 * Math.PI / driveMotorReduction; // Rotor Rotations -> Wheel Radians
   public static final double driveEncoderVelocityFactor =
@@ -70,7 +73,7 @@ public class DriveConstants {
 
   // Drive PID configuration
   // TODO Max added last year's PID for SDS in comments
-  public static final double driveKp = 0.1; //0.15
+  public static final double driveKp = 0.01; // 0.15
   public static final double driveKd = 0.0;
   public static final double driveKs = 0.0;
   public static final double driveKv = 0.1; // ?
@@ -84,16 +87,19 @@ public class DriveConstants {
   public static final boolean turnInverted = false;
   public static final int turnMotorCurrentLimit = 40;
   public static final double turnMotorReduction = 12.8;
-  // TODO Max Check this. Last year code does not use this. Updated verified this is only for simulation
+  // TODO Max Check this. Last year code does not use this. Updated verified this is only for
+  // simulation
   public static final DCMotor turnGearbox = DCMotor.getNeoVortex(1);
 
   // Turn encoder configuration
   // TODO Max Unused for SDS modules
   public static final boolean turnEncoderInverted = true;
   // TODO Max Last year's code divides by motor reduction.
-  public static final double turnEncoderPositionFactor = 2 * Math.PI; // Rotations -> Radians
+  public static final double turnEncoderPositionFactor =
+      (2 * Math.PI) / turnMotorReduction; // Rotations -> Radians
   // TODO Max if motor reduction is added above, replace 2PI with Position Factor.
-  public static final double turnEncoderVelocityFactor = (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
+  public static final double turnEncoderVelocityFactor =
+      turnMotorReduction / 60.0; // (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
 
   // Turn PID configuration
   // TODO Max added last year's PID for SDS in comments
