@@ -23,6 +23,7 @@ public class Hand {
     private final int algaeSwitchOID = 3;
     private final int currentLimit = 40;
 
+    //TODO update speeds
     private final double coralIntakeSpeed = 0.1;
     private final double coralExpelSpeed = 0.1;
     private final double algaeIntakeSpeed = 0.1;
