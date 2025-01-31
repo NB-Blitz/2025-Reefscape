@@ -70,7 +70,8 @@ public class RobotContainer {
 
         vision =
             new Vision(
-                drive::addVisionMeasurement, new VisionIOLimelight("camera1", drive::getRotation));
+                drive::addVisionMeasurement,
+                new VisionIOLimelight(camera0Name, drive::getRotation));
         break;
 
       case SIM:

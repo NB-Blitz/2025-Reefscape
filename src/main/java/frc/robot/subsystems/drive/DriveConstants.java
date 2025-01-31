@@ -55,7 +55,7 @@ public class DriveConstants {
   // Drive motor configuration
   // TODO Max Last year's code had driving motor inverted.
   public static final boolean driveInverted = true;
-  public static final int driveMotorCurrentLimit = 40;
+  public static final int driveMotorCurrentLimit = 50;
   public static final double wheelRadiusMeters = Units.inchesToMeters(2);
   public static final double driveMotorReduction =
       8.14; // MAXSwerve with 14 pinion teeth and 22 spur teeth
@@ -76,7 +76,7 @@ public class DriveConstants {
   public static final double driveKp = 0.01; // 0.15
   public static final double driveKd = 0.0;
   public static final double driveKs = 0.0;
-  public static final double driveKv = 0.1; // ?
+  public static final double driveKv = 0.45; // ?
   // FF 0.45
   public static final double driveSimP = 0.05;
   public static final double driveSimD = 0.0;
@@ -85,7 +85,7 @@ public class DriveConstants {
 
   // Turn motor configuration
   public static final boolean turnInverted = false;
-  public static final int turnMotorCurrentLimit = 40;
+  public static final int turnMotorCurrentLimit = 50;
   public static final double turnMotorReduction = 12.8;
   // TODO Max Check this. Last year code does not use this. Updated verified this is only for
   // simulation
@@ -103,7 +103,7 @@ public class DriveConstants {
 
   // Turn PID configuration
   // TODO Max added last year's PID for SDS in comments
-  public static final double turnKp = 0.2; // 0.45
+  public static final double turnKp = 0.45; // 0.45
   public static final double turnKd = 0.0;
   public static final double turnSimP = 8.0;
   public static final double turnSimD = 0.0;
