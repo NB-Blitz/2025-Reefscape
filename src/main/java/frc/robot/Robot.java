@@ -16,7 +16,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -127,6 +129,7 @@ public class Robot extends LoggedRobot {
       gradient.applyTo(m_ledBuffer);
       m_led.setData(m_ledBuffer);
     } */
+    LEDPattern base = LEDPattern.gradient(GradientType.kDiscontinuous, Color.kRed, Color.kBlue);
     LEDPattern pattern = LEDPattern.progressMaskLayer(() -> led_num / 60.0);
     if (led_num == 60) {
       LEDUp = false;
@@ -140,7 +143,10 @@ public class Robot extends LoggedRobot {
     }
     count++;
 
-    pattern.applyTo(m_ledBuffer);
+    LEDPattern LEDStuff = base.mask(pattern);
+
+    LEDStuff.applyTo(m_ledBuffer);
+
     m_led.setData(m_ledBuffer);
   }
   /** This function is called once when the robot is disabled. */
