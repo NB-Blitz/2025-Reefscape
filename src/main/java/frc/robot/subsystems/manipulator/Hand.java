@@ -98,6 +98,16 @@ public class Hand {
         }
     }
 
+    public void clockwise() {
+        leftMotor.set(0.1);
+        rightMotor.set(0.1);
+    }
+
+    public void counterClockwise() {
+        leftMotor.set(-0.1);
+        rightMotor.set(-0.1);
+    }
+
     public void expelCoral() {
         leftMotor.set(coralExpelSpeed);
         rightMotor.set(coralExpelSpeed);
