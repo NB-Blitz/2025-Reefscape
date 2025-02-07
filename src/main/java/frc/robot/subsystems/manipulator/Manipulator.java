@@ -3,12 +3,15 @@ package frc.robot.subsystems.manipulator;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.manipulator.Elevator.ElevatorPosition;
 import frc.robot.subsystems.manipulator.Wrist.WristAngle;
+import frc.robot.util.LEDStrip;
 
 public class Manipulator extends SubsystemBase {
   private final Hand robotHand = new Hand();
   private final Wrist robotWrist = new Wrist();
   private final Elevator robotElevator = new Elevator();
   private final double elevatorHeightTolerance = 0.01;
+  private final LEDStrip rEle = new LEDStrip(0, 120);
+  private final LEDStrip lEle = new LEDStrip(1, 120);
 
   private final ElevatorPosition[] elevatorPositions = {
     ElevatorPosition.bottom,
@@ -54,6 +57,8 @@ public class Manipulator extends SubsystemBase {
      */
     robotWrist.updateWrist();
     robotElevator.move();
+    rEle.updateLEDs();
+    lEle.updateLEDs();
   }
 
   public void incrementLevel() {
@@ -126,5 +131,8 @@ public class Manipulator extends SubsystemBase {
       joystickCommand = true;
     }
     positionCommand = false;
+
+    rEle.progressMask(robotElevator.getHeight() / 20);
+    lEle.progressMask(robotElevator.getHeight() / 20);
   }
 }
