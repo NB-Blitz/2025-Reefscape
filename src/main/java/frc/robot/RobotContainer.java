@@ -189,7 +189,28 @@ public class RobotContainer {
             () ->
                 manipulator.decrementLevel(),
                 manipulator));
-
+    xBoxController
+        .leftBumper()
+        .onTrue(Commands.runOnce(
+            () ->
+                manipulator.intake(),
+                manipulator));
+    xBoxController
+        .rightBumper()
+        .onTrue(Commands.runOnce(
+            () ->
+                manipulator.expel(),
+                manipulator));
+    xBoxController
+        .leftStick()
+        .onTrue(Commands.run(
+            () ->
+                {
+                    if(xBoxController.rightStick().getAsBoolean()){
+                        manipulator.emergencyStop();
+                    }
+                } ,
+                manipulator));
   }
 
   /**
