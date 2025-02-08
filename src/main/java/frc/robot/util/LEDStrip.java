@@ -34,4 +34,8 @@ public class LEDStrip {
   public void setGradient(Color bottom, Color top) {
     m_colorBase = LEDPattern.gradient(GradientType.kDiscontinuous, bottom, top);
   }
+
+  public void SetintakeCoral(Color intakeColor) {
+    m_colorBase = LEDPattern.solid(intakeColor);
+  }
 }
