@@ -15,7 +15,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class Elevator {
+public class Elevator implements ElevatorInterface {
 
   // creating all the constants
 
@@ -65,28 +65,6 @@ public class Elevator {
   private final SparkClosedLoopController m_PIDController = m_leftMotor.getClosedLoopController();
 
   private final double maxElevatorSpeed = 1.0; // meters per second
-
-  // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)
-  public static enum ElevatorPosition {
-    coralL1(100),
-    coralL2(200),
-    coralL3(300),
-    coralL4(400),
-    algaeL1(250),
-    algaeL2(350),
-    coralIntake(250),
-    algaeBarge(500),
-    algaeProcessor(50),
-    algaeIntake(25),
-    bottom(0),
-    top(500);
-
-    public final double position;
-
-    ElevatorPosition(double position) {
-      this.position = position;
-    }
-  }
 
   public Elevator() {
 

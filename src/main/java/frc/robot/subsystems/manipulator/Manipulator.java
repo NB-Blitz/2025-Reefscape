@@ -1,13 +1,14 @@
 package frc.robot.subsystems.manipulator;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.manipulator.Elevator.ElevatorPosition;
-import frc.robot.subsystems.manipulator.Wrist.WristAngle;
+import frc.robot.subsystems.manipulator.ElevatorInterface.ElevatorPosition;
+import frc.robot.subsystems.manipulator.WristInterface.WristAngle;
 
 public class Manipulator extends SubsystemBase {
-  private final Hand robotHand = new Hand();
+  // Set to "Blank" versions to disable each component
+  private final HandInterface robotHand = new Hand();
   private final Wrist robotWrist = new Wrist();
-  private final Elevator robotElevator = new Elevator();
+  private final ElevatorInterface robotElevator = new Elevator();
   private final double elevatorHeightTolerance = 0.01;
 
   private final ElevatorPosition[] elevatorPositions = {

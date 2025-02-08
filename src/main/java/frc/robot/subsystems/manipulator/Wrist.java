@@ -16,7 +16,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class Wrist {
+public class Wrist implements WristInterface {
 
   // encoder - TBD gear ratio - TBD
 
@@ -44,26 +44,6 @@ public class Wrist {
   private final int wristMotorCANID = 314159; // TODO: fix the can ids
   private final int wristLimitSwitchCANID = 271817181;
   private final double maxWristSpeed = 90; // degrees per second
-
-  // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)
-  public static enum WristAngle {
-    coralBottom(-1),
-    coralMiddle(-1),
-    coralTop(-1),
-    coralIntake(-1),
-    algaeInReef(-1),
-    algaeBarge(-1),
-    algaeProcessor(-1),
-    algaeIntake(-1),
-    bottom(-1),
-    top(-1);
-
-    public final double angle;
-
-    WristAngle(double angle) {
-      this.angle = angle;
-    }
-  }
 
   public Wrist() {
     wristMotor = new SparkMax(wristMotorCANID, MotorType.kBrushless);
