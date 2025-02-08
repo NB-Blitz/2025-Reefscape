@@ -57,8 +57,9 @@ public class Manipulator extends SubsystemBase {
      */
     robotWrist.updateWrist();
     robotElevator.move();
-    rEle.updateLEDs();
-    lEle.updateLEDs();
+    double ledRatio = robotElevator.getHeight()/ElevatorPosition.top.position;
+    rEle.updateLEDs(robotHand.coralInPosition(), ledRatio);
+    lEle.updateLEDs(robotHand.coralInPosition(), ledRatio);
   }
 
   public void incrementLevel() {
@@ -131,7 +132,6 @@ public class Manipulator extends SubsystemBase {
       joystickCommand = true;
     }
     positionCommand = false;
-
     rEle.progressMask(robotElevator.getHeight() / 20);
     lEle.progressMask(robotElevator.getHeight() / 20);
   }

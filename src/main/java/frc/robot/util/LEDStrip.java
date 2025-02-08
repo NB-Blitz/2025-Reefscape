@@ -18,9 +18,15 @@ public class LEDStrip {
     m_led.setLength(m_ledBuffer.getLength());
     m_led.setData(m_ledBuffer);
   }
-
-  public void updateLEDs() {
+  //private double ledRatio = robotElevator.getHeight()/top;
+  public void updateLEDs(boolean hascoral, double ledRatio) {
     LEDPattern LEDStuff = m_colorBase.mask(m_Pattern);
+    if(hascoral){
+      setIntakeCoral(Color.kWhite);
+    }
+    else{
+      progressMask(ledRatio);
+    }
 
     LEDStuff.applyTo(m_ledBuffer);
 
@@ -35,7 +41,7 @@ public class LEDStrip {
     m_colorBase = LEDPattern.gradient(GradientType.kDiscontinuous, bottom, top);
   }
 
-  public void SetintakeCoral(Color intakeColor) {
+  public void setIntakeCoral(Color intakeColor) {
     m_colorBase = LEDPattern.solid(intakeColor);
   }
 }

@@ -125,14 +125,6 @@ public class Hand {
     return false;
   }
 
-  public boolean getinfo() {
-    if (coralFrontSwitch.get() == true && coralBackSwitch.get() == false) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   public void intakeAlgae() {
     if (algaeSwitch.get() == false
         && coralBackSwitch.get() == false
