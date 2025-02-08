@@ -70,7 +70,7 @@ public class RobotContainer {
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
-        manipulator=new Manipulator();
+        manipulator = new Manipulator();
         vision =
             new Vision(
                 drive::addVisionMeasurement, new VisionIOLimelight("camera1", drive::getRotation));
@@ -85,7 +85,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        manipulator=new Manipulator();
+        manipulator = new Manipulator();
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -103,7 +103,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        manipulator=new Manipulator();
+        manipulator = new Manipulator();
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {});
 
         break;
@@ -139,7 +139,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    //Default Commands, normal field-relative drive
+    // Default Commands, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
@@ -179,37 +179,21 @@ public class RobotContainer {
 
     xBoxController
         .povUp()
-        .onTrue(Commands.runOnce(
-            () ->
-                manipulator.incrementLevel(),
-                manipulator));
+        .onTrue(Commands.runOnce(() -> manipulator.incrementLevel(), manipulator));
     xBoxController
         .povDown()
-        .onTrue(Commands.runOnce(
-            () ->
-                manipulator.decrementLevel(),
-                manipulator));
-    xBoxController
-        .leftBumper()
-        .onTrue(Commands.runOnce(
-            () ->
-                manipulator.intake(),
-                manipulator));
-    xBoxController
-        .rightBumper()
-        .onTrue(Commands.runOnce(
-            () ->
-                manipulator.expel(),
-                manipulator));
+        .onTrue(Commands.runOnce(() -> manipulator.decrementLevel(), manipulator));
+    xBoxController.leftBumper().onTrue(Commands.runOnce(() -> manipulator.intake(), manipulator));
+    xBoxController.rightBumper().onTrue(Commands.runOnce(() -> manipulator.expel(), manipulator));
     xBoxController
         .leftStick()
-        .onTrue(Commands.run(
-            () ->
-                {
-                    if(xBoxController.rightStick().getAsBoolean()){
-                        manipulator.emergencyStop();
-                    }
-                } ,
+        .onTrue(
+            Commands.run(
+                () -> {
+                  if (xBoxController.rightStick().getAsBoolean()) {
+                    manipulator.emergencyStop();
+                  }
+                },
                 manipulator));
   }
 
