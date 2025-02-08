@@ -6,9 +6,9 @@ import frc.robot.subsystems.manipulator.WristInterface.WristAngle;
 
 public class Manipulator extends SubsystemBase {
   // Set to "Blank" versions to disable each component
-  private final HandInterface robotHand = new Hand();
-  private final Wrist robotWrist = new Wrist();
-  private final ElevatorInterface robotElevator = new Elevator();
+  private final HandInterface robotHand = new HandBlank();
+  private final WristInterface robotWrist = new WristBlank();
+  private final ElevatorInterface robotElevator = new ElevatorBlank();
   private final double elevatorHeightTolerance = 0.01;
 
   private final ElevatorPosition[] elevatorPositions = {

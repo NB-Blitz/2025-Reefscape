@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ManipulatorCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -53,7 +52,8 @@ public class RobotContainer {
   private final Drive drive;
   private final Manipulator manipulator;
 
-  private final boolean compRobot = true;
+  // Constant to switch between the practice SDS base and the competition Flex base
+  private final boolean compRobot = false;
 
   // Controllers
   private final CommandJoystick joystick = new CommandJoystick(0);
@@ -67,25 +67,22 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        if(compRobot)
-        {
-            drive =
-            new Drive(
-                new GyroIONavX(),
-                new ModuleIOSparkFlex(0),
-                new ModuleIOSparkFlex(1),
-                new ModuleIOSparkFlex(2),
-                new ModuleIOSparkFlex(3));
-        }
-        else
-        {
-            drive =
-                new Drive(
-                    new GyroIONavX(),
-                    new ModuleIOSparkMax(0),
-                    new ModuleIOSparkMax(1),
-                    new ModuleIOSparkMax(2),
-                    new ModuleIOSparkMax(3));
+        if (compRobot) {
+          drive =
+              new Drive(
+                  new GyroIONavX(),
+                  new ModuleIOSparkFlex(0),
+                  new ModuleIOSparkFlex(1),
+                  new ModuleIOSparkFlex(2),
+                  new ModuleIOSparkFlex(3));
+        } else {
+          drive =
+              new Drive(
+                  new GyroIONavX(),
+                  new ModuleIOSparkMax(0),
+                  new ModuleIOSparkMax(1),
+                  new ModuleIOSparkMax(2),
+                  new ModuleIOSparkMax(3));
         }
         manipulator = new Manipulator();
         vision =

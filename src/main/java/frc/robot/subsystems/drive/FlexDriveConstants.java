@@ -101,10 +101,10 @@ public class FlexDriveConstants {
   public static final double turnEncoderVelocityFactor =
       turnMotorReduction / 60.0; // (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
 
-    public static final double absoluteTurnEncoderPositionFactor = 2 * Math.PI;
-    // TODO Max if motor reduction is added above, replace 2PI with Position Factor.
-    public static final double absoluteTurnEncoderVelocityFactor =
-        turnMotorReduction / 60.0; // (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
+  public static final double absoluteTurnEncoderPositionFactor = 2 * Math.PI;
+  // TODO Max if motor reduction is added above, replace 2PI with Position Factor.
+  public static final double absoluteTurnEncoderVelocityFactor =
+      turnMotorReduction / 60.0; // (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
 
   // Turn PID configuration
   // TODO Max added last year's PID for SDS in comments
