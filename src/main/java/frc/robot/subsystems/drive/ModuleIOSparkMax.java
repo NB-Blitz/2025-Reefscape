@@ -302,16 +302,6 @@ public class ModuleIOSparkMax implements ModuleIO {
     turnController.setReference(setpoint, ControlType.kPosition);
   }
 
-  // TODO Max This is not required since we are syncing rel and abs
-  private double getTurningEncoderPosition() {
-    return turnEncoder.getAbsolutePosition().getValueAsDouble();
-  }
-
-  // TODO Max This is not required since we are syncing rel and abs
-  private double getTurningEncoderVelocity() {
-    return turnEncoder.getVelocity().getValueAsDouble() * 60.0;
-  }
-
   public void syncTurningEncoders() {
     double absolutePosition = turnEncoder.getAbsolutePosition().getValueAsDouble() * (2 * Math.PI);
     // TODO Max Not sure that we need to account for the calibration when syncing as the PID control

@@ -21,7 +21,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class DriveConstants {
-  public static final double maxSpeedMetersPerSec = 4.8;
+  public static final double maxSpeedMetersPerSec = 3.81;
   public static final double odometryFrequency = 100.0; // Hz
   public static final double trackWidth = Units.inchesToMeters(18.5);
   public static final double wheelBase = Units.inchesToMeters(19.5);
@@ -59,9 +59,7 @@ public class DriveConstants {
   public static final double wheelRadiusMeters = Units.inchesToMeters(2);
   public static final double driveMotorReduction =
       8.14; // MAXSwerve with 14 pinion teeth and 22 spur teeth
-  // TODO Max Check this. Last year code does not use this. This is being used by Path plannner and
-  // simulation
-  public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);
+  public static final DCMotor driveGearbox = DCMotor.getNEO(1);
 
   // Drive encoder configuration
   // TODO Max Check these. Last year code uses Wheel Diameter * PI need to check if wheel diameter
@@ -111,9 +109,9 @@ public class DriveConstants {
   public static final double turnPIDMaxInput = 2 * Math.PI; // Radians
 
   // PathPlanner configuration
-  public static final double robotMassKg = 74.088;
-  public static final double robotMOI = 6.883;
-  public static final double wheelCOF = 1.2;
+  public static final double robotMassKg = 29.55; // SDS
+  public static final double robotMOI = 4.0; // Estimated for SDS
+  public static final double wheelCOF = 1.2; // Tread, Colson wheel:1.0
   public static final RobotConfig ppConfig =
       new RobotConfig(
           robotMassKg,
@@ -123,7 +121,7 @@ public class DriveConstants {
               maxSpeedMetersPerSec,
               wheelCOF,
               driveGearbox.withReduction(driveMotorReduction),
-              driveMotorCurrentLimit,
+              22,
               1),
           moduleTranslations);
 }

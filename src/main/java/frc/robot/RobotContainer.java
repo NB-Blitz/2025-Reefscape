@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
@@ -57,7 +56,7 @@ public class RobotContainer {
 
   // Controllers
   private final CommandJoystick joystick = new CommandJoystick(0);
-  private final CommandXboxController xBoxController = new CommandXboxController(1);
+  // private final CommandXboxController xBoxController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -183,24 +182,26 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    xBoxController
-        .povUp()
-        .onTrue(Commands.runOnce(() -> manipulator.incrementLevel(), manipulator));
-    xBoxController
-        .povDown()
-        .onTrue(Commands.runOnce(() -> manipulator.decrementLevel(), manipulator));
-    xBoxController.leftBumper().onTrue(Commands.runOnce(() -> manipulator.intake(), manipulator));
-    xBoxController.rightBumper().onTrue(Commands.runOnce(() -> manipulator.expel(), manipulator));
-    xBoxController
-        .leftStick()
-        .onTrue(
-            Commands.run(
-                () -> {
-                  if (xBoxController.rightStick().getAsBoolean()) {
-                    manipulator.emergencyStop();
-                  }
-                },
-                manipulator));
+    // xBoxController
+    //     .povUp()
+    //     .onTrue(Commands.runOnce(() -> manipulator.incrementLevel(), manipulator));
+    // xBoxController
+    //     .povDown()
+    //     .onTrue(Commands.runOnce(() -> manipulator.decrementLevel(), manipulator));
+    // xBoxController.leftBumper().onTrue(Commands.runOnce(() -> manipulator.intake(),
+    // manipulator));
+    // xBoxController.rightBumper().onTrue(Commands.runOnce(() -> manipulator.expel(),
+    // manipulator));
+    // xBoxController
+    //     .leftStick()
+    //     .onTrue(
+    //         Commands.run(
+    //             () -> {
+    //               if (xBoxController.rightStick().getAsBoolean()) {
+    //                 manipulator.emergencyStop();
+    //               }
+    //             },
+    //             manipulator));
   }
 
   /**
