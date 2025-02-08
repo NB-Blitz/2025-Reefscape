@@ -23,8 +23,10 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ManipulatorCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -32,6 +34,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkFlex;
 import frc.robot.subsystems.drive.ModuleIOSparkMax;
+import frc.robot.subsystems.manipulator.Manipulator;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
@@ -48,11 +51,13 @@ public class RobotContainer {
   // Subsystems
   private final Vision vision;
   private final Drive drive;
+  private final Manipulator manipulator;
+
   private final boolean compRobot = true;
 
-  // Controller
-  // private final CommandXboxController controller = new CommandXboxController(1);
+  // Controllers
   private final CommandJoystick joystick = new CommandJoystick(0);
+  private final CommandXboxController xBoxController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -82,7 +87,7 @@ public class RobotContainer {
                     new ModuleIOSparkMax(2),
                     new ModuleIOSparkMax(3));
         }
-
+        manipulator = new Manipulator();
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -98,7 +103,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-
+        manipulator = new Manipulator();
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -107,6 +112,7 @@ public class RobotContainer {
         break;
 
       default:
+
         // Replayed robot, disable IO implementations
         drive =
             new Drive(
@@ -115,8 +121,9 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-
+        manipulator = new Manipulator();
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {});
+
         break;
     }
 
@@ -150,7 +157,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Default command, normal field-relative drive
+    // Default Commands, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
@@ -178,6 +185,25 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    xBoxController
+        .povUp()
+        .onTrue(Commands.runOnce(() -> manipulator.incrementLevel(), manipulator));
+    xBoxController
+        .povDown()
+        .onTrue(Commands.runOnce(() -> manipulator.decrementLevel(), manipulator));
+    xBoxController.leftBumper().onTrue(Commands.runOnce(() -> manipulator.intake(), manipulator));
+    xBoxController.rightBumper().onTrue(Commands.runOnce(() -> manipulator.expel(), manipulator));
+    xBoxController
+        .leftStick()
+        .onTrue(
+            Commands.run(
+                () -> {
+                  if (xBoxController.rightStick().getAsBoolean()) {
+                    manipulator.emergencyStop();
+                  }
+                },
+                manipulator));
   }
 
   /**
