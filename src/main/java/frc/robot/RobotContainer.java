@@ -16,8 +16,10 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -181,6 +183,24 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    // Auto aim command example
+    @SuppressWarnings("resource")
+    PIDController aimController = new PIDController(1.0, 0.0, 0.0);
+    aimController.enableContinuousInput(-Math.PI, Math.PI);
+    joystick
+        .button(6)
+        .whileTrue(
+            Commands.startRun(
+                () -> {
+                  aimController.reset();
+                },
+                () -> {
+                  drive.runVelocity(
+                      new ChassisSpeeds(
+                          0.0, aimController.calculate(vision.getTargetX(0).getRadians()), 0.0));
+                },
+                drive));
 
     // xBoxController
     //     .povUp()

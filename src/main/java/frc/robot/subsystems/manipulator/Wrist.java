@@ -35,7 +35,7 @@ public class Wrist implements WristInterface {
   private final double wristI = 0.0;
   private final double wristD = 0.0;
   private final double wristFF = 0.0;
-  private final double gearRatio = 12 / 38;
+  private final double gearRatio = 1 / 12.0;
   private final double wristEncoderPositionFactor =
       2 * Math.PI / gearRatio; // Rotor Rotations -> Wheel Radians
   private final double wristEncoderVelocityFactor = (2 * Math.PI) / 60.0 / gearRatio;

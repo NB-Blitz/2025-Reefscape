@@ -24,7 +24,7 @@ public class Elevator implements ElevatorInterface {
 
   public static final int kUpSwitchID = 3;
 
-  public static final double kGearRatio = 1 / 12.0;
+  public static final double kGearRatio = 1 / 5.0;
   public static final double kRotationSpeed = 1.0;
   public static final IdleMode kMotorIdleMode = IdleMode.kBrake;
   public static final int kMotorCurrentLimit = 39;
