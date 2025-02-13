@@ -92,6 +92,20 @@ public class Elevator implements ElevatorInterface {
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
+    /*
+     * leftMotorConfig
+     * .limitSwitch
+     * .forwardLimitSwitchEnabled(false)
+     * .reverseLimitSwitchType(Type.kNormallyOpen)
+     * .reverseLimitSwitchEnabled(true);
+     * .softLimit
+     * leftMotorConfig
+     * .softLimit
+    .forwardSoftLimit(0.0)
+    .forwardSoftLimitEnabled(true)
+    .reverseSoftLimit(0.0)
+    .reverseSoftLimitEnabled(true)
+     */
 
     // sets the configuration of the left motor
     tryUntilOk(
@@ -131,6 +145,7 @@ public class Elevator implements ElevatorInterface {
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
+    // rightMotorConfig.follow(m_rightMotor, true);
 
     // sets the configuration of the right motor
     tryUntilOk(
@@ -163,7 +178,9 @@ public class Elevator implements ElevatorInterface {
   // moves the elevator a certain speed according to the double parameter
   public void move() {
     double PIDTarget = targetSpeed;
-    if (controlType == ControlType.kPosition) PIDTarget = targetPosition;
+    if (controlType == ControlType.kPosition) {
+      PIDTarget = targetPosition;
+    }
     m_PIDController.setReference(PIDTarget, controlType);
   }
 
