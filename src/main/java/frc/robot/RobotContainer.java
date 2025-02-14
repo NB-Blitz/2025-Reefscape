@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
@@ -55,16 +56,22 @@ public class RobotContainer {
 
   // Constant to switch between the practice SDS base and the competition Flex base
   private final boolean compRobot = false;
+  private final boolean useSecondController = false;
 
   // Controllers
   private final CommandJoystick joystick = new CommandJoystick(0);
-  // private final CommandXboxController xBoxController = new CommandXboxController(1);
+  private final CommandXboxController xBoxController;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    if (useSecondController) {
+      xBoxController = new CommandXboxController(1);
+    } else {
+      xBoxController = null;
+    }
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -201,27 +208,26 @@ public class RobotContainer {
                           0.0, aimController.calculate(vision.getTargetX(0).getRadians()), 0.0));
                 },
                 drive));
-
-    // xBoxController
-    //     .povUp()
-    //     .onTrue(Commands.runOnce(() -> manipulator.incrementLevel(), manipulator));
-    // xBoxController
-    //     .povDown()
-    //     .onTrue(Commands.runOnce(() -> manipulator.decrementLevel(), manipulator));
-    // xBoxController.leftBumper().onTrue(Commands.runOnce(() -> manipulator.intake(),
-    // manipulator));
-    // xBoxController.rightBumper().onTrue(Commands.runOnce(() -> manipulator.expel(),
-    // manipulator));
-    // xBoxController
-    //     .leftStick()
-    //     .onTrue(
-    //         Commands.run(
-    //             () -> {
-    //               if (xBoxController.rightStick().getAsBoolean()) {
-    //                 manipulator.emergencyStop();
-    //               }
-    //             },
-    //             manipulator));
+    if (useSecondController) {
+      xBoxController
+          .povUp()
+          .onTrue(Commands.runOnce(() -> manipulator.incrementLevel(), manipulator));
+      xBoxController
+          .povDown()
+          .onTrue(Commands.runOnce(() -> manipulator.decrementLevel(), manipulator));
+      xBoxController.leftBumper().onTrue(Commands.runOnce(() -> manipulator.intake(), manipulator));
+      xBoxController.rightBumper().onTrue(Commands.runOnce(() -> manipulator.expel(), manipulator));
+      xBoxController
+          .leftStick()
+          .onTrue(
+              Commands.run(
+                  () -> {
+                    if (xBoxController.rightStick().getAsBoolean()) {
+                      manipulator.emergencyStop();
+                    }
+                  },
+                  manipulator));
+    }
   }
 
   /**

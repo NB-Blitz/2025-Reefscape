@@ -5,10 +5,10 @@ import static frc.robot.util.SparkUtil.*;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Hand implements HandInterface {
@@ -40,14 +40,14 @@ public class Hand implements HandInterface {
 
   public Hand() {
 
-    leftMotor = new SparkMax(leftMotorCANID, MotorType.kBrushless);
-    rightMotor = new SparkMax(rightMotorCANID, MotorType.kBrushless);
+    leftMotor = new SparkFlex(leftMotorCANID, MotorType.kBrushless);
+    rightMotor = new SparkFlex(rightMotorCANID, MotorType.kBrushless);
 
     coralFrontSwitch = new DigitalInput(coralFrontSwitchOID);
     coralBackSwitch = new DigitalInput(coralBackSwitchOID);
     algaeSwitch = new DigitalInput(algaeSwitchOID);
 
-    var rightMotorConfig = new SparkMaxConfig();
+    var rightMotorConfig = new SparkFlexConfig();
     rightMotorConfig
         .idleMode(IdleMode.kBrake)
         .inverted(motorInverted)
@@ -65,7 +65,7 @@ public class Hand implements HandInterface {
             rightMotor.configure(
                 rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-    var leftMotorConfig = new SparkMaxConfig();
+    var leftMotorConfig = new SparkFlexConfig();
     leftMotorConfig
         .idleMode(IdleMode.kBrake)
         .inverted(!motorInverted)

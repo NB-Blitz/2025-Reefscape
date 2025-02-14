@@ -43,7 +43,7 @@ public class Wrist implements WristInterface {
   private final double wristAngleMax = 120.0;
   private final int wristMotorCANID = 314159; // TODO: fix the can ids
   private final int wristLimitSwitchCANID = 271817181;
-  private final double maxWristSpeed = 90; // degrees per second
+  private final double maxWristSpeed = 5.0; // degrees per second
 
   public Wrist() {
     wristMotor = new SparkMax(wristMotorCANID, MotorType.kBrushless);
