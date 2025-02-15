@@ -3,18 +3,18 @@ package frc.robot.subsystems.manipulator;
 public interface ElevatorInterface {
   // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)
   public enum ElevatorPosition {
-    coralL1(100),
-    coralL2(200),
-    coralL3(300),
-    coralL4(400),
-    algaeL1(250),
-    algaeL2(350),
-    coralIntake(250),
-    algaeBarge(500),
-    algaeProcessor(50),
-    algaeIntake(25),
+    coralL1(0.2),
+    coralL2(0.4),
+    coralL3(0.6),
+    coralL4(0.8),
+    algaeL1(0.5),
+    algaeL2(0.7),
+    coralIntake(0.5),
+    algaeBarge(1),
+    algaeProcessor(0.15),
+    algaeIntake(0.1),
     bottom(0),
-    top(500);
+    top(1);
 
     public final double position;
 

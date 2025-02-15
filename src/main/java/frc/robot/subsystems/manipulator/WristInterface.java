@@ -4,16 +4,16 @@ public interface WristInterface {
 
   // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)
   public enum WristAngle {
-    coralBottom(-1),
-    coralMiddle(-1),
-    coralTop(-1),
-    coralIntake(-1),
-    algaeInReef(-1),
-    algaeBarge(-1),
-    algaeProcessor(-1),
-    algaeIntake(-1),
-    bottom(-1),
-    top(-1);
+    coralBottom(90),
+    coralMiddle(45),
+    coralTop(30),
+    coralIntake(90),
+    algaeInReef(90),
+    algaeBarge(135),
+    algaeProcessor(45),
+    algaeIntake(45),
+    bottom(0),
+    top(180);
 
     public final double angle;
 

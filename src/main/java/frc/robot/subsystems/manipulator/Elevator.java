@@ -2,6 +2,7 @@ package frc.robot.subsystems.manipulator;
 
 import static frc.robot.util.SparkUtil.*;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -47,10 +48,10 @@ public class Elevator implements ElevatorInterface {
   public static final double kPositionConversionFactor =
       kGearRatio * kWheelCircumference * 2.0; // in meters
   public static final double kVelocityConversionFactor =
-      kPositionConversionFactor / 60.0; // in meters per second
+      kPositionConversionFactor / 60.0; // in meters per second TODO check this
 
   // the left motor is turning the opposite direction, the right motor is not
-  public static final boolean kRightInverted = false;
+  public static final boolean kRightInverted = true;
 
   // create the motors, one on the left side of the elevator and one on the right side
   // we need two motors to provide enough power to move the elevator quickly
@@ -61,6 +62,7 @@ public class Elevator implements ElevatorInterface {
   // they track the position of the motors
   private final RelativeEncoder m_leftEncoder = m_leftMotor.getEncoder();
   private final RelativeEncoder m_rightEncoder = m_rightMotor.getEncoder();
+  private final AbsoluteEncoder m_rightAbsEncoder = m_rightMotor.getAbsoluteEncoder();
 
   // set the input for the elevator
   private final DigitalInput m_bottomSwitch = new DigitalInput(kUpSwitchID);
@@ -68,7 +70,7 @@ public class Elevator implements ElevatorInterface {
   // create the PID controller (only for the left motor)
   private final SparkClosedLoopController m_PIDController = m_leftMotor.getClosedLoopController();
 
-  private final double maxElevatorSpeed = 0.5; // meters per second
+  private final double maxElevatorSpeed = 0.2; // meters per second
 
   public Elevator() {
 
@@ -87,6 +89,12 @@ public class Elevator implements ElevatorInterface {
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
     rightMotorConfig
+        .absoluteEncoder
+        .inverted(true) // TODO check this
+        .positionConversionFactor(kPositionConversionFactor * 5)
+        .velocityConversionFactor(kVelocityConversionFactor * 5)
+        .averageDepth(2);
+    rightMotorConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pidf(kP, kI, kD, kFF);
@@ -96,17 +104,20 @@ public class Elevator implements ElevatorInterface {
         .primaryEncoderPositionPeriodMs(20)
         .primaryEncoderVelocityAlwaysOn(true)
         .primaryEncoderVelocityPeriodMs(20)
+        .absoluteEncoderPositionAlwaysOn(true)
+        .absoluteEncoderPositionPeriodMs(10)
+        .absoluteEncoderVelocityAlwaysOn(true)
+        .absoluteEncoderVelocityPeriodMs(20)
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
     rightMotorConfig
         .limitSwitch
-        .forwardLimitSwitchEnabled(false)
         .reverseLimitSwitchType(Type.kNormallyOpen)
-        .reverseLimitSwitchEnabled(true);
+        .reverseLimitSwitchEnabled(false); //TODO Enable when limit switch is added
     rightMotorConfig
         .softLimit
-        .forwardSoftLimit(0.0)
+        .forwardSoftLimit(1) // TODO update max height in meters
         .forwardSoftLimitEnabled(true)
         .reverseSoftLimit(0.0)
         .reverseSoftLimitEnabled(true);
@@ -120,7 +131,7 @@ public class Elevator implements ElevatorInterface {
                 rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     // resets the right encoder position to 0.0
-    tryUntilOk(m_rightMotor, 5, () -> m_rightEncoder.setPosition(0.0));
+    tryUntilOk(m_rightMotor, 5, () -> m_rightEncoder.setPosition(m_rightAbsEncoder.getPosition()));
 
     // set up Spark Flex configuration for the left motor
     // (not sure what everything is set to but I think it works)
@@ -171,6 +182,6 @@ public class Elevator implements ElevatorInterface {
   }
 
   public double getHeight() {
-    return m_leftEncoder.getPosition();
+    return m_rightEncoder.getPosition();
   }
 }

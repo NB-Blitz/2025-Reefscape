@@ -9,7 +9,7 @@ public class Manipulator extends SubsystemBase {
   private final HandInterface robotHand = new HandBlank();
   private final WristInterface robotWrist = new WristBlank();
   private final ElevatorInterface robotElevator = new ElevatorBlank();
-  private final double elevatorHeightTolerance = 0.01;
+  private final double elevatorHeightTolerance = 0.03;
 
   private final ElevatorPosition[] elevatorPositions = {
     ElevatorPosition.bottom,
@@ -27,7 +27,7 @@ public class Manipulator extends SubsystemBase {
   };
 
   private final WristAngle[] wristAngles = {
-    WristAngle.bottom,
+    WristAngle.coralBottom,
     WristAngle.algaeIntake,
     WristAngle.algaeProcessor,
     WristAngle.coralBottom,
@@ -38,7 +38,7 @@ public class Manipulator extends SubsystemBase {
     WristAngle.algaeInReef,
     WristAngle.coralTop,
     WristAngle.algaeBarge,
-    WristAngle.top
+    WristAngle.algaeBarge
   };
 
   // 0-11

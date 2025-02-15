@@ -2,6 +2,7 @@ package frc.robot.subsystems.manipulator;
 
 import static frc.robot.util.SparkUtil.*;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -11,6 +12,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.controller.PIDController;
@@ -29,6 +31,7 @@ public class Wrist implements WristInterface {
   private SparkBase wristMotor;
   private DigitalInput wristLimitSwitch; // triggered = true
   private RelativeEncoder wristEncoder;
+  private AbsoluteEncoder wristAbsoluteEncoder;
   private SparkClosedLoopController PIDController = wristMotor.getClosedLoopController();
 
   private final double wristP = 0.5;
@@ -37,10 +40,10 @@ public class Wrist implements WristInterface {
   private final double wristFF = 0.0;
   private final double gearRatio = 1 / 12.0;
   private final double wristEncoderPositionFactor =
-      2 * Math.PI / gearRatio; // Rotor Rotations -> Wheel Radians
-  private final double wristEncoderVelocityFactor = (2 * Math.PI) / 60.0 / gearRatio;
+      360 * gearRatio; // Rotor Rotations -> Degrees
+  private final double wristEncoderVelocityFactor = wristEncoderPositionFactor /60;
   private final int currentLimit = 40;
-  private final double wristAngleMax = 120.0;
+  private final double wristAngleMax = 180.0;
   private final int wristMotorCANID = 314159; // TODO: fix the can ids
   private final int wristLimitSwitchCANID = 271817181;
   private final double maxWristSpeed = 5.0; // degrees per second
@@ -49,12 +52,14 @@ public class Wrist implements WristInterface {
     wristMotor = new SparkMax(wristMotorCANID, MotorType.kBrushless);
     wristLimitSwitch = new DigitalInput(wristLimitSwitchCANID);
     wristEncoder = wristMotor.getEncoder();
+    wristAbsoluteEncoder = wristMotor.getAbsoluteEncoder();
 
     var driveConfig =
         new SparkFlexConfig(); // TODO: invert the motor if needed to make positive motor speed
     // increase the angle(go down) and negative motor speed decrease the
     // angle (go up)
     driveConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(currentLimit).voltageCompensation(12.0);
+    driveConfig.inverted(true);
     driveConfig
         .encoder
         .positionConversionFactor(wristEncoderPositionFactor)
@@ -62,17 +67,37 @@ public class Wrist implements WristInterface {
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
     driveConfig
+        .absoluteEncoder
+        .inverted(true) // TODO check this
+        .positionConversionFactor(360)
+        .velocityConversionFactor(6)
+        .averageDepth(2);
+    driveConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pidf(
             wristP, wristI,
             wristD, wristFF);
     driveConfig
+        .limitSwitch
+        .reverseLimitSwitchType(Type.kNormallyOpen)
+        .reverseLimitSwitchEnabled(false); //TODO Enable when limit switch is added
+    driveConfig
+        .softLimit
+        .forwardSoftLimit(180) // TODO update max height in meters
+        .forwardSoftLimitEnabled(true)
+        .reverseSoftLimit(0)
+        .reverseSoftLimitEnabled(true);
+    driveConfig
         .signals
         .primaryEncoderPositionAlwaysOn(true)
-        .primaryEncoderPositionPeriodMs((int) (1000.0 / 100.0))
+        .primaryEncoderPositionPeriodMs(10)
         .primaryEncoderVelocityAlwaysOn(true)
         .primaryEncoderVelocityPeriodMs(20)
+        .absoluteEncoderPositionAlwaysOn(true)
+        .absoluteEncoderPositionPeriodMs(10)
+        .absoluteEncoderVelocityAlwaysOn(true)
+        .absoluteEncoderVelocityPeriodMs(20)
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
@@ -82,8 +107,7 @@ public class Wrist implements WristInterface {
         () ->
             wristMotor.configure(
                 driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
-    tryUntilOk(wristMotor, 5, () -> wristEncoder.setPosition(0.0));
-    wristEncoder.setPosition(0.0);
+    tryUntilOk(wristMotor, 5, () -> wristEncoder.setPosition(wristAbsoluteEncoder.getPosition()));
   }
 
   public void resetEncoder(double angle) {
