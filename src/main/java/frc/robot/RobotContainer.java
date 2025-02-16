@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ManipulatorCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -55,8 +56,8 @@ public class RobotContainer {
   private final Manipulator manipulator;
 
   // Constant to switch between the practice SDS base and the competition Flex base
-  private final boolean compRobot = false;
-  private final boolean useSecondController = false;
+  private final boolean compRobot = true;
+  private final boolean useSecondController = true;
 
   // Controllers
   private final CommandJoystick joystick = new CommandJoystick(0);
@@ -209,6 +210,9 @@ public class RobotContainer {
                 },
                 drive));
     if (useSecondController) {
+      manipulator.setDefaultCommand(
+          ManipulatorCommands.joystickManipulator(
+              manipulator, () -> xBoxController.getLeftY(), () -> xBoxController.getRightY()));
       xBoxController
           .povUp()
           .onTrue(Commands.runOnce(() -> manipulator.incrementLevel(), manipulator));

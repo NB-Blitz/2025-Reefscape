@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 public class Hand implements HandInterface {
 
   private final int leftMotorCANID = 13;
-  private final int rightMotorCANID = 14;
+  private final int rightMotorCANID = 12;
   private final int coralFrontSwitchOID = 1;
   private final int coralBackSwitchOID = 2;
   private final int algaeSwitchOID = 3;

@@ -14,6 +14,7 @@ public class ManipulatorCommands {
     return Commands.run(
         () -> {
           manipulator.runManipulator(leftYSupplier.getAsDouble(), rightYSupplier.getAsDouble());
-        });
+        },
+        manipulator);
   }
 }

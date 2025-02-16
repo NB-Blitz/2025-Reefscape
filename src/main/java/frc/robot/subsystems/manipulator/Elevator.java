@@ -9,8 +9,8 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -21,8 +21,8 @@ public class Elevator implements ElevatorInterface {
 
   // creating all the constants
 
-  public static final int kLeftMotorCANID = 1;
-  public static final int kRightMotorCANID = 2;
+  public static final int kLeftMotorCANID = 10;
+  public static final int kRightMotorCANID = 9;
 
   public static final int kUpSwitchID = 3;
 
@@ -55,12 +55,12 @@ public class Elevator implements ElevatorInterface {
 
   // create the motors, one on the left side of the elevator and one on the right side
   // we need two motors to provide enough power to move the elevator quickly
-  private final SparkBase m_leftMotor = new SparkMax(kLeftMotorCANID, MotorType.kBrushless);
-  private final SparkBase m_rightMotor = new SparkMax(kRightMotorCANID, MotorType.kBrushless);
+  private final SparkBase m_leftMotor = new SparkFlex(kLeftMotorCANID, MotorType.kBrushless);
+  private final SparkBase m_rightMotor = new SparkFlex(kRightMotorCANID, MotorType.kBrushless);
 
   // create the relative encoders (one for each motor)
   // they track the position of the motors
-  private final RelativeEncoder m_leftEncoder = m_leftMotor.getEncoder();
+  // private final RelativeEncoder m_leftEncoder = m_leftMotor.getEncoder();
   private final RelativeEncoder m_rightEncoder = m_rightMotor.getEncoder();
   private final AbsoluteEncoder m_rightAbsEncoder = m_rightMotor.getAbsoluteEncoder();
 
@@ -114,13 +114,13 @@ public class Elevator implements ElevatorInterface {
     rightMotorConfig
         .limitSwitch
         .reverseLimitSwitchType(Type.kNormallyOpen)
-        .reverseLimitSwitchEnabled(false); //TODO Enable when limit switch is added
+        .reverseLimitSwitchEnabled(false); // TODO Enable when limit switch is added
     rightMotorConfig
         .softLimit
         .forwardSoftLimit(1) // TODO update max height in meters
-        .forwardSoftLimitEnabled(true)
+        .forwardSoftLimitEnabled(false)
         .reverseSoftLimit(0.0)
-        .reverseSoftLimitEnabled(true);
+        .reverseSoftLimitEnabled(false);
 
     // sets the configuration of the right motor
     tryUntilOk(

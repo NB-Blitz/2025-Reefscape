@@ -34,7 +34,7 @@ public class FlexDriveConstants {
         new Translation2d(-trackWidth / 2.0, -wheelBase / 2.0)
       };
 
-  // Zeroed rotation values for each module, TODO Max see setup instructions
+  // Zeroed rotation values for each module (not necessary, calibration done with client)
   public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0);
   public static final Rotation2d frontRightZeroRotation = new Rotation2d(0);
   public static final Rotation2d backLeftZeroRotation = new Rotation2d(0);
@@ -58,7 +58,7 @@ public class FlexDriveConstants {
   public static final int driveMotorCurrentLimit = 50;
   public static final double wheelRadiusMeters = Units.inchesToMeters(2);
   public static final double driveMotorReduction =
-      8.14; // MAXSwerve with 14 pinion teeth and 22 spur teeth
+      5.14; // ThriftyBot with 14 pinion teeth and 16 spur teeth
   // TODO Max Check this. Last year code does not use this. This is being used by Path plannner and
   // simulation
   public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);
@@ -86,14 +86,14 @@ public class FlexDriveConstants {
   // Turn motor configuration
   public static final boolean turnInverted = false;
   public static final int turnMotorCurrentLimit = 50;
-  public static final double turnMotorReduction = 12.8;
+  public static final double turnMotorReduction = 25.0;
   // TODO Max Check this. Last year code does not use this. Updated verified this is only for
   // simulation
   public static final DCMotor turnGearbox = DCMotor.getNeoVortex(1);
 
   // Turn encoder configuration
   // TODO Max Unused for SDS modules
-  public static final boolean turnEncoderInverted = true;
+  public static final boolean turnEncoderInverted = false;
   // TODO Max Last year's code divides by motor reduction.
   public static final double turnEncoderPositionFactor =
       (2 * Math.PI) / turnMotorReduction; // Rotations -> Radians
@@ -108,7 +108,7 @@ public class FlexDriveConstants {
 
   // Turn PID configuration
   // TODO Max added last year's PID for SDS in comments
-  public static final double turnKp = 0.45; // 0.45
+  public static final double turnKp = 0.5; // 0.45
   public static final double turnKd = 0.0;
   public static final double turnSimP = 8.0;
   public static final double turnSimD = 0.0;

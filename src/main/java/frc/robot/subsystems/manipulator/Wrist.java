@@ -39,18 +39,17 @@ public class Wrist implements WristInterface {
   private final double wristD = 0.0;
   private final double wristFF = 0.0;
   private final double gearRatio = 1 / 12.0;
-  private final double wristEncoderPositionFactor =
-      360 * gearRatio; // Rotor Rotations -> Degrees
-  private final double wristEncoderVelocityFactor = wristEncoderPositionFactor /60;
+  private final double wristEncoderPositionFactor = 360 * gearRatio; // Rotor Rotations -> Degrees
+  private final double wristEncoderVelocityFactor = wristEncoderPositionFactor / 60;
   private final int currentLimit = 40;
   private final double wristAngleMax = 180.0;
-  private final int wristMotorCANID = 314159; // TODO: fix the can ids
-  private final int wristLimitSwitchCANID = 271817181;
+  private final int wristMotorCANID = 11;
+  // private final int wristLimitSwitchID = 271817181;
   private final double maxWristSpeed = 5.0; // degrees per second
 
   public Wrist() {
     wristMotor = new SparkMax(wristMotorCANID, MotorType.kBrushless);
-    wristLimitSwitch = new DigitalInput(wristLimitSwitchCANID);
+    // wristLimitSwitch = new DigitalInput(wristLimitSwitchID);
     wristEncoder = wristMotor.getEncoder();
     wristAbsoluteEncoder = wristMotor.getAbsoluteEncoder();
 
@@ -81,7 +80,7 @@ public class Wrist implements WristInterface {
     driveConfig
         .limitSwitch
         .reverseLimitSwitchType(Type.kNormallyOpen)
-        .reverseLimitSwitchEnabled(false); //TODO Enable when limit switch is added
+        .reverseLimitSwitchEnabled(false); // TODO Enable when limit switch is added
     driveConfig
         .softLimit
         .forwardSoftLimit(180) // TODO update max height in meters
