@@ -31,13 +31,13 @@ public class Elevator implements ElevatorInterface {
   public static final double kGearRatio = 1 / 5.0;
   public static final double kRotationSpeed = 1.0;
   public static final IdleMode kMotorIdleMode = IdleMode.kBrake;
-  public static final int kMotorCurrentLimit = 39;
+  public static final int kMotorCurrentLimit = 140;
 
   public static final int kDownPosition = 0;
   public static final int kUpPosition = 1;
 
   // these are values for the PID controller
-  public static final double kP = 0.1;
+  public static final double kP = 0.5;
   public static final double kI = 0.0;
   public static final double kD = 0.0;
   public static final double kFF = 0.0;
@@ -48,7 +48,7 @@ public class Elevator implements ElevatorInterface {
   public static final double kPositionConversionFactor =
       kGearRatio * kWheelCircumference * 2.0; // in meters
   public static final double kVelocityConversionFactor =
-      kPositionConversionFactor / 60.0; // in meters per second TODO check this
+      kPositionConversionFactor / 60.0; // in meters per second
 
   // the left motor is turning the opposite direction, the right motor is not
   public static final boolean kRightInverted = true;
@@ -68,9 +68,9 @@ public class Elevator implements ElevatorInterface {
   private final DigitalInput m_bottomSwitch = new DigitalInput(kUpSwitchID);
 
   // create the PID controller (only for the left motor)
-  private final SparkClosedLoopController m_PIDController = m_leftMotor.getClosedLoopController();
+  private final SparkClosedLoopController m_PIDController = m_rightMotor.getClosedLoopController();
 
-  private final double maxElevatorSpeed = 0.2; // meters per second
+  private final double maxElevatorSpeed = 0.5; // meters per second
 
   public Elevator() {
 
@@ -145,7 +145,8 @@ public class Elevator implements ElevatorInterface {
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
-    leftMotorConfig.follow(m_rightMotor, true);
+    // leftMotorConfig.follow(m_rightMotor, true);
+    leftMotorConfig.follow(kRightMotorCANID, true);
 
     // sets the configuration of the left motor
     tryUntilOk(

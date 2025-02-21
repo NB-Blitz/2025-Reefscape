@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.manipulator.Manipulator;
@@ -13,7 +14,9 @@ public class ManipulatorCommands {
       Manipulator manipulator, DoubleSupplier leftYSupplier, DoubleSupplier rightYSupplier) {
     return Commands.run(
         () -> {
-          manipulator.runManipulator(leftYSupplier.getAsDouble(), rightYSupplier.getAsDouble());
+          double leftY = MathUtil.applyDeadband(leftYSupplier.getAsDouble(), 0.1);
+          double rightY = MathUtil.applyDeadband(rightYSupplier.getAsDouble(), 0.1);
+          manipulator.runManipulator(leftY, rightY);
         },
         manipulator);
   }

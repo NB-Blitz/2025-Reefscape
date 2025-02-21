@@ -39,7 +39,7 @@ import java.util.function.Supplier;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
-  private static final double ROT_DEADBAND = 0.4;
+  private static final double ROT_DEADBAND = 0.5;
   private static final double ANGLE_KP = 5.0;
   private static final double ANGLE_KD = 0.4;
   private static final double ANGLE_MAX_VELOCITY = 8.0;
@@ -72,7 +72,8 @@ public class DriveCommands {
       Drive drive,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
-      DoubleSupplier omegaSupplier) {
+      DoubleSupplier omegaSupplier,
+      DoubleSupplier speedScaler) {
     return Commands.run(
         () -> {
           // Get linear velocity
@@ -83,24 +84,28 @@ public class DriveCommands {
           double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), ROT_DEADBAND);
 
           // Square rotation value for more precise control
-          omega = Math.copySign(omega * omega, omega);
+          omega = Math.copySign(omega * omega, omega) * 0.5;
 
           // Convert to field relative speeds & send command
           ChassisSpeeds speeds =
               new ChassisSpeeds(
-                  linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                  linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                  omega * drive.getMaxAngularSpeedRadPerSec());
+                  linearVelocity.getX()
+                      * drive.getMaxLinearSpeedMetersPerSec()
+                      * speedScaler.getAsDouble(),
+                  linearVelocity.getY()
+                      * drive.getMaxLinearSpeedMetersPerSec()
+                      * speedScaler.getAsDouble(),
+                  omega * drive.getMaxAngularSpeedRadPerSec() * speedScaler.getAsDouble());
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
                   && DriverStation.getAlliance().get() == Alliance.Red;
           drive.runVelocity(
-              // ChassisSpeeds.fromRobotRelativeSpeeds(speeds, Rotation2d.fromDegrees(0)));
-              ChassisSpeeds.fromFieldRelativeSpeeds(
-                  speeds,
-                  isFlipped
-                      ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                      : drive.getRotation()));
+              // ChassisSpeeds.fromFieldRelativeSpeeds(
+              //     speeds,
+              //     isFlipped
+              //         ? drive.getRotation().plus(new Rotation2d(Math.PI))
+              //         : drive.getRotation()));
+              speeds);
         },
         drive);
   }

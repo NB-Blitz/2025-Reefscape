@@ -33,6 +33,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
 
@@ -62,6 +63,8 @@ public class ModuleIOSparkFlex implements ModuleIO {
   // Connection debouncers
   private final Debouncer driveConnectedDebounce = new Debouncer(0.5);
   private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
+
+  private final String moduleName;
 
   public ModuleIOSparkFlex(int module) {
     zeroRotation =
@@ -102,6 +105,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
     var driveConfig = new SparkFlexConfig();
     driveConfig
         .idleMode(IdleMode.kBrake)
+        .inverted(driveInverted)
         .smartCurrentLimit(driveMotorCurrentLimit)
         .voltageCompensation(12.0);
     driveConfig
@@ -154,7 +158,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
         .averageDepth(2);
     turnConfig
         .closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
         .positionWrappingEnabled(true)
         .positionWrappingInputRange(turnPIDMinInput, turnPIDMaxInput)
         .pidf(turnKp, 0.0, turnKd, 0.0);
@@ -185,6 +189,16 @@ public class ModuleIOSparkFlex implements ModuleIO {
         SparkOdometryThread.getInstance().registerSignal(driveSpark, driveEncoder::getPosition);
     turnPositionQueue =
         SparkOdometryThread.getInstance().registerSignal(turnSpark, turnEncoder::getPosition);
+
+    // Module name for logging
+    moduleName =
+        switch (module) {
+          case 0 -> "frontLeft";
+          case 1 -> "frontRight";
+          case 2 -> "backLeft";
+          case 3 -> "backRight";
+          default -> "hey :)";
+        };
   }
 
   @Override
@@ -213,6 +227,10 @@ public class ModuleIOSparkFlex implements ModuleIO {
         (values) -> inputs.turnAppliedVolts = values[0] * values[1]);
     ifOk(turnSpark, turnSpark::getOutputCurrent, (value) -> inputs.turnCurrentAmps = value);
     inputs.turnConnected = turnConnectedDebounce.calculate(!sparkStickyFault);
+
+    SmartDashboard.putNumber(moduleName + "Turn relative", turnEncoder.getPosition());
+    SmartDashboard.putNumber(moduleName + "Turn absolute", absTurnEncoder.getPosition());
+    SmartDashboard.putNumber(moduleName + "Drive relative", driveEncoder.getPosition());
 
     // Update odometry inputs
     inputs.odometryTimestamps =

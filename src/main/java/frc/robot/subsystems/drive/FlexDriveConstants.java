@@ -21,7 +21,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class FlexDriveConstants {
-  public static final double maxSpeedMetersPerSec = 4.8;
+  public static final double maxSpeedMetersPerSec = Units.inchesToMeters(19.8 * 12);
   public static final double odometryFrequency = 100.0; // Hz
   public static final double trackWidth = Units.inchesToMeters(23.0);
   public static final double wheelBase = Units.inchesToMeters(23.0);
@@ -35,10 +35,10 @@ public class FlexDriveConstants {
       };
 
   // Zeroed rotation values for each module (not necessary, calibration done with client)
-  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0);
-  public static final Rotation2d frontRightZeroRotation = new Rotation2d(0);
-  public static final Rotation2d backLeftZeroRotation = new Rotation2d(0);
-  public static final Rotation2d backRightZeroRotation = new Rotation2d(0);
+  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0); // 0.2106459
+  public static final Rotation2d frontRightZeroRotation = new Rotation2d(0); // 0.1326632
+  public static final Rotation2d backLeftZeroRotation = new Rotation2d(0); // 0.8751022
+  public static final Rotation2d backRightZeroRotation = new Rotation2d(0); // 0.8419363
 
   // Device CAN IDs
 
@@ -73,7 +73,7 @@ public class FlexDriveConstants {
 
   // Drive PID configuration
   // TODO Max added last year's PID for SDS in comments
-  public static final double driveKp = 0.01; // 0.15
+  public static final double driveKp = 0.0075; // 0.15
   public static final double driveKd = 0.0;
   public static final double driveKs = 0.0;
   public static final double driveKv = 0.45; // ?
@@ -85,7 +85,7 @@ public class FlexDriveConstants {
 
   // Turn motor configuration
   public static final boolean turnInverted = false;
-  public static final int turnMotorCurrentLimit = 50;
+  public static final int turnMotorCurrentLimit = 40;
   public static final double turnMotorReduction = 25.0;
   // TODO Max Check this. Last year code does not use this. Updated verified this is only for
   // simulation
@@ -99,16 +99,16 @@ public class FlexDriveConstants {
       (2 * Math.PI) / turnMotorReduction; // Rotations -> Radians
   // TODO Max if motor reduction is added above, replace 2PI with Position Factor.
   public static final double turnEncoderVelocityFactor =
-      turnMotorReduction / 60.0; // (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
+      turnEncoderPositionFactor / 60.0; // (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
 
   public static final double absoluteTurnEncoderPositionFactor = 2 * Math.PI;
   // TODO Max if motor reduction is added above, replace 2PI with Position Factor.
   public static final double absoluteTurnEncoderVelocityFactor =
-      turnMotorReduction / 60.0; // (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
+      absoluteTurnEncoderPositionFactor / 60.0; // (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
 
   // Turn PID configuration
   // TODO Max added last year's PID for SDS in comments
-  public static final double turnKp = 0.5; // 0.45
+  public static final double turnKp = 0.52; // 0.45
   public static final double turnKd = 0.0;
   public static final double turnSimP = 8.0;
   public static final double turnSimD = 0.0;
