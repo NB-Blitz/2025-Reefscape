@@ -2,14 +2,16 @@ package frc.robot.subsystems.manipulator;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.manipulator.ElevatorInterface.ElevatorPosition;
-import frc.robot.subsystems.manipulator.WristInterface.WristAngle;
+import frc.robot.subsystems.manipulator.Wrist.WristAngle;
+import frc.robot.subsystems.manipulator.Shoulder.ShoulderAngle;
 
 public class Manipulator extends SubsystemBase {
   // Set to "Blank" versions to disable each component
   private final HandInterface robotHand = new HandBlank();
-  private final WristInterface robotWrist = new WristBlank();
+  private final Joint robotWrist = new JointBlank();
   private final ElevatorInterface robotElevator = new ElevatorBlank();
   private final double elevatorHeightTolerance = 0.03;
+  private final Joint robotShoulder = new JointBlank();
 
   private final ElevatorPosition[] elevatorPositions = {
     ElevatorPosition.bottom,
@@ -41,6 +43,21 @@ public class Manipulator extends SubsystemBase {
     WristAngle.algaeBarge
   };
 
+  private final ShoulderAngle[] shoulderAngles = {
+    ShoulderAngle.coralBottom,
+    ShoulderAngle.algaeIntake,
+    ShoulderAngle.algaeProcessor,
+    ShoulderAngle.coralBottom,
+    ShoulderAngle.coralMiddle,
+    ShoulderAngle.algaeInReef,
+    ShoulderAngle.coralIntake,
+    ShoulderAngle.coralMiddle,
+    ShoulderAngle.algaeInReef,
+    ShoulderAngle.coralTop,
+    ShoulderAngle.algaeBarge,
+    ShoulderAngle.algaeBarge
+  };
+
   // 0-11
   private int levelIndex = 0;
   private boolean positionCommand = false;
@@ -53,7 +70,7 @@ public class Manipulator extends SubsystemBase {
      * Any automatic behavior we want An example would be if we have a note and are in the top
      * position we could start the shooting motors.
      */
-    robotWrist.updateWrist();
+    robotWrist.updateJoint();
     robotElevator.move();
   }
 
@@ -111,19 +128,22 @@ public class Manipulator extends SubsystemBase {
 
   public void emergencyStop() {
     robotElevator.setSpeed(0.0);
-    robotWrist.setWristSpeed(0.0);
+    robotWrist.setJointSpeed(0.0);
     robotHand.stopMotors();
+    robotShoulder.setJointSpeed(0.0);
   }
 
-  public void runManipulator(double LJ, double RJ) {
+  public void runManipulator(double triggers, double leftJoy, double rightJoy) {
 
     // if we recieve a joystick input stop both auto positioning
-    if (LJ == 0.0 && RJ == 0.0 && positionCommand) {
+    if (triggers == 0.0 && leftJoy == 0.0 && rightJoy == 0.0 && positionCommand) {
       robotElevator.setPosition(elevatorPositions[levelIndex]);
-      robotWrist.setWristAngle(wristAngles[levelIndex]);
-    } else if (LJ != 0.0 || RJ != 0.0) {
-      robotElevator.setSpeed(LJ);
-      robotWrist.setWristSpeed(RJ);
+      robotWrist.setJointAngle(wristAngles[levelIndex].ordinal());
+      robotShoulder.setJointAngle(shoulderAngles[levelIndex].ordinal());
+    } else if (triggers != 0.0 || leftJoy != 0.0 || rightJoy != 0.0) {
+      robotElevator.setSpeed(triggers);
+      robotWrist.setJointSpeed(rightJoy);
+      robotShoulder.setJointSpeed(leftJoy);
       joystickCommand = true;
     }
     positionCommand = false;

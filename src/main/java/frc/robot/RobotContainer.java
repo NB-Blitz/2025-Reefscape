@@ -212,7 +212,7 @@ public class RobotContainer {
     if (useSecondController) {
       manipulator.setDefaultCommand(
           ManipulatorCommands.joystickManipulator(
-              manipulator, () -> -xBoxController.getLeftY(), () -> -xBoxController.getRightY()));
+              manipulator, () -> -xBoxController.getLeftTriggerAxis(), () -> xBoxController.getRightTriggerAxis(), () -> -xBoxController.getLeftY(), () -> -xBoxController.getRightY()));
       xBoxController
           .povUp()
           .onTrue(Commands.runOnce(() -> manipulator.incrementLevel(), manipulator));
