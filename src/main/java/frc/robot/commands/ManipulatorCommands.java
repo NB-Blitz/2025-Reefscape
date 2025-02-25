@@ -11,7 +11,11 @@ public class ManipulatorCommands {
   public ManipulatorCommands() {}
 
   public static Command joystickManipulator(
-      Manipulator manipulator, DoubleSupplier leftTriggerSupplier, DoubleSupplier rightTriggerSupplier, DoubleSupplier leftYSupplier, DoubleSupplier rightYSupplier) {
+      Manipulator manipulator,
+      DoubleSupplier leftTriggerSupplier,
+      DoubleSupplier rightTriggerSupplier,
+      DoubleSupplier leftYSupplier,
+      DoubleSupplier rightYSupplier) {
     return Commands.run(
         () -> {
           double leftT = MathUtil.applyDeadband(leftTriggerSupplier.getAsDouble(), 0.05);
@@ -20,10 +24,9 @@ public class ManipulatorCommands {
           double rightY = MathUtil.applyDeadband(rightYSupplier.getAsDouble(), 0.1);
           double triggers = 0.0;
 
-          if(leftT == 0.0 && rightT != 0.0){
+          if (leftT == 0.0 && rightT != 0.0) {
             triggers = rightT;
-          }
-          else if(leftT != 0.0 && rightT == 0.0){
+          } else if (leftT != 0.0 && rightT == 0.0) {
             triggers = leftT;
           }
           manipulator.runManipulator(triggers, leftY, rightY);

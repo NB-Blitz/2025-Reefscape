@@ -13,7 +13,7 @@
 
 package frc.robot.subsystems.drive;
 
-import static frc.robot.subsystems.drive.FlexDriveConstants.*;
+import static frc.robot.subsystems.drive.constants.DriveConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
 import com.revrobotics.AbsoluteEncoder;
@@ -33,7 +33,6 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
 
@@ -63,8 +62,6 @@ public class ModuleIOSparkFlex implements ModuleIO {
   // Connection debouncers
   private final Debouncer driveConnectedDebounce = new Debouncer(0.5);
   private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
-
-  private final String moduleName;
 
   public ModuleIOSparkFlex(int module) {
     zeroRotation =
@@ -102,7 +99,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
     turnController = turnSpark.getClosedLoopController();
 
     // Configure drive motor
-    var driveConfig = new SparkFlexConfig();
+    SparkFlexConfig driveConfig = new SparkFlexConfig();
     driveConfig
         .idleMode(IdleMode.kBrake)
         .inverted(driveInverted)
@@ -138,7 +135,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
     tryUntilOk(driveSpark, 5, () -> driveEncoder.setPosition(0.0));
 
     // Configure turn motor
-    var turnConfig = new SparkFlexConfig();
+    SparkFlexConfig turnConfig = new SparkFlexConfig();
     turnConfig
         .inverted(turnInverted)
         .idleMode(IdleMode.kBrake)
@@ -189,16 +186,6 @@ public class ModuleIOSparkFlex implements ModuleIO {
         SparkOdometryThread.getInstance().registerSignal(driveSpark, driveEncoder::getPosition);
     turnPositionQueue =
         SparkOdometryThread.getInstance().registerSignal(turnSpark, turnEncoder::getPosition);
-
-    // Module name for logging
-    moduleName =
-        switch (module) {
-          case 0 -> "frontLeft";
-          case 1 -> "frontRight";
-          case 2 -> "backLeft";
-          case 3 -> "backRight";
-          default -> "hey :)";
-        };
   }
 
   @Override
@@ -227,10 +214,6 @@ public class ModuleIOSparkFlex implements ModuleIO {
         (values) -> inputs.turnAppliedVolts = values[0] * values[1]);
     ifOk(turnSpark, turnSpark::getOutputCurrent, (value) -> inputs.turnCurrentAmps = value);
     inputs.turnConnected = turnConnectedDebounce.calculate(!sparkStickyFault);
-
-    SmartDashboard.putNumber(moduleName + "Turn relative", turnEncoder.getPosition());
-    SmartDashboard.putNumber(moduleName + "Turn absolute", absTurnEncoder.getPosition());
-    SmartDashboard.putNumber(moduleName + "Drive relative", driveEncoder.getPosition());
 
     // Update odometry inputs
     inputs.odometryTimestamps =

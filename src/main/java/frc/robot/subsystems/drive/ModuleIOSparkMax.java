@@ -13,8 +13,7 @@
 
 package frc.robot.subsystems.drive;
 
-import static frc.robot.subsystems.drive.DriveConstants.*;
-import static frc.robot.subsystems.drive.SparkMaxConstants.*;
+import static frc.robot.subsystems.drive.constants.DriveConstants.*;
 import static frc.robot.util.SparkUtil.*;
 
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;

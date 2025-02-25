@@ -9,16 +9,12 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 public class Joint {
 
@@ -38,14 +34,25 @@ public class Joint {
   private final int currentLimit = 40;
   private final double maxJointSpeed;
 
-  public Joint(double P, double I, double D, double FF, double gearRatio, double maxSpeed, double absGearRatio, boolean absInvert, boolean invert, SparkBase motorRef, SparkBaseConfig config) {
+  public Joint(
+      double P,
+      double I,
+      double D,
+      double FF,
+      double gearRatio,
+      double maxSpeed,
+      double absGearRatio,
+      boolean absInvert,
+      boolean invert,
+      SparkBase motorRef,
+      SparkBaseConfig config) {
     jointMotor = motorRef;
     this.maxJointSpeed = maxSpeed;
     // wristLimitSwitch = new DigitalInput(wristLimitSwitchID);
     jointEncoder = jointMotor.getEncoder();
     jointAbsoluteEncoder = jointMotor.getAbsoluteEncoder();
 
-    var jointConfig = config; 
+    var jointConfig = config;
     // TODO: invert the motor if needed to make positive motor speed
     // increase the angle(go down) and negative motor speed decrease the
     // angle (go up)
@@ -93,7 +100,7 @@ public class Joint {
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
     tryUntilOk(
-      jointMotor,
+        jointMotor,
         5,
         () ->
             jointMotor.configure(
@@ -101,7 +108,7 @@ public class Joint {
     tryUntilOk(jointMotor, 5, () -> jointEncoder.setPosition(jointAbsoluteEncoder.getPosition()));
   }
 
-  public Joint(){
+  public Joint() {
     maxJointSpeed = 0;
   }
 
@@ -122,8 +129,7 @@ public class Joint {
     controlType = ControlType.kVelocity;
   }
 
-  public void setJointAngle(int enumIndex) {
-  }
+  public void setJointAngle(int enumIndex) {}
 
   public void updateJoint() {
     /*

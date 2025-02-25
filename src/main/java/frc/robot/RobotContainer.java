@@ -13,12 +13,14 @@
 
 package frc.robot;
 
+import static frc.robot.subsystems.drive.constants.DriveConstants.*;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,7 +40,7 @@ import frc.robot.subsystems.drive.ModuleIOSparkMax;
 import frc.robot.subsystems.manipulator.Manipulator;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
-// import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -55,7 +57,6 @@ public class RobotContainer {
   private final Manipulator manipulator;
 
   // Constant to switch between the practice SDS base and the competition Flex base
-  private final boolean compRobot = true;
   private final boolean useSecondController = false;
 
   // Controllers
@@ -93,10 +94,10 @@ public class RobotContainer {
                   new ModuleIOSparkMax(3));
         }
         manipulator = new Manipulator();
-        vision = null;
-        //     new Vision(
-        //         drive::addVisionMeasurement,
-        //         new VisionIOLimelight(camera0Name, drive::getRotation));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOLimelight(camera0Name, drive::getRotation));
         break;
 
       case SIM:
@@ -196,23 +197,27 @@ public class RobotContainer {
     @SuppressWarnings("resource")
     PIDController aimController = new PIDController(1.0, 0.0, 0.0);
     aimController.enableContinuousInput(-Math.PI, Math.PI);
-    // joystick
-    //     .button(6)
-    //     .whileTrue(
-    //         Commands.startRun(
-    //             () -> {
-    //               aimController.reset();
-    //             },
-    //             () -> {
-    //               drive.runVelocity(
-    //                   new ChassisSpeeds(
-    //                       0.0, aimController.calculate(vision.getTargetX(0).getRadians()), 0.0));
-    //             },
-    //             drive));
+    joystick
+        .button(6)
+        .whileTrue(
+            Commands.startRun(
+                () -> {
+                  aimController.reset();
+                },
+                () -> {
+                  drive.runVelocity(
+                      new ChassisSpeeds(
+                          0.0, aimController.calculate(vision.getTargetX(0).getRadians()), 0.0));
+                },
+                drive));
     if (useSecondController) {
       manipulator.setDefaultCommand(
           ManipulatorCommands.joystickManipulator(
-              manipulator, () -> -xBoxController.getLeftTriggerAxis(), () -> xBoxController.getRightTriggerAxis(), () -> -xBoxController.getLeftY(), () -> -xBoxController.getRightY()));
+              manipulator,
+              () -> -xBoxController.getLeftTriggerAxis(),
+              () -> xBoxController.getRightTriggerAxis(),
+              () -> -xBoxController.getLeftY(),
+              () -> -xBoxController.getRightY()));
       xBoxController
           .povUp()
           .onTrue(Commands.runOnce(() -> manipulator.incrementLevel(), manipulator));
