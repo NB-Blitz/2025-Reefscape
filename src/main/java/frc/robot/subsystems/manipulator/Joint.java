@@ -13,7 +13,6 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Joint {
@@ -30,7 +29,7 @@ public class Joint {
   private DigitalInput jointLimitSwitch; // triggered = true
   private RelativeEncoder jointEncoder;
   private AbsoluteEncoder jointAbsoluteEncoder;
-  private SparkClosedLoopController PIDController = jointMotor.getClosedLoopController();
+  private SparkClosedLoopController jointController;
   private final int currentLimit = 40;
   private final double maxJointSpeed;
 
@@ -47,6 +46,7 @@ public class Joint {
       SparkBase motorRef,
       SparkBaseConfig config) {
     jointMotor = motorRef;
+    jointController = jointMotor.getClosedLoopController();
     this.maxJointSpeed = maxSpeed;
     // wristLimitSwitch = new DigitalInput(wristLimitSwitchID);
     jointEncoder = jointMotor.getEncoder();
@@ -139,6 +139,6 @@ public class Joint {
     */
     double PIDTarget = targetSpeed;
     if (controlType == ControlType.kPosition) PIDTarget = targetAngle;
-    PIDController.setReference(PIDTarget, controlType);
+    jointController.setReference(PIDTarget, controlType);
   }
 }
