@@ -13,7 +13,6 @@
 
 package frc.robot;
 
-import static frc.robot.subsystems.drive.constants.DriveConstants.*;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -37,6 +36,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkFlex;
 import frc.robot.subsystems.drive.ModuleIOSparkMax;
+import frc.robot.subsystems.drive.constants.DriveConstants;
 import frc.robot.subsystems.manipulator.Manipulator;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
@@ -76,7 +76,7 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
-        if (compRobot) {
+        if (DriveConstants.compRobot) {
           drive =
               new Drive(
                   new GyroIONavX(),

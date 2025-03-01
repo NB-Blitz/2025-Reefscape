@@ -35,7 +35,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
 
@@ -65,8 +64,6 @@ public class ModuleIOSparkMax implements ModuleIO {
   // Connection debouncers
   private final Debouncer driveConnectedDebounce = new Debouncer(0.5);
   private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
-
-  private final String moduleName;
 
   public ModuleIOSparkMax(int module) {
     zeroRotation =
@@ -209,16 +206,6 @@ public class ModuleIOSparkMax implements ModuleIO {
             .registerSignal(turnSpark, relativeTurnEncoder::getPosition);
 
     // syncTurningEncoders();
-
-    // Module name for logging
-    moduleName =
-        switch (module) {
-          case 0 -> "frontLeft";
-          case 1 -> "frontRight";
-          case 2 -> "backLeft";
-          case 3 -> "backRight";
-          default -> "hey :)";
-        };
   }
 
   @Override
@@ -233,11 +220,6 @@ public class ModuleIOSparkMax implements ModuleIO {
         (values) -> inputs.driveAppliedVolts = values[0] * values[1]);
     ifOk(driveSpark, driveSpark::getOutputCurrent, (value) -> inputs.driveCurrentAmps = value);
     inputs.driveConnected = driveConnectedDebounce.calculate(!sparkStickyFault);
-
-    SmartDashboard.putNumber(moduleName + "Turn relative", relativeTurnEncoder.getPosition());
-    SmartDashboard.putNumber(
-        moduleName + "Turn absolute", turnEncoder.getPosition().getValueAsDouble() * 2 * Math.PI);
-    SmartDashboard.putNumber(moduleName + "Drive relative", driveEncoder.getPosition());
 
     // Update turn inputs
     sparkStickyFault = false;
