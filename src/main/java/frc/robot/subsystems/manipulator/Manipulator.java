@@ -1,6 +1,8 @@
 package frc.robot.subsystems.manipulator;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.common.Joint;
+import frc.robot.subsystems.common.JointBlank;
 import frc.robot.subsystems.manipulator.ElevatorInterface.ElevatorPosition;
 import frc.robot.subsystems.manipulator.Shoulder.ShoulderAngle;
 import frc.robot.subsystems.manipulator.Wrist.WristAngle;

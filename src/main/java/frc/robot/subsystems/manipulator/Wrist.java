@@ -5,6 +5,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import frc.robot.subsystems.common.Joint;
+
 public class Wrist extends Joint {
 
   private static final double jointP = 0.5;
