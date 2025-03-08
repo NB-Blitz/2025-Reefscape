@@ -16,8 +16,9 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -155,6 +156,7 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+    NamedCommands.registerCommand("resetGyro",Commands.runOnce(() ->drive.resetGyro(),drive));
   }
 
   /**
@@ -189,8 +191,7 @@ public class RobotContainer {
         .onTrue(
             Commands.runOnce(
                     () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                        drive.resetGyro(),
                     drive)
                 .ignoringDisable(true));
 

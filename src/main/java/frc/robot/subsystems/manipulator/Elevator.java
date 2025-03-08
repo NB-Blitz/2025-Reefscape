@@ -10,21 +10,19 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Elevator implements ElevatorInterface {
 
   // creating all the constants
 
-  public static final int kLeftMotorCANID = 10;
-  public static final int kRightMotorCANID = 9;
-
-  public static final int kUpSwitchID = 3;
+  public static final int kFollowMotorCANID = 10;
+  public static final int kLeadMotorCANID = 9;
 
   public static final double kWheelDiameter = 0.04; // in meters
   public static final double kWheelCircumference = Math.PI * kWheelDiameter; // in meters
@@ -32,9 +30,6 @@ public class Elevator implements ElevatorInterface {
   public static final double kRotationSpeed = 1.0;
   public static final IdleMode kMotorIdleMode = IdleMode.kBrake;
   public static final int kMotorCurrentLimit = 140;
-
-  public static final int kDownPosition = 0;
-  public static final int kUpPosition = 1;
 
   // these are values for the PID controller
   public static final double kP = 0.5;
@@ -51,24 +46,23 @@ public class Elevator implements ElevatorInterface {
       kPositionConversionFactor / 60.0; // in meters per second
 
   // the left motor is turning the opposite direction, the right motor is not
-  public static final boolean kRightInverted = true;
+  public static final boolean kLeadInverted = false;
 
   // create the motors, one on the left side of the elevator and one on the right side
   // we need two motors to provide enough power to move the elevator quickly
-  private final SparkBase m_leftMotor = new SparkFlex(kLeftMotorCANID, MotorType.kBrushless);
-  private final SparkBase m_rightMotor = new SparkFlex(kRightMotorCANID, MotorType.kBrushless);
+  private final SparkBase m_followMotor = new SparkFlex(kFollowMotorCANID, MotorType.kBrushless);
+  private final SparkBase m_leadMotor = new SparkFlex(kLeadMotorCANID, MotorType.kBrushless);
 
   // create the relative encoders (one for each motor)
   // they track the position of the motors
   // private final RelativeEncoder m_leftEncoder = m_leftMotor.getEncoder();
-  private final RelativeEncoder m_rightEncoder = m_rightMotor.getEncoder();
-  private final AbsoluteEncoder m_rightAbsEncoder = m_rightMotor.getAbsoluteEncoder();
+  private final RelativeEncoder m_leadEncoder = m_leadMotor.getEncoder();
+  private final AbsoluteEncoder m_leadAbsEncoder = m_leadMotor.getAbsoluteEncoder();
 
   // set the input for the elevator
-  private final DigitalInput m_bottomSwitch = new DigitalInput(kUpSwitchID);
-
+  private final SparkLimitSwitch m_bottomSwitch = m_leadMotor.getReverseLimitSwitch();
   // create the PID controller (only for the left motor)
-  private final SparkClosedLoopController m_PIDController = m_rightMotor.getClosedLoopController();
+  private final SparkClosedLoopController m_PIDController = m_leadMotor.getClosedLoopController();
 
   private final double maxElevatorSpeed = 0.5; // meters per second
 
@@ -76,29 +70,29 @@ public class Elevator implements ElevatorInterface {
 
     // set up Spark Flex configuration for the left motor
     // (not sure what everything is set to but I think it works)
-    var rightMotorConfig = new SparkFlexConfig();
-    rightMotorConfig.inverted(kRightInverted);
-    rightMotorConfig
+    var leadMotorConfig = new SparkFlexConfig();
+    leadMotorConfig.inverted(kLeadInverted);
+    leadMotorConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(kMotorCurrentLimit)
         .voltageCompensation(12.0);
-    rightMotorConfig
+    leadMotorConfig
         .encoder
         .positionConversionFactor(kPositionConversionFactor)
         .velocityConversionFactor(kVelocityConversionFactor)
         .uvwMeasurementPeriod(10)
         .uvwAverageDepth(2);
-    rightMotorConfig
+    leadMotorConfig
         .absoluteEncoder
-        .inverted(true) // TODO check this
+        .inverted(false)
         .positionConversionFactor(kPositionConversionFactor * 5)
         .velocityConversionFactor(kVelocityConversionFactor * 5)
         .averageDepth(2);
-    rightMotorConfig
+    leadMotorConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pidf(kP, kI, kD, kFF);
-    rightMotorConfig
+    leadMotorConfig
         .signals
         .primaryEncoderPositionAlwaysOn(true)
         .primaryEncoderPositionPeriodMs(20)
@@ -111,11 +105,11 @@ public class Elevator implements ElevatorInterface {
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
-    rightMotorConfig
+    leadMotorConfig
         .limitSwitch
         .reverseLimitSwitchType(Type.kNormallyOpen)
-        .reverseLimitSwitchEnabled(false); // TODO Enable when limit switch is added
-    rightMotorConfig
+        .reverseLimitSwitchEnabled(true); // TODO Enable when limit switch is added
+    leadMotorConfig
         .softLimit
         .forwardSoftLimit(1) // TODO update max height in meters
         .forwardSoftLimitEnabled(false)
@@ -124,42 +118,42 @@ public class Elevator implements ElevatorInterface {
 
     // sets the configuration of the right motor
     tryUntilOk(
-        m_rightMotor,
+        m_leadMotor,
         5,
         () ->
-            m_rightMotor.configure(
-                rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+        m_leadMotor.configure(
+                leadMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     // resets the right encoder position to 0.0
-    tryUntilOk(m_rightMotor, 5, () -> m_rightEncoder.setPosition(m_rightAbsEncoder.getPosition()));
+    tryUntilOk(m_leadMotor, 5, () -> m_leadEncoder.setPosition(m_leadAbsEncoder.getPosition()));
 
     // set up Spark Flex configuration for the left motor
     // (not sure what everything is set to but I think it works)
-    var leftMotorConfig = new SparkFlexConfig();
-    leftMotorConfig
+    var followMotorConfig = new SparkFlexConfig();
+    followMotorConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(kMotorCurrentLimit)
         .voltageCompensation(12.0);
-    leftMotorConfig
+    followMotorConfig
         .signals
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
     // leftMotorConfig.follow(m_rightMotor, true);
-    leftMotorConfig.follow(kRightMotorCANID, true);
+    followMotorConfig.follow(kLeadMotorCANID, true);
 
     // sets the configuration of the left motor
     tryUntilOk(
-        m_leftMotor,
+        m_followMotor,
         5,
         () ->
-            m_leftMotor.configure(
-                leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+        m_followMotor.configure(
+                followMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
   // returns the state of the limit switch
   public boolean getLimit() {
-    return m_bottomSwitch.get();
+    return m_bottomSwitch.isPressed();
   }
 
   // moves the elevator to a preset position specified by the Position parameter (created in the
@@ -183,6 +177,6 @@ public class Elevator implements ElevatorInterface {
   }
 
   public double getHeight() {
-    return m_rightEncoder.getPosition();
+    return m_leadEncoder.getPosition();
   }
 }

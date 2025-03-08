@@ -198,11 +198,11 @@ public class Joint {
   }
 
   public void updateJoint() {
-    /*
-    if(wristLimitSwitch.get()){
-        resetEncoder(0.0);
+    if(jointAbsoluteEncoder != null){
+      if(Math.abs(jointAbsoluteEncoder.getPosition() - jointEncoder.getPosition()) > 1){
+        tryUntilOk(jointMotor, 5, () -> jointEncoder.setPosition(jointAbsoluteEncoder.getPosition()));
+      }
     }
-    */
     double PIDTarget = targetSpeed;
     if (controlType == ControlType.kPosition) PIDTarget = targetAngle;
     jointController.setReference(PIDTarget, controlType);

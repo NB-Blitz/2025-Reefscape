@@ -320,4 +320,9 @@ public class Drive extends SubsystemBase {
   public double getMaxAngularSpeedRadPerSec() {
     return maxSpeedMetersPerSec / driveBaseRadius;
   }
+
+  public void resetGyro() {
+    setPose(
+      new Pose2d(getPose().getTranslation(), new Rotation2d()));
+  }
 }
