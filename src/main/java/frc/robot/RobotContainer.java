@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ManipulatorCommands;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -55,6 +56,7 @@ public class RobotContainer {
   private final Vision vision;
   private final Drive drive;
   private final Manipulator manipulator;
+  private final Climber climber;
 
   // Constant to switch between the practice SDS base and the competition Flex base
   private final boolean useSecondController = false;
@@ -73,6 +75,8 @@ public class RobotContainer {
     } else {
       xBoxController = null;
     }
+    manipulator = new Manipulator();
+    climber = new Climber();
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -93,7 +97,6 @@ public class RobotContainer {
                   new ModuleIOSparkMax(2),
                   new ModuleIOSparkMax(3));
         }
-        manipulator = new Manipulator();
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -109,7 +112,6 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        manipulator = new Manipulator();
         vision =
             new Vision(
                 drive::addVisionMeasurement,
@@ -127,7 +129,6 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        manipulator = new Manipulator();
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {});
 
         break;
@@ -210,6 +211,10 @@ public class RobotContainer {
                           0.0, aimController.calculate(vision.getTargetX(0).getRadians()), 0.0));
                 },
                 drive));
+    joystick.button(8).onTrue(Commands.runOnce(() -> climber.deploy(), climber));
+    joystick.button(9).onTrue(Commands.runOnce(() -> climber.retract(), climber));
+    joystick.button(8).onFalse(Commands.runOnce(() -> climber.stop(), climber));
+    joystick.button(9).onFalse(Commands.runOnce(() -> climber.stop(), climber));
     if (useSecondController) {
       manipulator.setDefaultCommand(
           ManipulatorCommands.joystickManipulator(

@@ -14,5 +14,7 @@ public class JointBlank extends Joint {
 
   public void setJointSpeed(double joystickInput) {}
 
+  public void setJointAngle(int enumIndex) {}
+
   public void updateJoint() {}
 }

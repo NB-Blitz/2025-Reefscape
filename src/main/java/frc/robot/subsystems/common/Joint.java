@@ -83,9 +83,9 @@ public class Joint {
     jointConfig
         .softLimit
         .forwardSoftLimit(180) // TODO update max height in meters
-        .forwardSoftLimitEnabled(true)
+        .forwardSoftLimitEnabled(false)
         .reverseSoftLimit(0)
-        .reverseSoftLimitEnabled(true);
+        .reverseSoftLimitEnabled(false);
     jointConfig
         .signals
         .primaryEncoderPositionAlwaysOn(true)
@@ -192,7 +192,10 @@ public class Joint {
     controlType = ControlType.kVelocity;
   }
 
-  public void setJointAngle(int enumIndex) {}
+  public void setJointAngle(int enumIndex) {
+    targetAngle = enumIndex;
+    controlType = ControlType.kPosition;
+  }
 
   public void updateJoint() {
     /*
