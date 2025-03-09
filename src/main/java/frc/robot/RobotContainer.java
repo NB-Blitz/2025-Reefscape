@@ -17,7 +17,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -60,7 +59,7 @@ public class RobotContainer {
   private final Climber climber;
 
   // Constant to switch between the practice SDS base and the competition Flex base
-  private final boolean useSecondController = false;
+  private final boolean useSecondController = true;
 
   // Controllers
   private final CommandJoystick joystick = new CommandJoystick(0);
@@ -156,7 +155,7 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-    NamedCommands.registerCommand("resetGyro",Commands.runOnce(() ->drive.resetGyro(),drive));
+    NamedCommands.registerCommand("resetGyro", Commands.runOnce(() -> drive.resetGyro(), drive));
   }
 
   /**
@@ -188,12 +187,7 @@ public class RobotContainer {
     // Reset gyro to 0° when B button is pressed
     joystick
         .button(7)
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.resetGyro(),
-                    drive)
-                .ignoringDisable(true));
+        .onTrue(Commands.runOnce(() -> drive.resetGyro(), drive).ignoringDisable(true));
 
     // Auto aim command example
     @SuppressWarnings("resource")

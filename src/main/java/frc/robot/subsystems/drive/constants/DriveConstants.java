@@ -20,7 +20,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 
 public class DriveConstants {
-  public static final boolean compRobot = false;
+  public static final boolean compRobot = true;
 
   public static final double maxSpeedMetersPerSec =
       compRobot ? FlexConstants.maxSpeedMetersPerSec : SDSConstants.maxSpeedMetersPerSec;

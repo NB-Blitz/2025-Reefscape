@@ -11,9 +11,9 @@ public class Manipulator extends SubsystemBase {
   // Set to "Blank" versions to disable each component
   private final HandInterface robotHand = new HandBlank();
   private final Joint robotWrist = new JointBlank();
-  private final ElevatorInterface robotElevator = new ElevatorBlank();
+  private final ElevatorInterface robotElevator = new Elevator();
   private final double elevatorHeightTolerance = 0.03;
-  private final Joint robotShoulder = new JointBlank();
+  private final Joint robotShoulder = new Shoulder();
 
   private final ElevatorPosition[] elevatorPositions = {
     ElevatorPosition.bottom,
@@ -72,8 +72,9 @@ public class Manipulator extends SubsystemBase {
      * Any automatic behavior we want An example would be if we have a note and are in the top
      * position we could start the shooting motors.
      */
-    robotWrist.updateJoint();
     robotElevator.move();
+    robotShoulder.updateJoint();
+    robotWrist.updateJoint();
   }
 
   public void incrementLevel() {
@@ -142,7 +143,7 @@ public class Manipulator extends SubsystemBase {
       robotElevator.setPosition(elevatorPositions[levelIndex]);
       robotWrist.setJointAngle(wristAngles[levelIndex].ordinal());
       robotShoulder.setJointAngle(shoulderAngles[levelIndex].ordinal());
-    } else if (triggers != 0.0 || leftJoy != 0.0 || rightJoy != 0.0) {
+    } else {
       robotElevator.setSpeed(triggers);
       robotWrist.setJointSpeed(rightJoy);
       robotShoulder.setJointSpeed(leftJoy);

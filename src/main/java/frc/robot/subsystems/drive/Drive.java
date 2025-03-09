@@ -96,7 +96,7 @@ public class Drive extends SubsystemBase {
         this::getChassisSpeeds,
         this::runVelocity,
         new PPHolonomicDriveController(
-            new PIDConstants(4.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
         ppConfig,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
@@ -322,7 +322,6 @@ public class Drive extends SubsystemBase {
   }
 
   public void resetGyro() {
-    setPose(
-      new Pose2d(getPose().getTranslation(), new Rotation2d()));
+    setPose(new Pose2d(getPose().getTranslation(), new Rotation2d()));
   }
 }

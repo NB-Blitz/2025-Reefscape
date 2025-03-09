@@ -1,10 +1,8 @@
 package frc.robot.subsystems.climber;
 
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.common.Joint;
+import frc.robot.subsystems.common.JointBlank;
 
 public class Climber extends SubsystemBase {
   private final Joint climberJoint;
@@ -12,24 +10,24 @@ public class Climber extends SubsystemBase {
   private final double i = 0.0;
   private final double d = 0.0;
   private final double ff = 0.0;
-  private final double gearRatio = 108.0;
+  private final double gearRatio = 1 / 108.0;
   private final double maxSpeed = 90;
   private final boolean invert = false;
   private final int canID = 15;
 
   public Climber() {
 
-    climberJoint =
-        new Joint(
-            p,
-            i,
-            d,
-            ff,
-            gearRatio,
-            maxSpeed,
-            invert,
-            new SparkFlex(canID, MotorType.kBrushless),
-            new SparkFlexConfig());
+    climberJoint = new JointBlank();
+    // new Joint(
+    //     p,
+    //     i,
+    //     d,
+    //     ff,
+    //     gearRatio,
+    //     maxSpeed,
+    //     invert,
+    //     new SparkFlex(canID, MotorType.kBrushless),
+    //     new SparkFlexConfig());
 
     // this is normal converstion with Jackson
     // Alex: my house is so big... it massive

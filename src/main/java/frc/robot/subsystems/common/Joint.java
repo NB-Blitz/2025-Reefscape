@@ -14,6 +14,7 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj.DigitalInput;
+import org.littletonrobotics.junction.Logger;
 
 public class Joint {
 
@@ -30,7 +31,7 @@ public class Joint {
   private RelativeEncoder jointEncoder;
   private AbsoluteEncoder jointAbsoluteEncoder;
   private SparkClosedLoopController jointController;
-  private final int currentLimit = 40;
+  private final int currentLimit = 200;
   private final double maxJointSpeed;
 
   public Joint(
@@ -82,10 +83,10 @@ public class Joint {
         .reverseLimitSwitchEnabled(false); // TODO Enable when limit switch is added
     jointConfig
         .softLimit
-        .forwardSoftLimit(180) // TODO update max height in meters
-        .forwardSoftLimitEnabled(false)
-        .reverseSoftLimit(0)
-        .reverseSoftLimitEnabled(false);
+        .forwardSoftLimit(135) // TODO update max height in meters
+        .forwardSoftLimitEnabled(true)
+        .reverseSoftLimit(2)
+        .reverseSoftLimitEnabled(true);
     jointConfig
         .signals
         .primaryEncoderPositionAlwaysOn(true)
@@ -198,13 +199,16 @@ public class Joint {
   }
 
   public void updateJoint() {
-    if(jointAbsoluteEncoder != null){
-      if(Math.abs(jointAbsoluteEncoder.getPosition() - jointEncoder.getPosition()) > 1){
-        tryUntilOk(jointMotor, 5, () -> jointEncoder.setPosition(jointAbsoluteEncoder.getPosition()));
+    if (jointAbsoluteEncoder != null) {
+      if (Math.abs(jointAbsoluteEncoder.getPosition() - jointEncoder.getPosition()) > 1) {
+        tryUntilOk(
+            jointMotor, 5, () -> jointEncoder.setPosition(jointAbsoluteEncoder.getPosition()));
       }
     }
     double PIDTarget = targetSpeed;
     if (controlType == ControlType.kPosition) PIDTarget = targetAngle;
     jointController.setReference(PIDTarget, controlType);
+    Logger.recordOutput("Manipulator/Shoulder/Position", getPosition());
+    Logger.recordOutput("Manipulator/Shoulder/Current", jointMotor.getOutputCurrent());
   }
 }

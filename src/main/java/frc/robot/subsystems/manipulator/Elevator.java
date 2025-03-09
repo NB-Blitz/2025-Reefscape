@@ -16,15 +16,16 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Elevator implements ElevatorInterface {
 
   // creating all the constants
 
-  public static final int kFollowMotorCANID = 10;
   public static final int kLeadMotorCANID = 9;
+  public static final int kFollowMotorCANID = 10;
 
-  public static final double kWheelDiameter = 0.04; // in meters
+  public static final double kWheelDiameter = 0.045; // in meters
   public static final double kWheelCircumference = Math.PI * kWheelDiameter; // in meters
   public static final double kGearRatio = 1 / 5.0;
   public static final double kRotationSpeed = 1.0;
@@ -32,7 +33,7 @@ public class Elevator implements ElevatorInterface {
   public static final int kMotorCurrentLimit = 140;
 
   // these are values for the PID controller
-  public static final double kP = 0.5;
+  public static final double kP = 0.15;
   public static final double kI = 0.0;
   public static final double kD = 0.0;
   public static final double kFF = 0.0;
@@ -41,7 +42,7 @@ public class Elevator implements ElevatorInterface {
   private ControlType controlType = ControlType.kDutyCycle;
 
   public static final double kPositionConversionFactor =
-      kGearRatio * kWheelCircumference * 2.0; // in meters
+      kGearRatio * kWheelCircumference; // in meters
   public static final double kVelocityConversionFactor =
       kPositionConversionFactor / 60.0; // in meters per second
 
@@ -55,7 +56,6 @@ public class Elevator implements ElevatorInterface {
 
   // create the relative encoders (one for each motor)
   // they track the position of the motors
-  // private final RelativeEncoder m_leftEncoder = m_leftMotor.getEncoder();
   private final RelativeEncoder m_leadEncoder = m_leadMotor.getEncoder();
   private final AbsoluteEncoder m_leadAbsEncoder = m_leadMotor.getAbsoluteEncoder();
 
@@ -64,7 +64,7 @@ public class Elevator implements ElevatorInterface {
   // create the PID controller (only for the left motor)
   private final SparkClosedLoopController m_PIDController = m_leadMotor.getClosedLoopController();
 
-  private final double maxElevatorSpeed = 0.5; // meters per second
+  private final double maxElevatorSpeed = 2.5; // meters per second
 
   public Elevator() {
 
@@ -88,10 +88,7 @@ public class Elevator implements ElevatorInterface {
         .positionConversionFactor(kPositionConversionFactor * 5)
         .velocityConversionFactor(kVelocityConversionFactor * 5)
         .averageDepth(2);
-    leadMotorConfig
-        .closedLoop
-        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pidf(kP, kI, kD, kFF);
+    leadMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pidf(kP, kI, kD, kFF);
     leadMotorConfig
         .signals
         .primaryEncoderPositionAlwaysOn(true)
@@ -111,17 +108,15 @@ public class Elevator implements ElevatorInterface {
         .reverseLimitSwitchEnabled(true); // TODO Enable when limit switch is added
     leadMotorConfig
         .softLimit
-        .forwardSoftLimit(1) // TODO update max height in meters
-        .forwardSoftLimitEnabled(false)
-        .reverseSoftLimit(0.0)
-        .reverseSoftLimitEnabled(false);
+        .forwardSoftLimit(0.73) // TODO update max height in meters
+        .forwardSoftLimitEnabled(true);
 
     // sets the configuration of the right motor
     tryUntilOk(
         m_leadMotor,
         5,
         () ->
-        m_leadMotor.configure(
+            m_leadMotor.configure(
                 leadMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     // resets the right encoder position to 0.0
@@ -147,7 +142,7 @@ public class Elevator implements ElevatorInterface {
         m_followMotor,
         5,
         () ->
-        m_followMotor.configure(
+            m_followMotor.configure(
                 followMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
@@ -167,13 +162,19 @@ public class Elevator implements ElevatorInterface {
     targetSpeed = joystickInput * maxElevatorSpeed;
     controlType = ControlType.kVelocity;
   }
+
   // moves the elevator a certain speed according to the double parameter
   public void move() {
+    if (getLimit()) {
+      tryUntilOk(m_leadMotor, 5, () -> m_leadEncoder.setPosition(0));
+    }
     double PIDTarget = targetSpeed;
     if (controlType == ControlType.kPosition) {
       PIDTarget = targetPosition;
     }
     m_PIDController.setReference(PIDTarget, controlType);
+    SmartDashboard.putNumber("Elevator Height", getHeight());
+    SmartDashboard.putNumber("Absolute Height", m_leadAbsEncoder.getPosition());
   }
 
   public double getHeight() {

@@ -1,23 +1,23 @@
 package frc.robot.subsystems.manipulator;
 
 import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import frc.robot.subsystems.common.Joint;
 
 public class Shoulder extends Joint {
 
-  private static final double jointP = 0.5;
+  private static final double jointP = 0.0065;
   private static final double jointI = 0.0;
   private static final double jointD = 0.0;
   private static final double jointFF = 0.0;
-  private static final double gearRatio = 1 / 12.0;
+  private static final double gearRatio = 1 / (64 * 3.6);
   private final double jointEncoderPositionFactor = 360 * gearRatio; // Rotor Rotations -> Degrees
   private final double jointEncoderVelocityFactor = jointEncoderPositionFactor / 60;
   private static final int jointMotorCANID = 11;
   // private final int wristLimitSwitchID = 271817181;
-  private static final double maxJointSpeed = 5.0; // degrees per second
+  private static final double maxJointSpeed = 180.0; // degrees per second
 
   // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)
   public enum ShoulderAngle {
@@ -50,8 +50,8 @@ public class Shoulder extends Joint {
         1.0,
         true,
         true,
-        new SparkMax(jointMotorCANID, MotorType.kBrushless),
-        new SparkMaxConfig());
+        new SparkFlex(jointMotorCANID, MotorType.kBrushless),
+        new SparkFlexConfig());
   }
 
   public void setJointAngle(int enumIndex) {

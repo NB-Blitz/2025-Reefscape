@@ -15,7 +15,7 @@ public class Wrist extends Joint {
   private static final double gearRatio = 1 / 12.0;
   private final double jointEncoderPositionFactor = 360 * gearRatio; // Rotor Rotations -> Degrees
   private final double jointEncoderVelocityFactor = jointEncoderPositionFactor / 60;
-  private static final int jointMotorCANID = 11;
+  private static final int jointMotorCANID = 12;
   // private final int wristLimitSwitchID = 271817181;
   private static final double maxJointSpeed = 5.0; // degrees per second
 
