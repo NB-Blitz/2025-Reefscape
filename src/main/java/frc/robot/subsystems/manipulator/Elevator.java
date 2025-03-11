@@ -105,10 +105,10 @@ public class Elevator implements ElevatorInterface {
     leadMotorConfig
         .limitSwitch
         .reverseLimitSwitchType(Type.kNormallyOpen)
-        .reverseLimitSwitchEnabled(true); // TODO Enable when limit switch is added
+        .reverseLimitSwitchEnabled(true);
     leadMotorConfig
         .softLimit
-        .forwardSoftLimit(0.73) // TODO update max height in meters
+        .forwardSoftLimit(0.73)
         .forwardSoftLimitEnabled(true);
 
     // sets the configuration of the right motor

@@ -95,13 +95,13 @@ public class Hand implements HandInterface {
   }
 
   public void clockwise() {
-    leftMotor.set(0.05);
-    rightMotor.set(0.05);
+    leftMotor.set(0.01);
+    rightMotor.set(0.01);
   }
 
   public void counterClockwise() {
-    leftMotor.set(-0.05);
-    rightMotor.set(-0.05);
+    leftMotor.set(-0.01);
+    rightMotor.set(-0.01);
   }
 
   public void expelCoral() {

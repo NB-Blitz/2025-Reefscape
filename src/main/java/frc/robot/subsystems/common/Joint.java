@@ -10,29 +10,23 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import edu.wpi.first.wpilibj.DigitalInput;
-import org.littletonrobotics.junction.Logger;
 
 public class Joint {
 
-  // encoder - TBD gear ratio - TBD
-
-  // ALL CAN IDs HIGHER THAN 12
-
   protected double targetAngle = 0.0;
-  private double targetSpeed = 0.0;
+  protected double targetSpeed = 0.0;
   protected ControlType controlType = ControlType.kDutyCycle;
 
-  private SparkBase jointMotor;
-  private DigitalInput jointLimitSwitch; // triggered = true
+  protected SparkBase jointMotor;
   private RelativeEncoder jointEncoder;
-  private AbsoluteEncoder jointAbsoluteEncoder;
+  protected AbsoluteEncoder jointAbsoluteEncoder;
   private SparkClosedLoopController jointController;
   private final int currentLimit = 200;
   private final double maxJointSpeed;
+  protected final double angleOffset;
+  private final double kAngleTolerance = 2.0; // If the relaive encoder is plus or minus this value it sets it to the absolute tl;dr fixes belt skipping
 
   public Joint(
       double P,
@@ -44,19 +38,21 @@ public class Joint {
       double absGearRatio,
       boolean absInvert,
       boolean invert,
+      double kForwardSoftLimit,
+      double kReverseSoftLimit,
+      double angleOffsettywettyfetty,
       SparkBase motorRef,
       SparkBaseConfig config) {
     jointMotor = motorRef;
     jointController = jointMotor.getClosedLoopController();
     this.maxJointSpeed = maxSpeed;
-    // wristLimitSwitch = new DigitalInput(wristLimitSwitchID);
+    angleOffset = angleOffsettywettyfetty;
+
     jointEncoder = jointMotor.getEncoder();
     jointAbsoluteEncoder = jointMotor.getAbsoluteEncoder();
 
     var jointConfig = config;
-    // TODO: invert the motor if needed to make positive motor speed
-    // increase the angle(go down) and negative motor speed decrease the
-    // angle (go up)
+
     jointConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(currentLimit).voltageCompensation(12.0);
     jointConfig.inverted(invert);
     jointConfig
@@ -67,7 +63,7 @@ public class Joint {
         .uvwAverageDepth(2);
     jointConfig
         .absoluteEncoder
-        .inverted(absInvert) // TODO check this
+        .inverted(absInvert)
         .positionConversionFactor(absGearRatio * 360)
         .velocityConversionFactor(absGearRatio * 6)
         .averageDepth(2);
@@ -78,14 +74,10 @@ public class Joint {
             P, I,
             D, FF);
     jointConfig
-        .limitSwitch
-        .reverseLimitSwitchType(Type.kNormallyOpen)
-        .reverseLimitSwitchEnabled(false); // TODO Enable when limit switch is added
-    jointConfig
         .softLimit
-        .forwardSoftLimit(135) // TODO update max height in meters
+        .forwardSoftLimit(kForwardSoftLimit)
         .forwardSoftLimitEnabled(true)
-        .reverseSoftLimit(2)
+        .reverseSoftLimit(kReverseSoftLimit)
         .reverseSoftLimitEnabled(true);
     jointConfig
         .signals
@@ -119,17 +111,14 @@ public class Joint {
       boolean invert,
       SparkBase motorRef,
       SparkBaseConfig config) {
+    angleOffset = 0.0;
     jointMotor = motorRef;
     jointController = jointMotor.getClosedLoopController();
     this.maxJointSpeed = maxSpeed;
-    // wristLimitSwitch = new DigitalInput(wristLimitSwitchID);
     jointEncoder = jointMotor.getEncoder();
     jointAbsoluteEncoder = null;
 
     var jointConfig = config;
-    // TODO: invert the motor if needed to make positive motor speed
-    // increase the angle(go down) and negative motor speed decrease the
-    // angle (go up)
     jointConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(currentLimit).voltageCompensation(12.0);
     jointConfig.inverted(invert);
     jointConfig
@@ -144,10 +133,6 @@ public class Joint {
         .pidf(
             P, I,
             D, FF);
-    jointConfig
-        .limitSwitch
-        .reverseLimitSwitchType(Type.kNormallyOpen)
-        .reverseLimitSwitchEnabled(false); // TODO Enable when limit switch is added
     jointConfig
         .softLimit
         .forwardSoftLimit(180) // TODO update max height in meters
@@ -173,20 +158,17 @@ public class Joint {
   }
 
   public Joint() {
+    angleOffset = 0.0;
     maxJointSpeed = 0;
   }
 
   public void resetEncoder(double angle) {
-    jointEncoder.setPosition(angle);
+    jointEncoder.setPosition(angle + angleOffset);
   }
 
   public double getPosition() {
-    return jointEncoder.getPosition();
+    return jointEncoder.getPosition() + angleOffset;
   }
-
-  // public boolean getLimitSwitch() {
-  //   return jointLimitSwitch.get();
-  // }
 
   public void setJointSpeed(double joystickInput) {
     targetSpeed = joystickInput * maxJointSpeed;
@@ -194,13 +176,13 @@ public class Joint {
   }
 
   public void setJointAngle(int enumIndex) {
-    targetAngle = enumIndex;
+    targetAngle = enumIndex + angleOffset;
     controlType = ControlType.kPosition;
   }
 
   public void updateJoint() {
     if (jointAbsoluteEncoder != null) {
-      if (Math.abs(jointAbsoluteEncoder.getPosition() - jointEncoder.getPosition()) > 1) {
+      if (Math.abs(jointAbsoluteEncoder.getPosition() - jointEncoder.getPosition()) > kAngleTolerance) {
         tryUntilOk(
             jointMotor, 5, () -> jointEncoder.setPosition(jointAbsoluteEncoder.getPosition()));
       }
@@ -208,7 +190,5 @@ public class Joint {
     double PIDTarget = targetSpeed;
     if (controlType == ControlType.kPosition) PIDTarget = targetAngle;
     jointController.setReference(PIDTarget, controlType);
-    Logger.recordOutput("Manipulator/Shoulder/Position", getPosition());
-    Logger.recordOutput("Manipulator/Shoulder/Current", jointMotor.getOutputCurrent());
   }
 }

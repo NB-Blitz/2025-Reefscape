@@ -1,5 +1,6 @@
 package frc.robot.subsystems.manipulator;
 
+import org.littletonrobotics.junction.Logger;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -13,10 +14,7 @@ public class Shoulder extends Joint {
   private static final double jointD = 0.0;
   private static final double jointFF = 0.0;
   private static final double gearRatio = 1 / (64 * 3.6);
-  private final double jointEncoderPositionFactor = 360 * gearRatio; // Rotor Rotations -> Degrees
-  private final double jointEncoderVelocityFactor = jointEncoderPositionFactor / 60;
   private static final int jointMotorCANID = 11;
-  // private final int wristLimitSwitchID = 271817181;
   private static final double maxJointSpeed = 180.0; // degrees per second
 
   // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)
@@ -50,12 +48,24 @@ public class Shoulder extends Joint {
         1.0,
         true,
         true,
+        135.0,
+        2.0,
+        5.0,
         new SparkFlex(jointMotorCANID, MotorType.kBrushless),
         new SparkFlexConfig());
   }
 
+  @Override
   public void setJointAngle(int enumIndex) {
-    super.targetAngle = ShoulderAngle.values()[enumIndex].angle;
+    super.targetAngle = ShoulderAngle.values()[enumIndex].angle + angleOffset;
     super.controlType = ControlType.kPosition;
+  }
+
+  @Override
+  public void updateJoint()
+  {
+    super.updateJoint();
+    Logger.recordOutput("Manipulator/Shoulder/Position", getPosition());
+    Logger.recordOutput("Manipulator/Shoulder/Current", jointMotor.getOutputCurrent());
   }
 }
