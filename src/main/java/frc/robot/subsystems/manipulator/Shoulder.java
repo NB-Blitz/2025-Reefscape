@@ -49,7 +49,7 @@ public class Shoulder extends Joint {
         true,
         true,
         135.0,
-        2.0,
+        0.0,
         5.0,
         new SparkFlex(jointMotorCANID, MotorType.kBrushless),
         new SparkFlexConfig());

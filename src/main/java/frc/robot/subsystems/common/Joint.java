@@ -75,9 +75,9 @@ public class Joint {
             D, FF);
     jointConfig
         .softLimit
-        .forwardSoftLimit(kForwardSoftLimit)
+        .forwardSoftLimit(kForwardSoftLimit + angleOffset)
         .forwardSoftLimitEnabled(true)
-        .reverseSoftLimit(kReverseSoftLimit)
+        .reverseSoftLimit(kReverseSoftLimit + angleOffset)
         .reverseSoftLimitEnabled(true);
     jointConfig
         .signals

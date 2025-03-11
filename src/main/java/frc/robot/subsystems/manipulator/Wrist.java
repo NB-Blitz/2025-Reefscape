@@ -14,7 +14,7 @@ public class Wrist extends Joint {
   private static final double jointI = 0.0;
   private static final double jointD = 0.0;
   private static final double jointFF = 0.0;
-  private static final double gearRatio = 1 / 12.0; // TODO: might not be right
+  private static final double gearRatio = 1 / 18.0; // TODO: might not be right
   private static final int jointMotorCANID = 12;
   private static final double maxJointSpeed = 5.0; // degrees per second
 
@@ -48,7 +48,7 @@ public class Wrist extends Joint {
         maxJointSpeed,
         1.0,
         true,
-        true,
+        false,
         135.0,
         2.0,
         5.0,
