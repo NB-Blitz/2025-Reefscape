@@ -1,22 +1,21 @@
 package frc.robot.subsystems.manipulator;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import frc.robot.subsystems.common.Joint;
+import org.littletonrobotics.junction.Logger;
 
 public class Wrist extends Joint {
 
-  private static final double jointP = 0.005;
+  private static final double jointP = 0.001;
   private static final double jointI = 0.0;
   private static final double jointD = 0.0;
   private static final double jointFF = 0.0;
-  private static final double gearRatio = 1 / 18.0; // TODO: might not be right
+  private static final double gearRatio = 1 / 90.0;
   private static final int jointMotorCANID = 12;
-  private static final double maxJointSpeed = 5.0; // degrees per second
+  private static final double maxJointSpeed = 180.0; // degrees per second
 
   // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)
   public enum WristAngle {
@@ -49,8 +48,8 @@ public class Wrist extends Joint {
         1.0,
         true,
         false,
-        135.0,
-        2.0,
+        360.0,
+        0,
         5.0,
         new SparkMax(jointMotorCANID, MotorType.kBrushless),
         new SparkMaxConfig());
@@ -63,8 +62,7 @@ public class Wrist extends Joint {
   }
 
   @Override
-  public void updateJoint()
-  {
+  public void updateJoint() {
     super.updateJoint();
     Logger.recordOutput("Manipulator/Wrist/Position", getPosition());
     Logger.recordOutput("Manipulator/Wrist/Current", jointMotor.getOutputCurrent());

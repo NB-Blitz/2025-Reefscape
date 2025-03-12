@@ -16,7 +16,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.littletonrobotics.junction.Logger;
 
 public class Elevator implements ElevatorInterface {
 
@@ -33,9 +33,9 @@ public class Elevator implements ElevatorInterface {
   public static final int kMotorCurrentLimit = 140;
 
   // these are values for the PID controller
-  public static final double kP = 0.15;
+  public static final double kP = 0.2;
   public static final double kI = 0.0;
-  public static final double kD = 0.0;
+  public static final double kD = 0.2;
   public static final double kFF = 0.0;
   private double targetPosition = 0;
   private double targetSpeed = 0;
@@ -106,10 +106,7 @@ public class Elevator implements ElevatorInterface {
         .limitSwitch
         .reverseLimitSwitchType(Type.kNormallyOpen)
         .reverseLimitSwitchEnabled(true);
-    leadMotorConfig
-        .softLimit
-        .forwardSoftLimit(0.73)
-        .forwardSoftLimitEnabled(true);
+    leadMotorConfig.softLimit.forwardSoftLimit(0.73).forwardSoftLimitEnabled(true);
 
     // sets the configuration of the right motor
     tryUntilOk(
@@ -173,8 +170,8 @@ public class Elevator implements ElevatorInterface {
       PIDTarget = targetPosition;
     }
     m_PIDController.setReference(PIDTarget, controlType);
-    SmartDashboard.putNumber("Elevator Height", getHeight());
-    SmartDashboard.putNumber("Absolute Height", m_leadAbsEncoder.getPosition());
+    Logger.recordOutput("Manipulator/Elevator/Target Velocity", PIDTarget);
+    Logger.recordOutput("Manipulator/Elevator/Actual Velocity", m_leadEncoder.getVelocity());
   }
 
   public double getHeight() {

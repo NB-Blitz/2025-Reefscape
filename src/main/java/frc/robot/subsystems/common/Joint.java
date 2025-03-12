@@ -26,7 +26,9 @@ public class Joint {
   private final int currentLimit = 200;
   private final double maxJointSpeed;
   protected final double angleOffset;
-  private final double kAngleTolerance = 2.0; // If the relaive encoder is plus or minus this value it sets it to the absolute tl;dr fixes belt skipping
+  private final double kAngleTolerance =
+      2.0; // If the relaive encoder is plus or minus this value it sets it to the absolute tl;dr
+  // fixes belt skipping
 
   public Joint(
       double P,
@@ -72,7 +74,8 @@ public class Joint {
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pidf(
             P, I,
-            D, FF);
+            D, FF)
+        .positionWrappingEnabled(true);
     jointConfig
         .softLimit
         .forwardSoftLimit(kForwardSoftLimit + angleOffset)
@@ -132,7 +135,8 @@ public class Joint {
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pidf(
             P, I,
-            D, FF);
+            D, FF)
+        .positionWrappingEnabled(true);
     jointConfig
         .softLimit
         .forwardSoftLimit(180) // TODO update max height in meters
@@ -182,7 +186,8 @@ public class Joint {
 
   public void updateJoint() {
     if (jointAbsoluteEncoder != null) {
-      if (Math.abs(jointAbsoluteEncoder.getPosition() - jointEncoder.getPosition()) > kAngleTolerance) {
+      if (Math.abs(jointAbsoluteEncoder.getPosition() - jointEncoder.getPosition())
+          > kAngleTolerance) {
         tryUntilOk(
             jointMotor, 5, () -> jointEncoder.setPosition(jointAbsoluteEncoder.getPosition()));
       }

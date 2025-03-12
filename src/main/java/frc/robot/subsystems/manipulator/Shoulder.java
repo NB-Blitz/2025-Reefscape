@@ -1,11 +1,11 @@
 package frc.robot.subsystems.manipulator;
 
-import org.littletonrobotics.junction.Logger;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import frc.robot.subsystems.common.Joint;
+import org.littletonrobotics.junction.Logger;
 
 public class Shoulder extends Joint {
 
@@ -62,8 +62,7 @@ public class Shoulder extends Joint {
   }
 
   @Override
-  public void updateJoint()
-  {
+  public void updateJoint() {
     super.updateJoint();
     Logger.recordOutput("Manipulator/Shoulder/Position", getPosition());
     Logger.recordOutput("Manipulator/Shoulder/Current", jointMotor.getOutputCurrent());

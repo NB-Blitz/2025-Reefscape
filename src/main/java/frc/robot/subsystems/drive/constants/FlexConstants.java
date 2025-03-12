@@ -36,7 +36,7 @@ public class FlexConstants {
       5.14; // ThriftyBot with 14 pinion teeth and 16 spur teeth
   public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);
 
-  // Drive PID configuration
+  // Drive PID configuration for the robot
   public static final double driveKp = 0.005;
   public static final double driveKd = 0.02;
   public static final double driveKs = 0.09544;
@@ -61,7 +61,7 @@ public class FlexConstants {
       absoluteTurnEncoderPositionFactor / 60.0; // RPM -> Rad/Sec
 
   // Turn PID configuration
-  public static final double turnKp = 1.7;
+  public static final double turnKp = 1.6;
   public static final double turnKd = 2.0;
 
   public static final double turnSimP = 8.0;

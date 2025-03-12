@@ -227,6 +227,12 @@ public class RobotContainer {
       xBoxController.leftBumper().onTrue(Commands.runOnce(() -> manipulator.intake(), manipulator));
       xBoxController.rightBumper().onTrue(Commands.runOnce(() -> manipulator.expel(), manipulator));
       xBoxController
+          .leftBumper()
+          .onFalse(Commands.runOnce(() -> manipulator.stopHand(), manipulator));
+      xBoxController
+          .rightBumper()
+          .onFalse(Commands.runOnce(() -> manipulator.stopHand(), manipulator));
+      xBoxController
           .leftStick()
           .onTrue(
               Commands.run(

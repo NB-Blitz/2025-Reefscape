@@ -2,16 +2,15 @@ package frc.robot.subsystems.manipulator;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.common.Joint;
-import frc.robot.subsystems.common.JointBlank;
 import frc.robot.subsystems.manipulator.ElevatorInterface.ElevatorPosition;
 import frc.robot.subsystems.manipulator.Shoulder.ShoulderAngle;
 import frc.robot.subsystems.manipulator.Wrist.WristAngle;
 
 public class Manipulator extends SubsystemBase {
   // Set to "Blank" versions to disable each component
-  private final HandInterface robotHand = new HandBlank();
-  private final Joint robotWrist = new JointBlank();
-  private final ElevatorInterface robotElevator = new Elevator();
+  private final HandInterface robotHand = new Hand();
+  private final Joint robotWrist = new Wrist();
+  private final ElevatorInterface robotElevator = new ElevatorBlank();
   private final double elevatorHeightTolerance = 0.03;
   private final Joint robotShoulder = new Shoulder();
 
@@ -129,6 +128,12 @@ public class Manipulator extends SubsystemBase {
     isIntaking = !isIntaking;
   }
 
+  public void stopHand() {
+    robotHand.stopMotors();
+    isExpelling = false;
+    isIntaking = false;
+  }
+
   public void emergencyStop() {
     robotElevator.setSpeed(0.0);
     robotWrist.setJointSpeed(0.0);
@@ -136,7 +141,7 @@ public class Manipulator extends SubsystemBase {
     robotShoulder.setJointSpeed(0.0);
   }
 
-  public void runManipulator(double triggers, double leftJoy, double rightJoy) { //TODO: test this
+  public void runManipulator(double triggers, double leftJoy, double rightJoy) { // TODO: test this
 
     // if we recieve a joystick input stop both auto positioning
     if (triggers == 0.0 && leftJoy == 0.0 && rightJoy == 0.0 && positionCommand) {

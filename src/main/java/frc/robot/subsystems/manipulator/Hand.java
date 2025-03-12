@@ -21,11 +21,11 @@ public class Hand implements HandInterface {
   private final int currentLimit = 40;
 
   // TODO update speeds
-  private final double coralIntakeSpeed = 0.1;
-  private final double coralExpelSpeed = 0.1;
-  private final double algaeIntakeSpeed = 0.1;
-  private final double algaeExpelNetSpeed = -0.1;
-  private final double algaeExpelProcessorSpeed = -0.1;
+  private final double coralIntakeSpeed = 0.5;
+  private final double coralExpelSpeed = 0.5;
+  private final double algaeIntakeSpeed = 0.5;
+  private final double algaeExpelNetSpeed = -0.5;
+  private final double algaeExpelProcessorSpeed = -0.5;
 
   private final boolean motorInverted = true;
 
@@ -95,13 +95,13 @@ public class Hand implements HandInterface {
   }
 
   public void clockwise() {
-    leftMotor.set(0.01);
-    rightMotor.set(0.01);
+    leftMotor.set(1.0);
+    rightMotor.set(1.0);
   }
 
   public void counterClockwise() {
-    leftMotor.set(-0.01);
-    rightMotor.set(-0.01);
+    leftMotor.set(-1.0);
+    rightMotor.set(-1.0);
   }
 
   public void expelCoral() {
