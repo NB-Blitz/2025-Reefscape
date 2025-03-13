@@ -10,7 +10,7 @@ public class Manipulator extends SubsystemBase {
   // Set to "Blank" versions to disable each component
   private final HandInterface robotHand = new Hand();
   private final Joint robotWrist = new Wrist();
-  private final ElevatorInterface robotElevator = new ElevatorBlank();
+  private final ElevatorInterface robotElevator = new Elevator();
   private final double elevatorHeightTolerance = 0.03;
   private final Joint robotShoulder = new Shoulder();
 

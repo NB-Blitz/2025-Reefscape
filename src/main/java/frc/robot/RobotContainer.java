@@ -169,8 +169,8 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -1 * joystick.getY(),
-            () -> -1 * joystick.getX(),
+            () -> 1 * joystick.getY(),
+            () -> 1 * joystick.getX(),
             () -> -1 * joystick.getZ(),
             () -> 0.5 * (1 + -joystick.getRawAxis(3))));
 

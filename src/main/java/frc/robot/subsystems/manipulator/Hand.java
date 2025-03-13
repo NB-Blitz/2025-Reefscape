@@ -18,7 +18,7 @@ public class Hand implements HandInterface {
   private final int coralFrontSwitchOID = 1;
   private final int coralBackSwitchOID = 2;
   private final int algaeSwitchOID = 3;
-  private final int currentLimit = 40;
+  private final int currentLimit = 80;
 
   // TODO update speeds
   private final double coralIntakeSpeed = 0.5;
@@ -38,10 +38,19 @@ public class Hand implements HandInterface {
   // true when pressed
   private final DigitalInput algaeSwitch;
 
+  // private final double p = 0.0001;
+  // private final double RPM = 60 * 5;
+  private final double percent = 0.5;
+
+  // private SparkClosedLoopController righthandController;
+  // private SparkClosedLoopController lefthandController;
+
   public Hand() {
 
     leftMotor = new SparkFlex(leftMotorCANID, MotorType.kBrushless);
     rightMotor = new SparkFlex(rightMotorCANID, MotorType.kBrushless);
+    // righthandController = rightMotor.getClosedLoopController();
+    // lefthandController = leftMotor.getClosedLoopController();
 
     coralFrontSwitch = new DigitalInput(coralFrontSwitchOID);
     coralBackSwitch = new DigitalInput(coralBackSwitchOID);
@@ -53,6 +62,7 @@ public class Hand implements HandInterface {
         .inverted(motorInverted)
         .smartCurrentLimit(currentLimit)
         .voltageCompensation(12.0);
+    // rightMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pidf(p, 0, 0, 0);
     rightMotorConfig
         .signals
         .appliedOutputPeriodMs(20)
@@ -71,6 +81,7 @@ public class Hand implements HandInterface {
         .inverted(!motorInverted)
         .smartCurrentLimit(currentLimit)
         .voltageCompensation(12.0);
+    // leftMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pidf(p, 0, 0, 0);
     leftMotorConfig
         .signals
         .appliedOutputPeriodMs(20)
@@ -95,13 +106,17 @@ public class Hand implements HandInterface {
   }
 
   public void clockwise() {
-    leftMotor.set(1.0);
-    rightMotor.set(1.0);
+    leftMotor.set(percent);
+    rightMotor.set(percent);
+    // lefthandController.setReference(RPM, ControlType.kVelocity);
+    // righthandController.setReference(RPM, ControlType.kVelocity);
   }
 
   public void counterClockwise() {
-    leftMotor.set(-1.0);
-    rightMotor.set(-1.0);
+    leftMotor.set(-percent);
+    rightMotor.set(-percent);
+    // lefthandController.setReference(-RPM, ControlType.kVelocity);
+    // righthandController.setReference(-RPM, ControlType.kVelocity);
   }
 
   public void expelCoral() {
@@ -116,6 +131,8 @@ public class Hand implements HandInterface {
   public void stopMotors() {
     leftMotor.set(0);
     rightMotor.set(0);
+    // lefthandController.setReference(0, ControlType.kVelocity);
+    // righthandController.setReference(0, ControlType.kVelocity);
   }
 
   public boolean coralInPosition() {

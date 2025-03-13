@@ -62,7 +62,7 @@ public class FlexConstants {
 
   // Turn PID configuration
   public static final double turnKp = 1.6;
-  public static final double turnKd = 2.0;
+  public static final double turnKd = 1.8;
 
   public static final double turnSimP = 8.0;
   public static final double turnSimD = 0.0;

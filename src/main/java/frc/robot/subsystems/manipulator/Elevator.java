@@ -158,6 +158,10 @@ public class Elevator implements ElevatorInterface {
   public void setSpeed(double joystickInput) {
     targetSpeed = joystickInput * maxElevatorSpeed;
     controlType = ControlType.kVelocity;
+    if (targetSpeed == 0) {
+      targetPosition = getHeight();
+      controlType = ControlType.kPosition;
+    }
   }
 
   // moves the elevator a certain speed according to the double parameter

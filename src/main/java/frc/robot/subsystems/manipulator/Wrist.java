@@ -1,9 +1,9 @@
 package frc.robot.subsystems.manipulator;
 
 import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import frc.robot.subsystems.common.Joint;
 import org.littletonrobotics.junction.Logger;
 
@@ -48,11 +48,11 @@ public class Wrist extends Joint {
         1.0,
         true,
         false,
-        360.0,
+        155.0,
         0,
         5.0,
-        new SparkMax(jointMotorCANID, MotorType.kBrushless),
-        new SparkMaxConfig());
+        new SparkFlex(jointMotorCANID, MotorType.kBrushless),
+        new SparkFlexConfig());
   }
 
   @Override
