@@ -176,6 +176,7 @@ public class Elevator implements ElevatorInterface {
     m_PIDController.setReference(PIDTarget, controlType);
     Logger.recordOutput("Manipulator/Elevator/Target Velocity", PIDTarget);
     Logger.recordOutput("Manipulator/Elevator/Actual Velocity", m_leadEncoder.getVelocity());
+    Logger.recordOutput("Manipulator/Elevator/Height", getHeight());
   }
 
   public double getHeight() {

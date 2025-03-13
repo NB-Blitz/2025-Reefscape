@@ -61,7 +61,7 @@ public class FlexConstants {
       absoluteTurnEncoderPositionFactor / 60.0; // RPM -> Rad/Sec
 
   // Turn PID configuration
-  public static final double turnKp = 1.6;
+  public static final double turnKp = 1.8;
   public static final double turnKd = 1.8;
 
   public static final double turnSimP = 8.0;
