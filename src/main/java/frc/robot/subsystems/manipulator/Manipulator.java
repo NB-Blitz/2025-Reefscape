@@ -141,8 +141,7 @@ public class Manipulator extends SubsystemBase {
     robotShoulder.setJointSpeed(0.0);
   }
 
-  public void runManipulator(double triggers, double leftJoy, double rightJoy) { // TODO: test this
-
+  public void runManipulator(double triggers, double leftJoy, double rightJoy) {
     // if we recieve a joystick input stop both auto positioning
     if (triggers == 0.0 && leftJoy == 0.0 && rightJoy == 0.0 && positionCommand) {
       robotElevator.setPosition(elevatorPositions[levelIndex]);

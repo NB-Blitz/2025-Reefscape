@@ -75,19 +75,6 @@
               "_glyph": 148,
               "_showGlyph": false
             }
-          },
-          "6,0": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Gyro",
-              "_title": "Gyro",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
           }
         }
       }

@@ -176,10 +176,13 @@ public class Joint {
 
   public void setJointSpeed(double joystickInput) {
     targetSpeed = joystickInput * maxJointSpeed;
-    controlType = ControlType.kVelocity;
     if (targetSpeed == 0) {
-      targetAngle = jointEncoder.getPosition();
+      if (controlType == ControlType.kVelocity) {
+        targetAngle = jointEncoder.getPosition();
+      }
       controlType = ControlType.kPosition;
+    } else {
+      controlType = ControlType.kVelocity;
     }
   }
 
