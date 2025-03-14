@@ -30,31 +30,31 @@ public class Manipulator extends SubsystemBase {
   };
 
   private final WristAngle[] wristAngles = {
-    WristAngle.coralBottom,
+    WristAngle.bottom,
     WristAngle.algaeIntake,
     WristAngle.algaeProcessor,
-    WristAngle.coralBottom,
-    WristAngle.coralMiddle,
+    WristAngle.coralL1,
+    WristAngle.coralL2,
     WristAngle.algaeInReef,
     WristAngle.coralIntake,
-    WristAngle.coralMiddle,
+    WristAngle.coralL3,
     WristAngle.algaeInReef,
-    WristAngle.coralTop,
+    WristAngle.coralL4,
     WristAngle.algaeBarge,
     WristAngle.algaeBarge
   };
 
   private final ShoulderAngle[] shoulderAngles = {
-    ShoulderAngle.coralBottom,
+    ShoulderAngle.coralL1,
     ShoulderAngle.algaeIntake,
     ShoulderAngle.algaeProcessor,
-    ShoulderAngle.coralBottom,
-    ShoulderAngle.coralMiddle,
+    ShoulderAngle.coralL1,
+    ShoulderAngle.coralL2,
     ShoulderAngle.algaeInReef,
     ShoulderAngle.coralIntake,
-    ShoulderAngle.coralMiddle,
+    ShoulderAngle.coralL3,
     ShoulderAngle.algaeInReef,
-    ShoulderAngle.coralTop,
+    ShoulderAngle.coralL4,
     ShoulderAngle.algaeBarge,
     ShoulderAngle.algaeBarge
   };

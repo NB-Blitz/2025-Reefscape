@@ -19,16 +19,17 @@ public class Wrist extends Joint {
 
   // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)
   public enum WristAngle {
-    coralBottom(90),
-    coralMiddle(45),
-    coralTop(30),
-    coralIntake(90),
-    algaeInReef(90),
-    algaeBarge(135),
-    algaeProcessor(45),
+    coralL1(145),
+    coralL2(118),
+    coralL3(94),
+    coralL4(130),
+    coralIntake(152),
+    algaeInReef(118),
+    algaeBarge(55),
+    algaeProcessor(152),
     algaeIntake(45),
-    bottom(0),
-    top(180);
+    bottom(155),
+    top(55);
 
     public final double angle;
 

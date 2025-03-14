@@ -171,7 +171,7 @@ public class Joint {
   }
 
   public double getPosition() {
-    return jointEncoder.getPosition() + angleOffset;
+    return jointEncoder.getPosition() - angleOffset;
   }
 
   public void setJointSpeed(double joystickInput) {

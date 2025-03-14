@@ -19,16 +19,17 @@ public class Shoulder extends Joint {
 
   // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)
   public enum ShoulderAngle {
-    coralBottom(90),
-    coralMiddle(45),
-    coralTop(30),
-    coralIntake(90),
-    algaeInReef(90),
-    algaeBarge(135),
-    algaeProcessor(45),
-    algaeIntake(45),
+    coralL1(12),
+    coralL2(45),
+    coralL3(66.5),
+    coralL4(150),
+    coralIntake(35.5),
+    algaeInReef(45),
+    algaeBarge(66.5),
+    algaeProcessor(12),
+    algaeIntake(0),
     bottom(0),
-    top(180);
+    top(155);
 
     public final double angle;
 
@@ -48,7 +49,7 @@ public class Shoulder extends Joint {
         1.0,
         true,
         true,
-        135.0,
+        150.0,
         0.0,
         5.0,
         new SparkFlex(jointMotorCANID, MotorType.kBrushless),
