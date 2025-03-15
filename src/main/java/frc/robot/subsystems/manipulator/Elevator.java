@@ -68,6 +68,9 @@ public class Elevator implements ElevatorInterface {
   private final double positionIncrement = maxElevatorSpeed / 50;
   private final double topLimit = 0.73;
   private final double bottomLimit = 0;
+ 
+
+
 
   public Elevator() {
 
@@ -183,5 +186,9 @@ public class Elevator implements ElevatorInterface {
 
   public double getHeight() {
     return m_leadEncoder.getPosition();
+  }
+
+  public double getTopLimit(){
+    return topLimit;
   }
 }

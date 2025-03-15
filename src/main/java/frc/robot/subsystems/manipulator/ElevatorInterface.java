@@ -35,4 +35,6 @@ public interface ElevatorInterface {
   public void move();
 
   public double getHeight();
+
+  public double getTopLimit();
 }

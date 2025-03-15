@@ -6,6 +6,7 @@ import frc.robot.subsystems.common.Joint;
 import frc.robot.subsystems.manipulator.ElevatorInterface.ElevatorPosition;
 import frc.robot.subsystems.manipulator.Shoulder.ShoulderAngle;
 import frc.robot.subsystems.manipulator.Wrist.WristAngle;
+import frc.robot.util.LEDStrip;
 
 public class Manipulator extends SubsystemBase {
   // Set to "Blank" versions to disable each component
@@ -14,6 +15,8 @@ public class Manipulator extends SubsystemBase {
   private final ElevatorInterface robotElevator = new Elevator();
   private final double elevatorHeightTolerance = 0.03;
   private final Joint robotShoulder = new Shoulder();
+  private final LEDStrip rEle = new LEDStrip(0, 120);
+  private final LEDStrip lEle = new LEDStrip(1, 120);
 
   private final ElevatorPosition[] elevatorPositions = {
     ElevatorPosition.bottom,
@@ -73,6 +76,9 @@ public class Manipulator extends SubsystemBase {
     robotShoulder.updateJoint();
     robotWrist.updateJoint();
     SmartDashboard.putNumber("Level Index", levelIndex);
+    double ledRatio = robotElevator.getHeight()/robotElevator.getTopLimit();
+    rEle.updateLEDs(robotHand.coralInPosition(), ledRatio);
+    lEle.updateLEDs(robotHand.coralInPosition(), ledRatio);
   }
 
   public void incrementLevel() {
