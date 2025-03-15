@@ -75,6 +75,19 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "0,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Level Index",
+              "_title": "Level Index",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
