@@ -9,13 +9,13 @@ import org.littletonrobotics.junction.Logger;
 
 public class Shoulder extends Joint {
 
-  private static final double jointP = 0.0065;
+  private static final double jointP = 0.01;
   private static final double jointI = 0.0;
   private static final double jointD = 0.0;
   private static final double jointFF = 0.0;
   private static final double gearRatio = 1 / (64 * 3.6);
   private static final int jointMotorCANID = 11;
-  private static final double maxJointSpeed = 180.0; // degrees per second
+  private static final double maxJointSpeed = 135.0; // degrees per second
 
   // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)
   public enum ShoulderAngle {
@@ -26,8 +26,9 @@ public class Shoulder extends Joint {
     coralIntake(35.5),
     algaeInReefL1(45),
     algaeInReefL2(45),
-    algaeBarge(66.5),
+    algaeBarge(150),
     algaeProcessor(12),
+    noFoul(95.5),
     bottom(0);
 
     public final double angle;
@@ -50,7 +51,7 @@ public class Shoulder extends Joint {
         true,
         150.0,
         0.0,
-        5.0,
+        7.0,
         new SparkFlex(jointMotorCANID, MotorType.kBrushless),
         new SparkFlexConfig());
   }
@@ -64,7 +65,8 @@ public class Shoulder extends Joint {
   @Override
   public void updateJoint() {
     super.updateJoint();
-    Logger.recordOutput("Manipulator/Shoulder/Position", getPosition());
+    Logger.recordOutput("Manipulator/Shoulder/Angle", getPosition());
     Logger.recordOutput("Manipulator/Shoulder/Current", jointMotor.getOutputCurrent());
+    Logger.recordOutput("Manipulator/Shoulder/Target Angle", targetAngle - angleOffset);
   }
 }

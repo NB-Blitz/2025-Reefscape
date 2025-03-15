@@ -16,6 +16,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.wpilibj.Timer;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator implements ElevatorInterface {
@@ -33,13 +34,12 @@ public class Elevator implements ElevatorInterface {
   public static final int kMotorCurrentLimit = 140;
 
   // these are values for the PID controller
-  public static final double kP = 0.2;
+  public static final double kP = 0.6;
   public static final double kI = 0.0;
   public static final double kD = 0.2;
   public static final double kFF = 0.0;
   private double targetPosition = 0;
-  private double targetSpeed = 0;
-  private ControlType controlType = ControlType.kDutyCycle;
+  private ControlType controlType = ControlType.kPosition;
 
   public static final double kPositionConversionFactor =
       kGearRatio * kWheelCircumference; // in meters
@@ -64,7 +64,10 @@ public class Elevator implements ElevatorInterface {
   // create the PID controller (only for the left motor)
   private final SparkClosedLoopController m_PIDController = m_leadMotor.getClosedLoopController();
 
-  private final double maxElevatorSpeed = 2.5; // meters per second
+  private final double maxElevatorSpeed = 1.5; // meters per second
+  private final double positionIncrement = maxElevatorSpeed / 50;
+  private final double topLimit = 0.73;
+  private final double bottomLimit = 0;
 
   public Elevator() {
 
@@ -106,7 +109,7 @@ public class Elevator implements ElevatorInterface {
         .limitSwitch
         .reverseLimitSwitchType(Type.kNormallyOpen)
         .reverseLimitSwitchEnabled(true);
-    leadMotorConfig.softLimit.forwardSoftLimit(0.73).forwardSoftLimitEnabled(true);
+    leadMotorConfig.softLimit.forwardSoftLimit(topLimit).forwardSoftLimitEnabled(true);
 
     // sets the configuration of the right motor
     tryUntilOk(
@@ -118,6 +121,9 @@ public class Elevator implements ElevatorInterface {
 
     // resets the right encoder position to 0.0
     tryUntilOk(m_leadMotor, 5, () -> m_leadEncoder.setPosition(m_leadAbsEncoder.getPosition()));
+
+    Timer.delay(0.1);
+    targetPosition = getHeight();
 
     // set up Spark Flex configuration for the left motor
     // (not sure what everything is set to but I think it works)
@@ -152,34 +158,27 @@ public class Elevator implements ElevatorInterface {
   // enum)
   public void setPosition(ElevatorPosition position) {
     targetPosition = position.position;
-    controlType = ControlType.kPosition;
   }
 
   public void setSpeed(double joystickInput) {
-    targetSpeed = joystickInput * maxElevatorSpeed;
-    if (targetSpeed == 0) {
-      if (controlType == ControlType.kVelocity) {
-        targetPosition = getHeight();
-      }
-      controlType = ControlType.kPosition;
-    } else {
-      controlType = ControlType.kVelocity;
-    }
+    targetPosition += joystickInput * positionIncrement;
   }
 
   // moves the elevator a certain speed according to the double parameter
   public void move() {
     if (getLimit()) {
-      tryUntilOk(m_leadMotor, 5, () -> m_leadEncoder.setPosition(0));
+      tryUntilOk(m_leadMotor, 5, () -> m_leadEncoder.setPosition(bottomLimit));
+      if (targetPosition < bottomLimit) {
+        targetPosition = bottomLimit;
+      }
     }
-    double PIDTarget = targetSpeed;
-    if (controlType == ControlType.kPosition) {
-      PIDTarget = targetPosition;
+
+    if (targetPosition > topLimit) {
+      targetPosition = topLimit;
     }
-    m_PIDController.setReference(PIDTarget, controlType);
-    Logger.recordOutput("Manipulator/Elevator/Target Velocity", PIDTarget);
-    Logger.recordOutput("Manipulator/Elevator/Actual Velocity", m_leadEncoder.getVelocity());
+    m_PIDController.setReference(targetPosition, controlType);
     Logger.recordOutput("Manipulator/Elevator/Height", getHeight());
+    Logger.recordOutput("Manipulator/Elevator/Target Height", targetPosition);
   }
 
   public double getHeight() {

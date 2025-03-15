@@ -9,26 +9,27 @@ import org.littletonrobotics.junction.Logger;
 
 public class Wrist extends Joint {
 
-  private static final double jointP = 0.001;
+  private static final double jointP = 0.02;
   private static final double jointI = 0.0;
   private static final double jointD = 0.0;
   private static final double jointFF = 0.0;
   private static final double gearRatio = 1 / 90.0;
   private static final int jointMotorCANID = 12;
-  private static final double maxJointSpeed = 180.0; // degrees per second
+  private static final double maxJointSpeed = 90.0; // degrees per second
 
   // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)
   public enum WristAngle {
-    coralL1(145),
-    coralL2(118),
-    coralL3(94),
-    coralL4(130),
-    coralIntake(152),
-    algaeInReefL1(118),
-    algaeInReefL2(118),
-    algaeBarge(55),
-    algaeProcessor(152),
-    bottom(155);
+    coralL1(142),
+    coralL2(115),
+    coralL3(91),
+    coralL4(127),
+    coralIntake(149),
+    algaeInReefL1(115),
+    algaeInReefL2(115),
+    algaeBarge(52),
+    algaeProcessor(149),
+    noFoul(66),
+    bottom(152);
 
     public final double angle;
 
@@ -48,9 +49,9 @@ public class Wrist extends Joint {
         1.0,
         true,
         false,
-        155.0,
-        0,
-        5.0,
+        152.0,
+        50,
+        20.0,
         new SparkFlex(jointMotorCANID, MotorType.kBrushless),
         new SparkFlexConfig());
   }
@@ -64,7 +65,8 @@ public class Wrist extends Joint {
   @Override
   public void updateJoint() {
     super.updateJoint();
-    Logger.recordOutput("Manipulator/Wrist/Position", getPosition());
+    Logger.recordOutput("Manipulator/Wrist/Angle", getPosition());
     Logger.recordOutput("Manipulator/Wrist/Current", jointMotor.getOutputCurrent());
+    Logger.recordOutput("Manipulator/Wrist/Target Angle", super.targetAngle - angleOffset);
   }
 }

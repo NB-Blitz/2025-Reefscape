@@ -1,5 +1,6 @@
 package frc.robot.subsystems.manipulator;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.common.Joint;
 import frc.robot.subsystems.manipulator.ElevatorInterface.ElevatorPosition;
@@ -23,6 +24,7 @@ public class Manipulator extends SubsystemBase {
     ElevatorPosition.coralIntake,
     ElevatorPosition.coralL3,
     ElevatorPosition.algaeL2,
+    ElevatorPosition.noFoul,
     ElevatorPosition.coralL4,
     ElevatorPosition.algaeBarge
   };
@@ -36,6 +38,7 @@ public class Manipulator extends SubsystemBase {
     WristAngle.coralIntake,
     WristAngle.coralL3,
     WristAngle.algaeInReefL2,
+    WristAngle.noFoul,
     WristAngle.coralL4,
     WristAngle.algaeBarge
   };
@@ -49,6 +52,7 @@ public class Manipulator extends SubsystemBase {
     ShoulderAngle.coralIntake,
     ShoulderAngle.coralL3,
     ShoulderAngle.algaeInReefL2,
+    ShoulderAngle.noFoul,
     ShoulderAngle.coralL4,
     ShoulderAngle.algaeBarge
   };
@@ -56,7 +60,7 @@ public class Manipulator extends SubsystemBase {
   // 0-11
   private int levelIndex = 0;
   private boolean positionCommand = false;
-  private boolean joystickCommand = false;
+  private boolean joystickCommand = true;
   private boolean isIntaking = false;
   private boolean isExpelling = false;
 
@@ -68,6 +72,7 @@ public class Manipulator extends SubsystemBase {
     robotElevator.move();
     robotShoulder.updateJoint();
     robotWrist.updateJoint();
+    SmartDashboard.putNumber("Level Index", levelIndex);
   }
 
   public void incrementLevel() {

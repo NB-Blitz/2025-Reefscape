@@ -12,8 +12,9 @@ public interface ElevatorInterface {
     coralIntake(0.45),
     algaeBarge(0.7),
     algaeProcessor(0.24),
+    noFoul(0.66),
     bottom(0);
-    
+
     public final double position;
 
     ElevatorPosition(double position) {

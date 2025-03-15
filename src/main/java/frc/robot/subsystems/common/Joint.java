@@ -12,12 +12,12 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Joint {
 
   protected double targetAngle = 0.0;
-  protected double targetSpeed = 0.0;
-  protected ControlType controlType = ControlType.kDutyCycle;
+  protected ControlType controlType = ControlType.kPosition;
 
   protected SparkBase jointMotor;
   private RelativeEncoder jointEncoder;
@@ -25,9 +25,12 @@ public class Joint {
   private SparkClosedLoopController jointController;
   private final int currentLimit = 200;
   private final double maxJointSpeed;
+  private final double angleIncrement;
+  private final double topLimit;
+  private final double bottomLimit;
   protected final double angleOffset;
   private final double kAngleTolerance =
-      2.0; // If the relaive encoder is plus or minus this value it sets it to the absolute tl;dr
+      1.25; // If the relaive encoder is plus or minus this value it sets it to the absolute tl;dr
   // fixes belt skipping
 
   public Joint(
@@ -48,7 +51,10 @@ public class Joint {
     jointMotor = motorRef;
     jointController = jointMotor.getClosedLoopController();
     this.maxJointSpeed = maxSpeed;
+    angleIncrement = maxJointSpeed / 50;
     angleOffset = angleOffsettywettyfetty;
+    topLimit = kForwardSoftLimit + angleOffset;
+    bottomLimit = kReverseSoftLimit + angleOffset;
 
     jointEncoder = jointMotor.getEncoder();
     jointAbsoluteEncoder = jointMotor.getAbsoluteEncoder();
@@ -102,6 +108,9 @@ public class Joint {
             jointMotor.configure(
                 jointConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
     tryUntilOk(jointMotor, 5, () -> jointEncoder.setPosition(jointAbsoluteEncoder.getPosition()));
+
+    Timer.delay(0.1);
+    targetAngle = jointEncoder.getPosition();
   }
 
   public Joint(
@@ -115,9 +124,12 @@ public class Joint {
       SparkBase motorRef,
       SparkBaseConfig config) {
     angleOffset = 0.0;
+    topLimit = 360;
+    bottomLimit = 0;
     jointMotor = motorRef;
     jointController = jointMotor.getClosedLoopController();
     this.maxJointSpeed = maxSpeed;
+    angleIncrement = maxJointSpeed / 50;
     jointEncoder = jointMotor.getEncoder();
     jointAbsoluteEncoder = null;
 
@@ -159,11 +171,17 @@ public class Joint {
             jointMotor.configure(
                 jointConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
     tryUntilOk(jointMotor, 5, () -> jointEncoder.setPosition(0));
+
+    Timer.delay(0.1);
+    targetAngle = jointEncoder.getPosition();
   }
 
   public Joint() {
     angleOffset = 0.0;
     maxJointSpeed = 0;
+    angleIncrement = 0;
+    topLimit = 0;
+    bottomLimit = 0;
   }
 
   public void resetEncoder(double angle) {
@@ -175,15 +193,7 @@ public class Joint {
   }
 
   public void setJointSpeed(double joystickInput) {
-    targetSpeed = joystickInput * maxJointSpeed;
-    if (targetSpeed == 0) {
-      if (controlType == ControlType.kVelocity) {
-        targetAngle = jointEncoder.getPosition();
-      }
-      controlType = ControlType.kPosition;
-    } else {
-      controlType = ControlType.kVelocity;
-    }
+    targetAngle += (joystickInput * angleIncrement);
   }
 
   public void setJointAngle(int enumIndex) {
@@ -199,8 +209,13 @@ public class Joint {
             jointMotor, 5, () -> jointEncoder.setPosition(jointAbsoluteEncoder.getPosition()));
       }
     }
-    double PIDTarget = targetSpeed;
-    if (controlType == ControlType.kPosition) PIDTarget = targetAngle;
-    jointController.setReference(PIDTarget, controlType);
+
+    if (targetAngle < bottomLimit) {
+      targetAngle = bottomLimit;
+    } else if (targetAngle > topLimit) {
+      targetAngle = topLimit;
+    }
+
+    jointController.setReference(targetAngle, controlType);
   }
 }
