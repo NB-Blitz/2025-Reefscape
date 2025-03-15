@@ -24,12 +24,11 @@ public class Wrist extends Joint {
     coralL3(94),
     coralL4(130),
     coralIntake(152),
-    algaeInReef(118),
+    algaeInReefL1(118),
+    algaeInReefL2(118),
     algaeBarge(55),
     algaeProcessor(152),
-    algaeIntake(45),
-    bottom(155),
-    top(55);
+    bottom(155);
 
     public final double angle;
 

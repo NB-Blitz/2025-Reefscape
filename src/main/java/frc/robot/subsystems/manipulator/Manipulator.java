@@ -16,7 +16,6 @@ public class Manipulator extends SubsystemBase {
 
   private final ElevatorPosition[] elevatorPositions = {
     ElevatorPosition.bottom,
-    ElevatorPosition.algaeIntake,
     ElevatorPosition.algaeProcessor,
     ElevatorPosition.coralL1,
     ElevatorPosition.coralL2,
@@ -25,37 +24,32 @@ public class Manipulator extends SubsystemBase {
     ElevatorPosition.coralL3,
     ElevatorPosition.algaeL2,
     ElevatorPosition.coralL4,
-    ElevatorPosition.algaeBarge,
-    ElevatorPosition.top
+    ElevatorPosition.algaeBarge
   };
 
   private final WristAngle[] wristAngles = {
     WristAngle.bottom,
-    WristAngle.algaeIntake,
     WristAngle.algaeProcessor,
     WristAngle.coralL1,
     WristAngle.coralL2,
-    WristAngle.algaeInReef,
+    WristAngle.algaeInReefL1,
     WristAngle.coralIntake,
     WristAngle.coralL3,
-    WristAngle.algaeInReef,
+    WristAngle.algaeInReefL2,
     WristAngle.coralL4,
-    WristAngle.algaeBarge,
     WristAngle.algaeBarge
   };
 
   private final ShoulderAngle[] shoulderAngles = {
     ShoulderAngle.coralL1,
-    ShoulderAngle.algaeIntake,
     ShoulderAngle.algaeProcessor,
     ShoulderAngle.coralL1,
     ShoulderAngle.coralL2,
-    ShoulderAngle.algaeInReef,
+    ShoulderAngle.algaeInReefL1,
     ShoulderAngle.coralIntake,
     ShoulderAngle.coralL3,
-    ShoulderAngle.algaeInReef,
+    ShoulderAngle.algaeInReefL2,
     ShoulderAngle.coralL4,
-    ShoulderAngle.algaeBarge,
     ShoulderAngle.algaeBarge
   };
 
