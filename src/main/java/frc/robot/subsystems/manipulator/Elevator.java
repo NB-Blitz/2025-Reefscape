@@ -38,8 +38,10 @@ public class Elevator implements ElevatorInterface {
   public static final double kI = 0.0005;
   public static final double kD = 0.0;
   public static final double kFF = 0.0;
+
+  private String controlMode = "manual";
+  private double endTargetPos = 0;
   private double targetPosition = 0;
-  private ControlType controlType = ControlType.kPosition;
 
   public static final double kPositionConversionFactor =
       kGearRatio * kWheelCircumference; // in meters
@@ -157,11 +159,13 @@ public class Elevator implements ElevatorInterface {
   // moves the elevator to a preset position specified by the Position parameter (created in the
   // enum)
   public void setPosition(ElevatorPosition position) {
-    targetPosition = position.position;
+    endTargetPos = position.position;
+    controlMode = "preset";
   }
 
   public void setSpeed(double joystickInput) {
     targetPosition += joystickInput * positionIncrement;
+    controlMode = "manual";
   }
 
   // moves the elevator a certain speed according to the double parameter
@@ -173,10 +177,25 @@ public class Elevator implements ElevatorInterface {
       }
     }
 
+    if (controlMode == "preset") {
+      double targetDiff = endTargetPos - targetPosition;
+      double diffAbs = Math.abs(targetDiff);
+      if (diffAbs > positionIncrement) {
+        if (targetDiff > 0) {
+          targetPosition += positionIncrement;
+        } else if (targetDiff < 0) {
+          targetPosition -= positionIncrement;
+        }
+      } else {
+        targetPosition = endTargetPos;
+      }
+    }
+
     if (targetPosition > topLimit) {
       targetPosition = topLimit;
     }
-    m_PIDController.setReference(targetPosition, controlType);
+    m_PIDController.setReference(targetPosition, ControlType.kPosition);
+
     Logger.recordOutput("Manipulator/Elevator/Height", getHeight());
     Logger.recordOutput("Manipulator/Elevator/Target Height", targetPosition);
   }

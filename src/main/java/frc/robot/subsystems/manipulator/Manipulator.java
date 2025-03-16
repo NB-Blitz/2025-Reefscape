@@ -15,6 +15,20 @@ public class Manipulator extends SubsystemBase {
   private final double elevatorHeightTolerance = 0.03;
   private final Joint robotShoulder = new Shoulder();
 
+  private final String[] presetNames = {
+    "Bottom",
+    "Processor",
+    "Coral L1",
+    "Coral L2",
+    "Algae L1",
+    "Coral Station",
+    "Coral L3",
+    "Algae L2",
+    "No Foul",
+    "Coral L4",
+    "Barge"
+  };
+
   private final ElevatorPosition[] elevatorPositions = {
     ElevatorPosition.bottom,
     ElevatorPosition.algaeProcessor,
@@ -72,7 +86,7 @@ public class Manipulator extends SubsystemBase {
     robotElevator.move();
     robotShoulder.updateJoint();
     robotWrist.updateJoint();
-    SmartDashboard.putNumber("Level Index", levelIndex);
+    SmartDashboard.putString("Preset Level", presetNames[levelIndex]);
   }
 
   public void incrementLevel() {

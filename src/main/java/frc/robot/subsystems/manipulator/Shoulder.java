@@ -1,6 +1,5 @@
 package frc.robot.subsystems.manipulator;
 
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
@@ -9,7 +8,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Shoulder extends Joint {
 
-  private static final double jointP = 0.01;
+  private static final double jointP = 0.02;
   private static final double jointI = 0.0;
   private static final double jointD = 0.0;
   private static final double jointFF = 0.0;
@@ -58,8 +57,8 @@ public class Shoulder extends Joint {
 
   @Override
   public void setJointAngle(int enumIndex) {
-    super.targetAngle = ShoulderAngle.values()[enumIndex].angle + angleOffset;
-    super.controlType = ControlType.kPosition;
+    super.endTargetAngle = ShoulderAngle.values()[enumIndex].angle + angleOffset;
+    super.controlMode = "preset";
   }
 
   @Override

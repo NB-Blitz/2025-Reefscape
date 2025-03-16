@@ -16,8 +16,9 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class Joint {
 
-  protected double targetAngle = 0.0;
-  protected ControlType controlType = ControlType.kPosition;
+  protected String controlMode = "manual";
+  protected double endTargetAngle = 0;
+  protected double targetAngle = 0;
 
   protected SparkBase jointMotor;
   private RelativeEncoder jointEncoder;
@@ -193,12 +194,13 @@ public class Joint {
   }
 
   public void setJointSpeed(double joystickInput) {
-    targetAngle += (joystickInput * angleIncrement);
+    targetAngle += joystickInput * angleIncrement;
+    controlMode = "manual";
   }
 
   public void setJointAngle(int enumIndex) {
     targetAngle = enumIndex + angleOffset;
-    controlType = ControlType.kPosition;
+    controlMode = "preset";
   }
 
   public void updateJoint() {
@@ -210,12 +212,26 @@ public class Joint {
       }
     }
 
+    if (controlMode == "preset") {
+      double targetDiff = endTargetAngle - targetAngle;
+      double diffAbs = Math.abs(targetDiff);
+      if (diffAbs > angleIncrement) {
+        if (targetDiff > 0) {
+          targetAngle += angleIncrement;
+        } else if (targetDiff < 0) {
+          targetAngle -= angleIncrement;
+        }
+      } else {
+        targetAngle = endTargetAngle;
+      }
+    }
+
     if (targetAngle < bottomLimit) {
       targetAngle = bottomLimit;
     } else if (targetAngle > topLimit) {
       targetAngle = topLimit;
     }
 
-    jointController.setReference(targetAngle, controlType);
+    jointController.setReference(targetAngle, ControlType.kPosition);
   }
 }
