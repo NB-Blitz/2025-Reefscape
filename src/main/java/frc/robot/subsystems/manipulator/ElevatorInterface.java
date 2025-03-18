@@ -9,7 +9,7 @@ public interface ElevatorInterface {
     coralL4(0.54),
     algaeL1(0.5),
     algaeL2(0.7),
-    coralIntake(0.45),
+    coralIntake(0.3),
     algaeBarge(0.7),
     algaeProcessor(0.24),
     noFoul(0.66),

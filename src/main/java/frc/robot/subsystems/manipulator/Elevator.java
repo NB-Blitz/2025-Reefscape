@@ -66,7 +66,7 @@ public class Elevator implements ElevatorInterface {
   // create the PID controller (only for the left motor)
   private final SparkClosedLoopController m_PIDController = m_leadMotor.getClosedLoopController();
 
-  private final double maxElevatorSpeed = 0.5; // meters per second
+  private final double maxElevatorSpeed = 0.7; // meters per second
   private final double positionIncrement = maxElevatorSpeed / 50;
   private final double topLimit = 0.73;
   private final double bottomLimit = 0;

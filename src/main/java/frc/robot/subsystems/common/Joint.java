@@ -203,6 +203,11 @@ public class Joint {
     controlMode = "preset";
   }
 
+  public void setJointAngleRaw(double angle) {
+    endTargetAngle = angle + angleOffset;
+    controlMode = "preset";
+  }
+
   public void updateJoint() {
     if (jointAbsoluteEncoder != null) {
       if (Math.abs(jointAbsoluteEncoder.getPosition() - jointEncoder.getPosition())

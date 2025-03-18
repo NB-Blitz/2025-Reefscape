@@ -22,7 +22,7 @@ public class Wrist extends Joint {
     coralL2(115),
     coralL3(91),
     coralL4(127),
-    coralIntake(149),
+    coralIntake(150),
     algaeInReefL1(115),
     algaeInReefL2(115),
     algaeBarge(52),
@@ -49,7 +49,7 @@ public class Wrist extends Joint {
         true,
         false,
         152.0,
-        50,
+        52,
         20.0,
         new SparkFlex(jointMotorCANID, MotorType.kBrushless),
         new SparkFlexConfig());

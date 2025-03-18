@@ -12,16 +12,19 @@ public class Manipulator extends SubsystemBase {
   private final HandInterface robotHand = new Hand();
   private final Joint robotWrist = new Wrist();
   private final ElevatorInterface robotElevator = new Elevator();
-  private final double elevatorHeightTolerance = 0.03;
   private final Joint robotShoulder = new Shoulder();
+  private final double elevatorHeightTolerance = 0.025; // meters
+  private final double shoulderNoFoulTolerance = 28.0; // degrees
+  private final int noFoulIndex = 8;
+  private int cachedWristIndex = 0;
 
   private final String[] presetNames = {
     "Bottom",
     "Processor",
     "Coral L1",
+    "Coral Station",
     "Coral L2",
     "Algae L1",
-    "Coral Station",
     "Coral L3",
     "Algae L2",
     "No Foul",
@@ -33,9 +36,9 @@ public class Manipulator extends SubsystemBase {
     ElevatorPosition.bottom,
     ElevatorPosition.algaeProcessor,
     ElevatorPosition.coralL1,
+    ElevatorPosition.coralIntake,
     ElevatorPosition.coralL2,
     ElevatorPosition.algaeL1,
-    ElevatorPosition.coralIntake,
     ElevatorPosition.coralL3,
     ElevatorPosition.algaeL2,
     ElevatorPosition.noFoul,
@@ -47,9 +50,9 @@ public class Manipulator extends SubsystemBase {
     WristAngle.bottom,
     WristAngle.algaeProcessor,
     WristAngle.coralL1,
+    WristAngle.coralIntake,
     WristAngle.coralL2,
     WristAngle.algaeInReefL1,
-    WristAngle.coralIntake,
     WristAngle.coralL3,
     WristAngle.algaeInReefL2,
     WristAngle.noFoul,
@@ -61,9 +64,9 @@ public class Manipulator extends SubsystemBase {
     ShoulderAngle.coralL1,
     ShoulderAngle.algaeProcessor,
     ShoulderAngle.coralL1,
+    ShoulderAngle.coralIntake,
     ShoulderAngle.coralL2,
     ShoulderAngle.algaeInReefL1,
-    ShoulderAngle.coralIntake,
     ShoulderAngle.coralL3,
     ShoulderAngle.algaeInReefL2,
     ShoulderAngle.noFoul,
@@ -158,6 +161,7 @@ public class Manipulator extends SubsystemBase {
     // if we recieve a joystick input stop both auto positioning
     if (triggers == 0.0 && leftJoy == 0.0 && rightJoy == 0.0 && positionCommand) {
       robotElevator.setPosition(elevatorPositions[levelIndex]);
+      cachedWristIndex = levelIndex;
       robotWrist.setJointAngle(wristAngles[levelIndex].ordinal());
       robotShoulder.setJointAngle(shoulderAngles[levelIndex].ordinal());
     } else if (joystickCommand || triggers != 0.0 || leftJoy != 0.0 || rightJoy != 0.0) {
@@ -167,5 +171,14 @@ public class Manipulator extends SubsystemBase {
       joystickCommand = true;
     }
     positionCommand = false;
+
+    if (robotShoulder.getPosition() > shoulderAngles[noFoulIndex].angle - shoulderNoFoulTolerance
+        && robotShoulder.getPosition()
+            < shoulderAngles[noFoulIndex].angle + shoulderNoFoulTolerance) {
+      double angleDiff = shoulderAngles[noFoulIndex].angle - robotShoulder.getPosition();
+      robotWrist.setJointAngleRaw(wristAngles[noFoulIndex].angle + angleDiff);
+    } else if (!joystickCommand) {
+      robotWrist.setJointAngle(wristAngles[cachedWristIndex].ordinal());
+    }
   }
 }

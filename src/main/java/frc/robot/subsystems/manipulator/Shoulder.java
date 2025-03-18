@@ -22,7 +22,7 @@ public class Shoulder extends Joint {
     coralL2(45),
     coralL3(66.5),
     coralL4(150),
-    coralIntake(35.5),
+    coralIntake(53.6),
     algaeInReefL1(45),
     algaeInReefL2(45),
     algaeBarge(150),
