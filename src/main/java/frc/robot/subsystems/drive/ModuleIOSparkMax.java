@@ -116,7 +116,7 @@ public class ModuleIOSparkMax implements ModuleIO {
     turnEncoder.getConfigurator().apply(canCoderConfig);
 
     // Configure drive motor
-    var driveConfig = new SparkMaxConfig();
+    SparkMaxConfig driveConfig = new SparkMaxConfig();
     driveConfig
         // TODO Max Add inverted if deemed necessary
         .inverted(driveInverted)
@@ -154,7 +154,7 @@ public class ModuleIOSparkMax implements ModuleIO {
     tryUntilOk(driveSpark, 5, () -> driveEncoder.setPosition(0.0));
 
     // Configure turn motor
-    var turnConfig = new SparkMaxConfig();
+    SparkMaxConfig turnConfig = new SparkMaxConfig();
     turnConfig
         .inverted(turnInverted)
         .idleMode(IdleMode.kBrake)

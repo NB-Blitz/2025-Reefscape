@@ -56,7 +56,7 @@ public class Hand implements HandInterface {
     coralBackSwitch = new DigitalInput(coralBackSwitchOID);
     algaeSwitch = new DigitalInput(algaeSwitchOID);
 
-    var rightMotorConfig = new SparkFlexConfig();
+    SparkFlexConfig rightMotorConfig = new SparkFlexConfig();
     rightMotorConfig
         .idleMode(IdleMode.kBrake)
         .inverted(motorInverted)
@@ -75,7 +75,7 @@ public class Hand implements HandInterface {
             rightMotor.configure(
                 rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-    var leftMotorConfig = new SparkFlexConfig();
+    SparkFlexConfig leftMotorConfig = new SparkFlexConfig();
     leftMotorConfig
         .idleMode(IdleMode.kBrake)
         .inverted(!motorInverted)

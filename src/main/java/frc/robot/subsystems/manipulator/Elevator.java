@@ -75,7 +75,7 @@ public class Elevator implements ElevatorInterface {
 
     // set up Spark Flex configuration for the left motor
     // (not sure what everything is set to but I think it works)
-    var leadMotorConfig = new SparkFlexConfig();
+    SparkFlexConfig leadMotorConfig = new SparkFlexConfig();
     leadMotorConfig.inverted(kLeadInverted);
     leadMotorConfig
         .idleMode(IdleMode.kBrake)
@@ -129,7 +129,7 @@ public class Elevator implements ElevatorInterface {
 
     // set up Spark Flex configuration for the left motor
     // (not sure what everything is set to but I think it works)
-    var followMotorConfig = new SparkFlexConfig();
+    SparkFlexConfig followMotorConfig = new SparkFlexConfig();
     followMotorConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(kMotorCurrentLimit)
