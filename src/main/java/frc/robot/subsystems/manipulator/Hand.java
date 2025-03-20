@@ -13,158 +13,118 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Hand implements HandInterface {
 
-  private final int leftMotorCANID = 13;
-  private final int rightMotorCANID = 14;
-  private final int coralFrontSwitchOID = 1;
-  private final int coralBackSwitchOID = 2;
-  private final int algaeSwitchOID = 3;
+  private final int topMotorCANID = 13;
+  private final int bottomMotorCANID = 14;
+  private final int coralSensorID = 1;
   private final int currentLimit = 80;
 
-  // TODO update speeds
-  private final double coralIntakeSpeed = 0.5;
-  private final double coralExpelSpeed = 0.5;
-  private final double algaeIntakeSpeed = 0.5;
-  private final double algaeExpelNetSpeed = -0.5;
-  private final double algaeExpelProcessorSpeed = -0.5;
+  private final double percent = 0.3;
+  private final double coralIntakeSpeed = -0.3;
+  private final double coralExpelSpeed = 0.3;
+  private final double algaeIntakeSpeed = 0.3;
+  private final double algaeExpelNetSpeed = -0.3;
+  private final double algaeExpelProcessorSpeed = -0.3;
 
   private final boolean motorInverted = true;
 
-  private final SparkBase leftMotor;
-  private final SparkBase rightMotor;
+  private final SparkBase topMotor;
+  private final SparkBase bottomMotor;
 
-  // true when pressed
-  private final DigitalInput coralFrontSwitch;
-  private final DigitalInput coralBackSwitch;
-  // true when pressed
-  private final DigitalInput algaeSwitch;
+  private final DigitalInput coralSensor;
 
   // private final double p = 0.0001;
   // private final double RPM = 60 * 5;
-  private final double percent = 0.5;
-
-  // private SparkClosedLoopController righthandController;
-  // private SparkClosedLoopController lefthandController;
 
   public Hand() {
 
-    leftMotor = new SparkFlex(leftMotorCANID, MotorType.kBrushless);
-    rightMotor = new SparkFlex(rightMotorCANID, MotorType.kBrushless);
-    // righthandController = rightMotor.getClosedLoopController();
-    // lefthandController = leftMotor.getClosedLoopController();
+    topMotor = new SparkFlex(topMotorCANID, MotorType.kBrushless);
+    bottomMotor = new SparkFlex(bottomMotorCANID, MotorType.kBrushless);
 
-    coralFrontSwitch = new DigitalInput(coralFrontSwitchOID);
-    coralBackSwitch = new DigitalInput(coralBackSwitchOID);
-    algaeSwitch = new DigitalInput(algaeSwitchOID);
+    coralSensor = new DigitalInput(coralSensorID);
 
-    SparkFlexConfig rightMotorConfig = new SparkFlexConfig();
-    rightMotorConfig
+    SparkFlexConfig bottomMotorConfig = new SparkFlexConfig();
+    bottomMotorConfig
         .idleMode(IdleMode.kBrake)
         .inverted(motorInverted)
         .smartCurrentLimit(currentLimit)
         .voltageCompensation(12.0);
-    // rightMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pidf(p, 0, 0, 0);
-    rightMotorConfig
+    // bottomMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pidf(p, 0, 0, 0);
+    bottomMotorConfig
         .signals
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
     tryUntilOk(
-        rightMotor,
+        bottomMotor,
         5,
         () ->
-            rightMotor.configure(
-                rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+            bottomMotor.configure(
+                bottomMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
-    SparkFlexConfig leftMotorConfig = new SparkFlexConfig();
-    leftMotorConfig
+    SparkFlexConfig topMotorConfig = new SparkFlexConfig();
+    topMotorConfig
         .idleMode(IdleMode.kBrake)
         .inverted(!motorInverted)
         .smartCurrentLimit(currentLimit)
         .voltageCompensation(12.0);
-    // leftMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pidf(p, 0, 0, 0);
-    leftMotorConfig
+    // topMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pidf(p, 0, 0, 0);
+    topMotorConfig
         .signals
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
     tryUntilOk(
-        leftMotor,
+        topMotor,
         5,
         () ->
-            leftMotor.configure(
-                leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+            topMotor.configure(
+                topMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
-  public void intakeCoral() {
-    if (coralBackSwitch.get() == false && algaeInPosition() == false) {
-      leftMotor.set(coralIntakeSpeed);
-      rightMotor.set(coralIntakeSpeed);
-    } else {
-      leftMotor.set(0);
-      rightMotor.set(0);
-    }
+  public boolean holdingCoral() {
+    return coralSensor.get();
   }
+
+  // Coral in = algae out
+  // Coral out = algae in
 
   public void clockwise() {
-    leftMotor.set(percent);
-    rightMotor.set(percent);
-    // lefthandController.setReference(RPM, ControlType.kVelocity);
-    // righthandController.setReference(RPM, ControlType.kVelocity);
+    topMotor.set(percent);
+    bottomMotor.set(percent);
   }
 
   public void counterClockwise() {
-    leftMotor.set(-percent);
-    rightMotor.set(-percent);
-    // lefthandController.setReference(-RPM, ControlType.kVelocity);
-    // righthandController.setReference(-RPM, ControlType.kVelocity);
-  }
-
-  public void expelCoral() {
-    leftMotor.set(coralExpelSpeed);
-    rightMotor.set(coralExpelSpeed);
-    if (coralBackSwitch.get() == false && coralFrontSwitch.get() == false) {
-      leftMotor.set(0);
-      rightMotor.set(0);
-    }
+    topMotor.set(-percent);
+    bottomMotor.set(-percent);
   }
 
   public void stopMotors() {
-    leftMotor.set(0);
-    rightMotor.set(0);
-    // lefthandController.setReference(0, ControlType.kVelocity);
-    // righthandController.setReference(0, ControlType.kVelocity);
+    topMotor.set(0);
+    bottomMotor.set(0);
   }
 
-  public boolean coralInPosition() {
-    if (coralFrontSwitch.get() == true && coralBackSwitch.get() == false) {
-      return true;
-    }
-    return false;
+  public void intakeCoral() {
+    topMotor.set(coralIntakeSpeed);
+    bottomMotor.set(coralIntakeSpeed);
+  }
+
+  public void expelCoral() {
+    topMotor.set(coralExpelSpeed);
+    bottomMotor.set(coralExpelSpeed);
   }
 
   public void intakeAlgae() {
-    if (algaeSwitch.get() == false
-        && coralBackSwitch.get() == false
-        && coralFrontSwitch.get() == false) {
-      leftMotor.set(algaeIntakeSpeed);
-      rightMotor.set(algaeIntakeSpeed);
-    } else {
-      leftMotor.set(0);
-      rightMotor.set(0);
-    }
+    topMotor.set(algaeIntakeSpeed);
+    bottomMotor.set(0);
   }
 
   public void expelAlgaeNet() {
-    leftMotor.set(algaeExpelNetSpeed);
-    rightMotor.set(algaeExpelNetSpeed);
+    topMotor.set(algaeExpelNetSpeed);
+    bottomMotor.set(0);
   }
 
   public void expelAlgaeProcessor() {
-    leftMotor.set(algaeExpelProcessorSpeed);
-    rightMotor.set(algaeExpelProcessorSpeed);
-  }
-
-  public boolean algaeInPosition() {
-    return algaeSwitch.get();
+    topMotor.set(algaeExpelProcessorSpeed);
+    bottomMotor.set(0);
   }
 }

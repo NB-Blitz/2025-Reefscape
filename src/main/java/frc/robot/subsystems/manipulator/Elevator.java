@@ -139,7 +139,6 @@ public class Elevator implements ElevatorInterface {
         .appliedOutputPeriodMs(20)
         .busVoltagePeriodMs(20)
         .outputCurrentPeriodMs(20);
-    // leftMotorConfig.follow(m_rightMotor, true);
     followMotorConfig.follow(kLeadMotorCANID, true);
 
     // sets the configuration of the left motor
@@ -168,6 +167,10 @@ public class Elevator implements ElevatorInterface {
     controlMode = "manual";
   }
 
+  public void eStop() {
+    controlMode = "estop";
+  }
+
   // moves the elevator a certain speed according to the double parameter
   public void move() {
     if (getLimit()) {
@@ -194,7 +197,12 @@ public class Elevator implements ElevatorInterface {
     if (targetPosition > topLimit) {
       targetPosition = topLimit;
     }
-    m_PIDController.setReference(targetPosition, ControlType.kPosition);
+
+    if (controlMode == "estop") {
+      m_PIDController.setReference(0, ControlType.kDutyCycle);
+    } else {
+      m_PIDController.setReference(targetPosition, ControlType.kPosition);
+    }
 
     Logger.recordOutput("Manipulator/Elevator/Height", getHeight());
     Logger.recordOutput("Manipulator/Elevator/Target Height", targetPosition);
@@ -202,5 +210,14 @@ public class Elevator implements ElevatorInterface {
 
   public double getHeight() {
     return m_leadEncoder.getPosition();
+  }
+
+  public void resetTargetHeight() {
+    targetPosition = getHeight();
+    controlMode = "manual";
+  }
+
+  public double getTopLimit() {
+    return topLimit;
   }
 }

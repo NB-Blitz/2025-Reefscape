@@ -6,16 +6,18 @@ import frc.robot.subsystems.common.Joint;
 import frc.robot.subsystems.manipulator.ElevatorInterface.ElevatorPosition;
 import frc.robot.subsystems.manipulator.Shoulder.ShoulderAngle;
 import frc.robot.subsystems.manipulator.Wrist.WristAngle;
+import frc.robot.util.LEDStrip;
 
 public class Manipulator extends SubsystemBase {
   // Set to "Blank" versions to disable each component
-  private final HandInterface robotHand = new Hand();
-  private final Joint robotWrist = new Wrist();
-  private final ElevatorInterface robotElevator = new Elevator();
-  private final Joint robotShoulder = new Shoulder();
-  private final double elevatorHeightTolerance = 0.025; // meters
+  private final ElevatorInterface elevator = new Elevator();
+  private final Joint shoulder = new Shoulder();
+  private final Joint wrist = new Wrist();
+  private final HandInterface hand = new Hand();
+  private final LEDStrip ledStrip = new LEDStrip(0, 58);
+
+  // private final double elevatorHeightTolerance = 0.025; // meters
   private final double shoulderNoFoulTolerance = 28.0; // degrees
-  private final int noFoulIndex = 8;
   private int cachedWristIndex = 0;
 
   private final String[] presetNames = {
@@ -24,10 +26,9 @@ public class Manipulator extends SubsystemBase {
     "Coral L1",
     "Coral Station",
     "Coral L2",
-    "Algae L1",
-    "Coral L3",
     "Algae L2",
-    "No Foul",
+    "Coral L3",
+    "Algae L3",
     "Coral L4",
     "Barge"
   };
@@ -38,12 +39,24 @@ public class Manipulator extends SubsystemBase {
     ElevatorPosition.coralL1,
     ElevatorPosition.coralIntake,
     ElevatorPosition.coralL2,
-    ElevatorPosition.algaeL1,
+    ElevatorPosition.algaeInReefL2,
     ElevatorPosition.coralL3,
-    ElevatorPosition.algaeL2,
-    ElevatorPosition.noFoul,
+    ElevatorPosition.algaeInReefL3,
     ElevatorPosition.coralL4,
     ElevatorPosition.algaeBarge
+  };
+
+  private final ShoulderAngle[] shoulderAngles = {
+    ShoulderAngle.bottom,
+    ShoulderAngle.algaeProcessor,
+    ShoulderAngle.coralL1,
+    ShoulderAngle.coralIntake,
+    ShoulderAngle.coralL2,
+    ShoulderAngle.algaeInReefL2,
+    ShoulderAngle.coralL3,
+    ShoulderAngle.algaeInReefL3,
+    ShoulderAngle.coralL4,
+    ShoulderAngle.algaeBarge
   };
 
   private final WristAngle[] wristAngles = {
@@ -52,53 +65,49 @@ public class Manipulator extends SubsystemBase {
     WristAngle.coralL1,
     WristAngle.coralIntake,
     WristAngle.coralL2,
-    WristAngle.algaeInReefL1,
-    WristAngle.coralL3,
     WristAngle.algaeInReefL2,
-    WristAngle.noFoul,
+    WristAngle.coralL3,
+    WristAngle.algaeInReefL3,
     WristAngle.coralL4,
     WristAngle.algaeBarge
-  };
-
-  private final ShoulderAngle[] shoulderAngles = {
-    ShoulderAngle.coralL1,
-    ShoulderAngle.algaeProcessor,
-    ShoulderAngle.coralL1,
-    ShoulderAngle.coralIntake,
-    ShoulderAngle.coralL2,
-    ShoulderAngle.algaeInReefL1,
-    ShoulderAngle.coralL3,
-    ShoulderAngle.algaeInReefL2,
-    ShoulderAngle.noFoul,
-    ShoulderAngle.coralL4,
-    ShoulderAngle.algaeBarge
   };
 
   // 0-11
   private int levelIndex = 0;
   private boolean positionCommand = false;
   private boolean joystickCommand = true;
-  private boolean isIntaking = false;
-  private boolean isExpelling = false;
+  private boolean isIntakingCoral = false;
+  private boolean isExpellingCoral = false;
 
   public void periodic() {
     /**
      * Any automatic behavior we want An example would be if we have a note and are in the top
      * position we could start the shooting motors.
      */
-    robotElevator.move();
-    robotShoulder.updateJoint();
-    robotWrist.updateJoint();
-    SmartDashboard.putString("Preset Level", presetNames[levelIndex]);
+    elevator.move();
+    shoulder.updateJoint();
+    wrist.updateJoint();
+
+    // SmartDashboard.putString("Preset Level", presetNames[levelIndex]);
+    String[] display = presetNames.clone();
+    if (positionCommand) {
+      display[levelIndex] = ">>> " + display[levelIndex];
+    }
+    SmartDashboard.putStringArray("Preset Level", display);
+
+    double ledRatio = elevator.getHeight() / elevator.getTopLimit();
+    ledStrip.updateLEDs(hand.holdingCoral(), ledRatio);
   }
 
   public void incrementLevel() {
     if (joystickCommand) {
-      double height = robotElevator.getHeight();
+      double smallestDiff = Integer.MAX_VALUE;
+      double height = elevator.getHeight();
       for (int i = 1; i < elevatorPositions.length; i++) {
-        if (height < elevatorPositions[i].position - elevatorHeightTolerance) {
+        double diff = elevatorPositions[i].position - height;
+        if (diff > 0 && Math.abs(diff) < smallestDiff) {
           levelIndex = i;
-          break;
+          smallestDiff = diff;
         }
       }
       joystickCommand = false;
@@ -110,11 +119,13 @@ public class Manipulator extends SubsystemBase {
 
   public void decrementLevel() {
     if (joystickCommand) {
-      double height = robotElevator.getHeight();
+      double smallestDiff = Integer.MAX_VALUE;
+      double height = elevator.getHeight();
       for (int i = elevatorPositions.length - 2; i >= 0; i--) {
-        if (height > elevatorPositions[i].position + elevatorHeightTolerance) {
+        double diff = elevatorPositions[i].position - height;
+        if (diff < 0 && Math.abs(diff) < smallestDiff) {
           levelIndex = i;
-          break;
+          smallestDiff = diff;
         }
       }
       joystickCommand = false;
@@ -124,61 +135,80 @@ public class Manipulator extends SubsystemBase {
     positionCommand = true;
   }
 
-  public void expel() {
-    if (!isExpelling) {
-      robotHand.clockwise();
-      isIntaking = false;
+  public void intakeCoralExpelAlgae() {
+    isIntakingCoral = true;
+    if (isExpellingCoral) {
+      hand.stopMotors();
     } else {
-      robotHand.stopMotors();
+      if (hand.holdingCoral() && positionCommand && levelIndex != 8) {
+        hand.stopMotors();
+      } else {
+        hand.intakeCoral();
+      }
     }
-    isExpelling = !isExpelling;
   }
 
-  public void intake() {
-    if (!isIntaking) {
-      robotHand.counterClockwise();
-      isExpelling = false;
+  public void expelCoralIntakeAlgae() {
+    isExpellingCoral = true;
+    if (isIntakingCoral) {
+      hand.stopMotors();
     } else {
-      robotHand.stopMotors();
+      if (hand.holdingCoral() && positionCommand && levelIndex == 8) {
+        hand.stopMotors();
+      } else {
+        hand.expelCoral();
+      }
     }
-    isIntaking = !isIntaking;
   }
 
-  public void stopHand() {
-    robotHand.stopMotors();
-    isExpelling = false;
-    isIntaking = false;
+  public void stopIntakeCoral() {
+    isIntakingCoral = false;
+    if (!isExpellingCoral) {
+      hand.stopMotors();
+    }
+  }
+
+  public void stopExpelCoral() {
+    isExpellingCoral = false;
+    if (!isIntakingCoral) {
+      hand.stopMotors();
+    }
   }
 
   public void emergencyStop() {
-    robotElevator.setSpeed(0.0);
-    robotWrist.setJointSpeed(0.0);
-    robotHand.stopMotors();
-    robotShoulder.setJointSpeed(0.0);
+    elevator.eStop();
+    shoulder.eStop();
+    wrist.eStop();
+    hand.stopMotors();
   }
 
   public void runManipulator(double triggers, double leftJoy, double rightJoy) {
     // if we recieve a joystick input stop both auto positioning
     if (triggers == 0.0 && leftJoy == 0.0 && rightJoy == 0.0 && positionCommand) {
-      robotElevator.setPosition(elevatorPositions[levelIndex]);
+      elevator.setPosition(elevatorPositions[levelIndex]);
       cachedWristIndex = levelIndex;
-      robotWrist.setJointAngle(wristAngles[levelIndex].ordinal());
-      robotShoulder.setJointAngle(shoulderAngles[levelIndex].ordinal());
+      wrist.setJointAngle(wristAngles[levelIndex].ordinal());
+      shoulder.setJointAngle(shoulderAngles[levelIndex].ordinal());
     } else if (joystickCommand || triggers != 0.0 || leftJoy != 0.0 || rightJoy != 0.0) {
-      robotElevator.setSpeed(triggers);
-      robotWrist.setJointSpeed(rightJoy);
-      robotShoulder.setJointSpeed(leftJoy);
+      elevator.setSpeed(triggers);
+      wrist.setJointSpeed(rightJoy);
+      shoulder.setJointSpeed(leftJoy);
       joystickCommand = true;
     }
     positionCommand = false;
 
-    if (robotShoulder.getPosition() > shoulderAngles[noFoulIndex].angle - shoulderNoFoulTolerance
-        && robotShoulder.getPosition()
-            < shoulderAngles[noFoulIndex].angle + shoulderNoFoulTolerance) {
-      double angleDiff = shoulderAngles[noFoulIndex].angle - robotShoulder.getPosition();
-      robotWrist.setJointAngleRaw(wristAngles[noFoulIndex].angle + angleDiff);
+    if (shoulder.getPosition() > shoulder.noFoulPos - shoulderNoFoulTolerance
+        && shoulder.getPosition() < shoulder.noFoulPos + shoulderNoFoulTolerance) {
+      double angleDiff = shoulder.noFoulPos - shoulder.getPosition();
+      wrist.setJointAngleRaw(wrist.noFoulPos + angleDiff);
     } else if (!joystickCommand) {
-      robotWrist.setJointAngle(wristAngles[cachedWristIndex].ordinal());
+      wrist.setJointAngle(wristAngles[cachedWristIndex].ordinal());
     }
+  }
+
+  public void resetTargets() {
+    elevator.resetTargetHeight();
+    shoulder.resetTargetAngle();
+    wrist.resetTargetAngle();
   }
 }

@@ -1,19 +1,20 @@
 package frc.robot.subsystems.manipulator;
 
 public interface ElevatorInterface {
+  public double noFoulPos = 0.66;
+
   // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)
   public enum ElevatorPosition {
-    coralL1(0.24),
-    coralL2(0.39),
-    coralL3(0.66),
-    coralL4(0.54),
-    algaeL1(0.5),
-    algaeL2(0.7),
-    coralIntake(0.3),
-    algaeBarge(0.7),
+    bottom(0),
     algaeProcessor(0.24),
-    noFoul(0.66),
-    bottom(0);
+    coralL1(0.24),
+    coralIntake(0.3),
+    coralL2(0.39),
+    algaeInReefL2(0.5),
+    coralL3(0.66),
+    algaeInReefL3(0.7),
+    coralL4(0.54),
+    algaeBarge(0.7);
 
     public final double position;
 
@@ -31,8 +32,14 @@ public interface ElevatorInterface {
 
   public void setSpeed(double joystickInput);
 
+  public void eStop();
+
   // moves the elevator a certain speed according to the double parameter
   public void move();
 
   public double getHeight();
+
+  public void resetTargetHeight();
+
+  public double getTopLimit();
 }

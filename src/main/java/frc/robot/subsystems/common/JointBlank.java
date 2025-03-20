@@ -16,5 +16,9 @@ public class JointBlank extends Joint {
 
   public void setJointAngle(int enumIndex) {}
 
+  public void eStop() {}
+
+  public void resetTargetAngle() {}
+
   public void updateJoint() {}
 }

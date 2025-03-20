@@ -22,7 +22,7 @@ public class Joint {
 
   protected SparkBase jointMotor;
   private RelativeEncoder jointEncoder;
-  protected AbsoluteEncoder jointAbsoluteEncoder;
+  private AbsoluteEncoder jointAbsoluteEncoder;
   private SparkClosedLoopController jointController;
   private final int currentLimit = 200;
   private final double maxJointSpeed;
@@ -33,6 +33,8 @@ public class Joint {
   private final double kAngleTolerance =
       1.25; // If the relaive encoder is plus or minus this value it sets it to the absolute tl;dr
   // fixes belt skipping
+
+  public double noFoulPos;
 
   public Joint(
       double P,
@@ -51,7 +53,7 @@ public class Joint {
       SparkBaseConfig config) {
     jointMotor = motorRef;
     jointController = jointMotor.getClosedLoopController();
-    this.maxJointSpeed = maxSpeed;
+    maxJointSpeed = maxSpeed;
     angleIncrement = maxJointSpeed / 50;
     angleOffset = angleOffsettywettyfetty;
     topLimit = kForwardSoftLimit + angleOffset;
@@ -208,6 +210,15 @@ public class Joint {
     controlMode = "preset";
   }
 
+  public void eStop() {
+    controlMode = "estop";
+  }
+
+  public void resetTargetAngle() {
+    targetAngle = jointEncoder.getPosition();
+    controlMode = "manual";
+  }
+
   public void updateJoint() {
     if (jointAbsoluteEncoder != null) {
       if (Math.abs(jointAbsoluteEncoder.getPosition() - jointEncoder.getPosition())
@@ -237,6 +248,10 @@ public class Joint {
       targetAngle = topLimit;
     }
 
-    jointController.setReference(targetAngle, ControlType.kPosition);
+    if (controlMode == "estop") {
+      jointController.setReference(0, ControlType.kDutyCycle);
+    } else {
+      jointController.setReference(targetAngle, ControlType.kPosition);
+    }
   }
 }

@@ -41,6 +41,8 @@ import frc.robot.subsystems.drive.constants.DriveConstants;
 import frc.robot.subsystems.manipulator.Manipulator;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -96,10 +98,11 @@ public class RobotContainer {
                   new ModuleIOSparkMax(2),
                   new ModuleIOSparkMax(3));
         }
-        vision = null;
-        // new Vision(
-        //     drive::addVisionMeasurement,
-        //     new VisionIOLimelight(camera0Name, drive::getRotation));
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
+                new VisionIOLimelight(camera0Name, drive::getRotation),
+                new VisionIOPhotonVision(camera1Name, robotToCamera1));
         break;
 
       case SIM:
@@ -223,14 +226,18 @@ public class RobotContainer {
       xBoxController
           .povDown()
           .onTrue(Commands.runOnce(() -> manipulator.decrementLevel(), manipulator));
-      xBoxController.leftBumper().onTrue(Commands.runOnce(() -> manipulator.intake(), manipulator));
-      xBoxController.rightBumper().onTrue(Commands.runOnce(() -> manipulator.expel(), manipulator));
       xBoxController
           .leftBumper()
-          .onFalse(Commands.runOnce(() -> manipulator.stopHand(), manipulator));
+          .whileTrue(Commands.runOnce(() -> manipulator.intakeCoralExpelAlgae(), manipulator));
       xBoxController
           .rightBumper()
-          .onFalse(Commands.runOnce(() -> manipulator.stopHand(), manipulator));
+          .whileTrue(Commands.runOnce(() -> manipulator.expelCoralIntakeAlgae(), manipulator));
+      xBoxController
+          .leftBumper()
+          .onFalse(Commands.runOnce(() -> manipulator.stopIntakeCoral(), manipulator));
+      xBoxController
+          .rightBumper()
+          .onFalse(Commands.runOnce(() -> manipulator.stopExpelCoral(), manipulator));
       xBoxController
           .leftStick()
           .onTrue(
@@ -242,6 +249,10 @@ public class RobotContainer {
                   },
                   manipulator));
     }
+  }
+
+  public void resetManipulatorTargets() {
+    manipulator.resetTargets();
   }
 
   /**
