@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ManipulatorCommands;
+import frc.robot.commands.auto.ExpelCoral;
 import frc.robot.commands.auto.GoToPreset;
 import frc.robot.commands.auto.IntakeCoral;
 import frc.robot.subsystems.climber.Climber;
@@ -159,10 +160,11 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-    
+
     NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(manipulator));
-    NamedCommands.registerCommand("ExpelCoral", Commands.runOnce(() -> manipulator.expelCoralIntakeAlgae(), manipulator));
-    NamedCommands.registerCommand("StopHand", Commands.runOnce(() -> manipulator.stopHand(), manipulator));
+    NamedCommands.registerCommand("ExpelCoral", new ExpelCoral(manipulator));
+    NamedCommands.registerCommand(
+        "StopHand", Commands.runOnce(() -> manipulator.stopHand(), manipulator));
     NamedCommands.registerCommand("GoToL1", new GoToPreset(manipulator, 2));
     NamedCommands.registerCommand("GoToCoralStation", new GoToPreset(manipulator, 3));
     NamedCommands.registerCommand("GoToL2", new GoToPreset(manipulator, 4));

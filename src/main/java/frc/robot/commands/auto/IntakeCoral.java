@@ -4,22 +4,22 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.manipulator.Manipulator;
 
 public class IntakeCoral extends Command {
-    private Manipulator manipulator;
-    
-    public IntakeCoral(Manipulator manipulator) {
-        this.manipulator = manipulator;
-    }
+  private Manipulator manipulator;
 
-    @Override
-    public void initialize() {}
+  public IntakeCoral(Manipulator manipulator) {
+    this.manipulator = manipulator;
+  }
 
-    @Override
-    public void execute() {
-        manipulator.intakeCoralExpelAlgae();
-    }
+  @Override
+  public void initialize() {}
 
-    @Override
-    public boolean isFinished() {
-        return manipulator.isHoldingCoral();
-    }
+  @Override
+  public void execute() {
+    manipulator.intakeCoralExpelAlgae();
+  }
+
+  @Override
+  public boolean isFinished() {
+    return manipulator.isHoldingCoral();
+  }
 }

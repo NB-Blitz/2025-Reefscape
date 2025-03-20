@@ -14,7 +14,7 @@ public class Manipulator extends SubsystemBase {
   private final Joint shoulder = new Shoulder();
   private final Joint wrist = new Wrist();
   private final HandInterface hand = new Hand();
-  private final LEDStrip ledStrip = new LEDStrip(0, 58);
+  private final LEDStrip ledStrip = new LEDStrip(9, 58);
 
   // private final double elevatorHeightTolerance = 0.025; // meters
   private final double shoulderNoFoulTolerance = 28.0; // degrees
@@ -88,12 +88,16 @@ public class Manipulator extends SubsystemBase {
     shoulder.updateJoint();
     wrist.updateJoint();
 
-    // SmartDashboard.putString("Preset Level", presetNames[levelIndex]);
-    String[] display = presetNames.clone();
-    if (positionCommand) {
-      display[levelIndex] = ">>> " + display[levelIndex];
-    }
-    SmartDashboard.putStringArray("Preset Level", display);
+    SmartDashboard.putString("Preset Level", presetNames[levelIndex]);
+    // String display = "";
+    // for (int i = 0; i < presetNames.length; i++) {
+    //   if (positionCommand && i == levelIndex) {
+    //     display += ">>> ";
+    //   }
+    //   display += presetNames[i] + "\n";
+    // }
+    // SmartDashboard.putString("Preset Level", display);
+    SmartDashboard.putBoolean("Coral Sensor", hand.holdingCoral());
 
     double ledRatio = elevator.getHeight() / elevator.getTopLimit();
     ledStrip.updateLEDs(hand.holdingCoral(), ledRatio);
