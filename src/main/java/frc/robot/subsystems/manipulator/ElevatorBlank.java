@@ -24,6 +24,10 @@ public class ElevatorBlank implements ElevatorInterface {
 
   public void resetTargetHeight() {}
 
+  public double getTarget() {
+    return 0;
+  }
+
   public double getTopLimit() {
     return 0;
   }

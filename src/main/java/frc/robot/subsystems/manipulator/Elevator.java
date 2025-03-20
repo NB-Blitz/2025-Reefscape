@@ -217,6 +217,13 @@ public class Elevator implements ElevatorInterface {
     controlMode = "manual";
   }
 
+  public double getTarget() {
+    if (controlMode == "preset") {
+      return endTargetPos;
+    }
+    return targetPosition;
+  }
+
   public double getTopLimit() {
     return topLimit;
   }

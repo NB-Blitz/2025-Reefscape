@@ -219,6 +219,13 @@ public class Joint {
     controlMode = "manual";
   }
 
+  public double getTarget() {
+    if (controlMode == "preset") {
+      return endTargetAngle;
+    }
+    return targetAngle;
+  }
+
   public void updateJoint() {
     if (jointAbsoluteEncoder != null) {
       if (Math.abs(jointAbsoluteEncoder.getPosition() - jointEncoder.getPosition())

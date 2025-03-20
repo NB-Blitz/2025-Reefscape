@@ -41,5 +41,7 @@ public interface ElevatorInterface {
 
   public void resetTargetHeight();
 
+  public double getTarget();
+
   public double getTopLimit();
 }

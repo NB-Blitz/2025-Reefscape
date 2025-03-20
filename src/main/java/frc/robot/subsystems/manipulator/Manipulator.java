@@ -186,13 +186,13 @@ public class Manipulator extends SubsystemBase {
     // if we recieve a joystick input stop both auto positioning
     if (triggers == 0.0 && leftJoy == 0.0 && rightJoy == 0.0 && positionCommand) {
       elevator.setPosition(elevatorPositions[levelIndex]);
-      cachedWristIndex = levelIndex;
-      wrist.setJointAngle(wristAngles[levelIndex].ordinal());
       shoulder.setJointAngle(shoulderAngles[levelIndex].ordinal());
+      wrist.setJointAngle(wristAngles[levelIndex].ordinal());
+      cachedWristIndex = levelIndex;
     } else if (joystickCommand || triggers != 0.0 || leftJoy != 0.0 || rightJoy != 0.0) {
       elevator.setSpeed(triggers);
-      wrist.setJointSpeed(rightJoy);
       shoulder.setJointSpeed(leftJoy);
+      wrist.setJointSpeed(rightJoy);
       joystickCommand = true;
     }
     positionCommand = false;
@@ -210,5 +210,29 @@ public class Manipulator extends SubsystemBase {
     elevator.resetTargetHeight();
     shoulder.resetTargetAngle();
     wrist.resetTargetAngle();
+  }
+
+  // Autonomous utility functions
+  public void goToPreset(int presetIndex) {
+    levelIndex = presetIndex;
+    positionCommand = true;
+    joystickCommand = false;
+  }
+
+  public boolean isAtTarget() {
+    boolean elevatorAtTarget = elevator.getHeight() == elevator.getTarget();
+    boolean shoulderAtTarget = shoulder.getPosition() == shoulder.getTarget();
+    boolean wristAtTarget = wrist.getPosition() == wrist.getTarget();
+    return elevatorAtTarget && shoulderAtTarget && wristAtTarget;
+  }
+
+  public boolean isHoldingCoral() {
+    return hand.holdingCoral();
+  }
+
+  public void stopHand() {
+    isExpellingCoral = false;
+    isIntakingCoral = false;
+    hand.stopMotors();
   }
 }

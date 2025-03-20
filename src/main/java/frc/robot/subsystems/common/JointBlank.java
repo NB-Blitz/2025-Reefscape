@@ -20,5 +20,9 @@ public class JointBlank extends Joint {
 
   public void resetTargetAngle() {}
 
+  public double getTarget() {
+    return 0;
+  }
+
   public void updateJoint() {}
 }
