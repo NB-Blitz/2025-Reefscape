@@ -161,7 +161,7 @@ public class Manipulator extends SubsystemBase {
     if (isIntakingCoral) {
       hand.stopMotors();
     } else {
-      if (hand.holdingCoral() && (shoulder.getPosition() > 130 || wrist.getPosition() > 100)) {
+      if (hand.holdingCoral() && shoulder.getPosition() > 130 && wrist.getPosition() > 100) {
         hand.stopMotors();
       } else {
         hand.expelCoral();

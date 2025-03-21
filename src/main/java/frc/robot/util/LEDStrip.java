@@ -37,9 +37,10 @@ public class LEDStrip {
     // Mirrors the effect on both sides
     double splitRatio = ledRatio * 0.5;
     LEDPattern mask1 = LEDPattern.progressMaskLayer(() -> splitRatio);
+    LEDPattern masked1 = pattern.mask(mask1);
     LEDPattern mask2 = LEDPattern.progressMaskLayer(() -> splitRatio).reversed();
-    LEDPattern mask = mask1.overlayOn(mask2);
-    return pattern.mask(mask);
+    LEDPattern masked2 = pattern.mask(mask2);
+    return masked1.overlayOn(masked2);
   }
 
   public LEDPattern setGradient(Color bottom, Color top) {
