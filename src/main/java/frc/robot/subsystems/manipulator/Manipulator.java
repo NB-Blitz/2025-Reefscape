@@ -91,7 +91,7 @@ public class Manipulator extends SubsystemBase {
     // SmartDashboard.putString("Preset Level", presetNames[levelIndex]);
     String display = "";
     for (int i = 0; i < presetNames.length; i++) {
-      if (positionCommand && i == levelIndex) {
+      if (i == levelIndex) {
         display += ">>>" + presetNames[i] + "<<<";
       } else {
         display += presetNames[i];
@@ -148,7 +148,7 @@ public class Manipulator extends SubsystemBase {
     if (isExpellingCoral) {
       hand.stopMotors();
     } else {
-      if (hand.holdingCoral() && shoulder.getPosition() > 130 && wrist.getPosition() > 100) {
+      if (hand.holdingCoral() && (shoulder.getPosition() < 130 || wrist.getPosition() < 100)) {
         hand.stopMotors();
       } else {
         hand.intakeCoral();
@@ -161,7 +161,7 @@ public class Manipulator extends SubsystemBase {
     if (isIntakingCoral) {
       hand.stopMotors();
     } else {
-      if (hand.holdingCoral() && shoulder.getPosition() < 130 && wrist.getPosition() < 100) {
+      if (hand.holdingCoral() && (shoulder.getPosition() > 130 || wrist.getPosition() > 100)) {
         hand.stopMotors();
       } else {
         hand.expelCoral();

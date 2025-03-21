@@ -19,11 +19,11 @@ public class Hand implements HandInterface {
   private final int currentLimit = 80;
 
   private final double percent = 0.3;
-  private final double coralIntakeSpeed = -0.3;
-  private final double coralExpelSpeed = 0.3;
-  private final double algaeIntakeSpeed = 0.3;
-  private final double algaeExpelNetSpeed = -0.3;
-  private final double algaeExpelProcessorSpeed = -0.3;
+  private final double coralIntakeSpeed = 0.3;
+  private final double coralExpelSpeed = -0.3;
+  private final double algaeIntakeSpeed = -0.3;
+  private final double algaeExpelNetSpeed = 0.3;
+  private final double algaeExpelProcessorSpeed = 0.3;
 
   private final boolean motorInverted = true;
 
@@ -82,7 +82,7 @@ public class Hand implements HandInterface {
   }
 
   public boolean holdingCoral() {
-    return coralSensor.get();
+    return !coralSensor.get();
   }
 
   // Coral in = algae out

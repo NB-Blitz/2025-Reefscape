@@ -14,6 +14,7 @@ public class LEDStrip {
     m_led = new AddressableLED(pwmPort);
     m_ledBuffer = new AddressableLEDBuffer(numPixels);
     m_led.setLength(m_ledBuffer.getLength());
+    m_led.start();
     m_led.setData(m_ledBuffer);
   }
 
