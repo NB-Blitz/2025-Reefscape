@@ -88,15 +88,19 @@ public class Manipulator extends SubsystemBase {
     shoulder.updateJoint();
     wrist.updateJoint();
 
-    SmartDashboard.putString("Preset Level", presetNames[levelIndex]);
-    // String display = "";
-    // for (int i = 0; i < presetNames.length; i++) {
-    //   if (positionCommand && i == levelIndex) {
-    //     display += ">>> ";
-    //   }
-    //   display += presetNames[i] + "\n";
-    // }
-    // SmartDashboard.putString("Preset Level", display);
+    // SmartDashboard.putString("Preset Level", presetNames[levelIndex]);
+    String display = "";
+    for (int i = 0; i < presetNames.length; i++) {
+      if (positionCommand && i == levelIndex) {
+        display += ">>>" + presetNames[i] + "<<<";
+      } else {
+        display += presetNames[i];
+      }
+      if (i != presetNames.length - 1) {
+        display += " -- ";
+      }
+    }
+    SmartDashboard.putString("Preset Level", display);
     SmartDashboard.putBoolean("Coral Sensor", hand.holdingCoral());
 
     double ledRatio = elevator.getHeight() / elevator.getTopLimit();
@@ -144,7 +148,7 @@ public class Manipulator extends SubsystemBase {
     if (isExpellingCoral) {
       hand.stopMotors();
     } else {
-      if (hand.holdingCoral() && positionCommand && levelIndex != 8) {
+      if (hand.holdingCoral() && shoulder.getPosition() > 130 && wrist.getPosition() > 100) {
         hand.stopMotors();
       } else {
         hand.intakeCoral();
@@ -157,7 +161,7 @@ public class Manipulator extends SubsystemBase {
     if (isIntakingCoral) {
       hand.stopMotors();
     } else {
-      if (hand.holdingCoral() && positionCommand && levelIndex == 8) {
+      if (hand.holdingCoral() && shoulder.getPosition() < 130 && wrist.getPosition() < 100) {
         hand.stopMotors();
       } else {
         hand.expelCoral();

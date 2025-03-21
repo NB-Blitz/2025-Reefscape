@@ -18,16 +18,16 @@ public class Shoulder extends Joint {
 
   // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)
   public enum ShoulderAngle {
-    coralL1(12),
-    coralL2(45),
-    coralL3(66.5),
-    coralL4(150),
-    coralIntake(53.6),
-    algaeInReefL2(45),
-    algaeInReefL3(45),
-    algaeBarge(150),
+    bottom(0),
     algaeProcessor(12),
-    bottom(0);
+    coralL1(12),
+    coralIntake(53.6),
+    coralL2(45),
+    algaeInReefL2(45),
+    coralL3(66.5),
+    algaeInReefL3(45),
+    coralL4(150),
+    algaeBarge(150);
 
     public final double angle;
 

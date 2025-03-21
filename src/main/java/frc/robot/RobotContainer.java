@@ -222,6 +222,7 @@ public class RobotContainer {
     joystick.button(9).onTrue(Commands.runOnce(() -> climber.retract(), climber));
     joystick.button(8).onFalse(Commands.runOnce(() -> climber.stop(), climber));
     joystick.button(9).onFalse(Commands.runOnce(() -> climber.stop(), climber));
+
     if (useSecondController) {
       manipulator.setDefaultCommand(
           ManipulatorCommands.joystickManipulator(
@@ -238,10 +239,10 @@ public class RobotContainer {
           .onTrue(Commands.runOnce(() -> manipulator.decrementLevel(), manipulator));
       xBoxController
           .leftBumper()
-          .whileTrue(Commands.runOnce(() -> manipulator.intakeCoralExpelAlgae(), manipulator));
+          .whileTrue(Commands.run(() -> manipulator.intakeCoralExpelAlgae(), manipulator));
       xBoxController
           .rightBumper()
-          .whileTrue(Commands.runOnce(() -> manipulator.expelCoralIntakeAlgae(), manipulator));
+          .whileTrue(Commands.run(() -> manipulator.expelCoralIntakeAlgae(), manipulator));
       xBoxController
           .leftBumper()
           .onFalse(Commands.runOnce(() -> manipulator.stopIntakeCoral(), manipulator));
