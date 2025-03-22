@@ -2,6 +2,7 @@ package frc.robot.util;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 import edu.wpi.first.wpilibj.util.Color;
@@ -9,13 +10,18 @@ import edu.wpi.first.wpilibj.util.Color;
 public class LEDStrip {
   private AddressableLED m_led;
   private AddressableLEDBuffer m_ledBuffer;
+  private AddressableLEDBufferView m_leftBuffer;
+  private AddressableLEDBufferView m_rightBuffer;
 
   public LEDStrip(int pwmPort, int numPixels) {
     m_led = new AddressableLED(pwmPort);
     m_ledBuffer = new AddressableLEDBuffer(numPixels);
+    m_leftBuffer = m_ledBuffer.createView(0, numPixels/2 - 1);
+    m_rightBuffer = m_ledBuffer.createView(numPixels/2, numPixels-1).reversed();
+
     m_led.setLength(m_ledBuffer.getLength());
-    m_led.start();
     m_led.setData(m_ledBuffer);
+    m_led.start();
   }
 
   public void updateLEDs(boolean holdingCoral, double ledRatio) {
@@ -33,14 +39,8 @@ public class LEDStrip {
   }
 
   public LEDPattern progressMask(LEDPattern pattern, double ledRatio) {
-    // The strip is split in half between the robot's sides
-    // Mirrors the effect on both sides
-    double splitRatio = ledRatio * 0.5;
-    LEDPattern mask1 = LEDPattern.progressMaskLayer(() -> splitRatio);
-    LEDPattern masked1 = pattern.mask(mask1);
-    LEDPattern mask2 = LEDPattern.progressMaskLayer(() -> splitRatio).reversed();
-    LEDPattern masked2 = pattern.mask(mask2);
-    return masked1.overlayOn(masked2);
+    LEDPattern mask = LEDPattern.progressMaskLayer(() -> ledRatio);
+    return pattern.mask(mask);
   }
 
   public LEDPattern setGradient(Color bottom, Color top) {
