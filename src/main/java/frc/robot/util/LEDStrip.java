@@ -33,7 +33,8 @@ public class LEDStrip {
       pattern = progressMask(pattern, ledRatio);
     }
 
-    pattern.applyTo(m_ledBuffer);
+    pattern.applyTo(m_leftBuffer);
+    pattern.applyTo(m_rightBuffer);
 
     m_led.setData(m_ledBuffer);
   }
