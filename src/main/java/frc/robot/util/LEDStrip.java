@@ -16,8 +16,8 @@ public class LEDStrip {
   public LEDStrip(int pwmPort, int numPixels) {
     m_led = new AddressableLED(pwmPort);
     m_ledBuffer = new AddressableLEDBuffer(numPixels);
-    m_leftBuffer = m_ledBuffer.createView(0, numPixels/2 - 1);
-    m_rightBuffer = m_ledBuffer.createView(numPixels/2, numPixels-1).reversed();
+    m_leftBuffer = m_ledBuffer.createView(0, numPixels / 2 - 1);
+    m_rightBuffer = m_ledBuffer.createView(numPixels / 2, numPixels - 1).reversed();
 
     m_led.setLength(m_ledBuffer.getLength());
     m_led.setData(m_ledBuffer);

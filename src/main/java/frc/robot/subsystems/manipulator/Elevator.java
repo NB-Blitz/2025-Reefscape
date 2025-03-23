@@ -68,7 +68,7 @@ public class Elevator implements ElevatorInterface {
 
   private final double maxElevatorSpeed = 0.7; // meters per second
   private final double positionIncrement = maxElevatorSpeed / 50;
-  private final double topLimit = 0.73;
+  private final double topLimit = 0.75;
   private final double bottomLimit = 0;
 
   public Elevator() {

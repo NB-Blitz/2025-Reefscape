@@ -6,7 +6,7 @@ public interface ElevatorInterface {
   // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)
   public enum ElevatorPosition {
     bottom(0),
-    algaeProcessor(0.24),
+    algaeProcessor(0),
     coralL1(0.24),
     coralIntake(0.3),
     coralL2(0.39),
@@ -14,7 +14,7 @@ public interface ElevatorInterface {
     coralL3(0.66),
     algaeInReefL3(0.7),
     coralL4(0.54),
-    algaeBarge(0.7);
+    algaeBarge(0.75);
 
     public final double position;
 

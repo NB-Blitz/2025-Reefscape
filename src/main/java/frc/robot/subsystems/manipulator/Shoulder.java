@@ -15,11 +15,14 @@ public class Shoulder extends Joint {
   private static final double gearRatio = 1 / (64 * 3.6);
   private static final int jointMotorCANID = 11;
   private static final double maxJointSpeed = 120.0; // degrees per second
+  private static final double forwardLimit = 180.0;
+  private static final double reverseLimit = 0;
+  private static final double angleOffset = 7;
 
   // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)
   public enum ShoulderAngle {
     bottom(0),
-    algaeProcessor(12),
+    algaeProcessor(0),
     coralL1(12),
     coralIntake(53.6),
     coralL2(45),
@@ -27,7 +30,7 @@ public class Shoulder extends Joint {
     coralL3(66.5),
     algaeInReefL3(45),
     coralL4(150),
-    algaeBarge(150);
+    algaeBarge(165);
 
     public final double angle;
 
@@ -47,9 +50,9 @@ public class Shoulder extends Joint {
         1.0,
         true,
         true,
-        150.0,
-        0.0,
-        7.0,
+        forwardLimit,
+        reverseLimit,
+        angleOffset,
         new SparkFlex(jointMotorCANID, MotorType.kBrushless),
         new SparkFlexConfig());
 
