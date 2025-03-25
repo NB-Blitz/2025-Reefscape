@@ -66,6 +66,33 @@ public class Vision extends SubsystemBase {
     return inputs[cameraIndex].latestTargetObservation.tx();
   }
 
+  /**
+   * Returns the tag poses on the reef in view.
+   *
+   * @param cameraIndex The index of the camera to use. -1 for all cameras.
+   */
+  public List<Pose2d> getReefTags(int cameraIndex) {
+    List<Pose2d> tags = new LinkedList<>();
+    // Add tag poses
+    if (cameraIndex == -1) { // If all cameras are requested
+      for (int i = 0; i < io.length; i++) {
+        tags.addAll(getReefTags(i));
+      }
+      return tags;
+    }
+
+    for (int tagId : inputs[cameraIndex].tagIds) {
+      if ((tagId <= 22 && tagId >= 17) || (tagId <= 11 && tagId >= 6)) { // Only add reef tags
+        Optional<Pose3d> tagPose = aprilTagLayout.getTagPose(tagId);
+        if (tagPose.isPresent()) {
+          tags.add(tagPose.get().toPose2d());
+        }
+      }
+    }
+
+    return tags;
+  }
+
   @Override
   public void periodic() {
     for (int i = 0; i < io.length; i++) {

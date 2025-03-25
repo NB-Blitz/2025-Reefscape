@@ -22,52 +22,52 @@ public class Manipulator extends SubsystemBase {
 
   private final String[] presetNames = {
     "Bottom",
-    "Processor",
+    // "Processor",
     "Coral L1",
     "Coral Station",
     "Coral L2",
-    "Algae L2",
+    // "Algae L2",
     "Coral L3",
-    "Algae L3",
+    // "Algae L3",
     "Coral L4",
     "Barge"
   };
 
   private final ElevatorPosition[] elevatorPositions = {
     ElevatorPosition.bottom,
-    ElevatorPosition.algaeProcessor,
+    // ElevatorPosition.algaeProcessor,
     ElevatorPosition.coralL1,
     ElevatorPosition.coralIntake,
     ElevatorPosition.coralL2,
-    ElevatorPosition.algaeInReefL2,
+    // ElevatorPosition.algaeInReefL2,
     ElevatorPosition.coralL3,
-    ElevatorPosition.algaeInReefL3,
+    // ElevatorPosition.algaeInReefL3,
     ElevatorPosition.coralL4,
     ElevatorPosition.algaeBarge
   };
 
   private final ShoulderAngle[] shoulderAngles = {
     ShoulderAngle.bottom,
-    ShoulderAngle.algaeProcessor,
+    // ShoulderAngle.algaeProcessor,
     ShoulderAngle.coralL1,
     ShoulderAngle.coralIntake,
     ShoulderAngle.coralL2,
-    ShoulderAngle.algaeInReefL2,
+    // ShoulderAngle.algaeInReefL2,
     ShoulderAngle.coralL3,
-    ShoulderAngle.algaeInReefL3,
+    // ShoulderAngle.algaeInReefL3,
     ShoulderAngle.coralL4,
     ShoulderAngle.algaeBarge
   };
 
   private final WristAngle[] wristAngles = {
     WristAngle.bottom,
-    WristAngle.algaeProcessor,
+    // WristAngle.algaeProcessor,
     WristAngle.coralL1,
     WristAngle.coralIntake,
     WristAngle.coralL2,
-    WristAngle.algaeInReefL2,
+    // WristAngle.algaeInReefL2,
     WristAngle.coralL3,
-    WristAngle.algaeInReefL3,
+    // WristAngle.algaeInReefL3,
     WristAngle.coralL4,
     WristAngle.algaeBarge
   };

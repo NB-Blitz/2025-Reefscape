@@ -18,7 +18,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -63,7 +62,7 @@ public class RobotContainer {
   private final Climber climber;
 
   // Constant to switch between the practice SDS base and the competition Flex base
-  private final boolean useSecondController = true;
+  private final boolean useSecondController = false;
 
   // Controllers
   private final CommandJoystick joystick = new CommandJoystick(0);
@@ -139,6 +138,14 @@ public class RobotContainer {
         break;
     }
 
+    NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(manipulator));
+    NamedCommands.registerCommand("ExpelCoral", new ExpelCoral(manipulator));
+    NamedCommands.registerCommand(
+        "StopHand", Commands.runOnce(() -> manipulator.stopHand(), manipulator));
+    NamedCommands.registerCommand("GoToL1", new GoToPreset(manipulator, 2));
+    NamedCommands.registerCommand("GoToCoralStation", new GoToPreset(manipulator, 3));
+    NamedCommands.registerCommand("GoToL2", new GoToPreset(manipulator, 4));
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -160,14 +167,6 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-
-    NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(manipulator));
-    NamedCommands.registerCommand("ExpelCoral", new ExpelCoral(manipulator));
-    NamedCommands.registerCommand(
-        "StopHand", Commands.runOnce(() -> manipulator.stopHand(), manipulator));
-    NamedCommands.registerCommand("GoToL1", new GoToPreset(manipulator, 2));
-    NamedCommands.registerCommand("GoToCoralStation", new GoToPreset(manipulator, 3));
-    NamedCommands.registerCommand("GoToL2", new GoToPreset(manipulator, 4));
   }
 
   /**
@@ -187,11 +186,11 @@ public class RobotContainer {
             () -> 0.5 * (1 + -joystick.getRawAxis(3))));
 
     // Lock to 0° when A button is held
-    joystick
-        .button(11)
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive, () -> -joystick.getY(), () -> -joystick.getX(), () -> new Rotation2d()));
+    // joystick
+    //     .button(11)
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive, () -> -joystick.getY(), () -> -joystick.getX(), () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
     joystick.button(4).onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -223,6 +222,17 @@ public class RobotContainer {
     joystick.button(8).onFalse(Commands.runOnce(() -> climber.stop(), climber));
     joystick.button(9).onFalse(Commands.runOnce(() -> climber.stop(), climber));
 
+    joystick
+        .button(3)
+        .onTrue(
+            DriveCommands.getPathFromNearestTag(
+                drive, () -> vision.getReefTags(0), Constants.rightReef[3]));
+    joystick
+        .button(2)
+        .onTrue(
+            DriveCommands.getPathFromNearestTag(
+                drive, () -> vision.getReefTags(0), Constants.leftReef[3]));
+
     if (useSecondController) {
       manipulator.setDefaultCommand(
           ManipulatorCommands.joystickManipulator(
@@ -239,15 +249,11 @@ public class RobotContainer {
           .onTrue(Commands.runOnce(() -> manipulator.decrementLevel(), manipulator));
       xBoxController
           .leftBumper()
-          .whileTrue(Commands.run(() -> manipulator.expelCoralIntakeAlgae(), manipulator));
-      xBoxController
-          .rightBumper()
-          .whileTrue(Commands.run(() -> manipulator.intakeCoralExpelAlgae(), manipulator));
-      xBoxController
-          .leftBumper()
+          .whileTrue(Commands.run(() -> manipulator.expelCoralIntakeAlgae(), manipulator))
           .onFalse(Commands.runOnce(() -> manipulator.stopExpelCoral(), manipulator));
       xBoxController
           .rightBumper()
+          .whileTrue(Commands.run(() -> manipulator.intakeCoralExpelAlgae(), manipulator))
           .onFalse(Commands.runOnce(() -> manipulator.stopIntakeCoral(), manipulator));
       xBoxController
           .leftStick()
