@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -14,7 +15,7 @@ import java.util.function.Supplier;
 public class ReefAlign extends InstantCommand {
   private Drive driveRef;
   private Supplier<List<Pose2d>> reefTagSupplier;
-  private Pose2d offsetFromTag;
+  private Transform2d offsetFromTag;
 
   private ChassisSpeeds speeds = new ChassisSpeeds();
 
@@ -27,10 +28,17 @@ public class ReefAlign extends InstantCommand {
   private ChassisSpeeds maximumSpeeds = new ChassisSpeeds(0.95, 1.0, 1.85);
   private Translation3d goalErrors = new Translation3d(0.015, 0.015, 0.01);
 
-  public ReefAlign(Drive drive, Supplier<List<Pose2d>> reefTags, Pose2d offsetPose2d) {
+  private Pose2d cachedTarget = null;
+
+  public ReefAlign(Drive drive, Supplier<List<Pose2d>> reefTags, Transform2d offsetPose2d) {
     driveRef = drive;
     reefTagSupplier = reefTags;
     offsetFromTag = offsetPose2d;
+  }
+
+  @Override
+  public void initialize() {
+    cachedTarget = null;
   }
 
   @Override
@@ -52,11 +60,17 @@ public class ReefAlign extends InstantCommand {
     double maxSpeedY = Math.abs(maximumSpeeds.vyMetersPerSecond);
     double maxSpeedTheta = Math.abs(maximumSpeeds.omegaRadiansPerSecond);
 
-    if (reefTagSupplier.get().isEmpty()) {
-      return false;
+    if (reefTagSupplier.get().isEmpty() && cachedTarget == null) {
+      return true;
     }
-    Pose2d nearestTag = driveRef.getPose().nearest(reefTagSupplier.get());
-    Pose2d fieldRelativeTarget = offsetFromTag.relativeTo(nearestTag);
+    Pose2d fieldRelativeTarget;
+    if (cachedTarget == null) {
+      Pose2d nearestTag = driveRef.getPose().nearest(reefTagSupplier.get());
+      fieldRelativeTarget = nearestTag.transformBy(offsetFromTag);
+      cachedTarget = fieldRelativeTarget;
+    } else {
+      fieldRelativeTarget = cachedTarget;
+    }
 
     Pose2d offsetPose = driveRef.getPose().relativeTo(fieldRelativeTarget);
 
