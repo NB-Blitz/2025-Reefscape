@@ -17,8 +17,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -45,7 +43,6 @@ import frc.robot.subsystems.manipulator.Manipulator;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -63,7 +60,7 @@ public class RobotContainer {
   private final Climber climber;
 
   // Constant to switch between the practice SDS base and the competition Flex base
-  private final boolean useSecondController = false;
+  private final boolean useSecondController = true;
 
   // Controllers
   private final CommandJoystick joystick = new CommandJoystick(0);
@@ -104,8 +101,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOLimelight(camera0Name, drive::getRotation),
-                new VisionIOPhotonVision(camera1Name, robotToCamera1));
+                new VisionIOLimelight(camera0Name, drive::getRotation));
+        // new VisionIOPhotonVision(camera1Name, robotToCamera1));
         break;
 
       case SIM:
@@ -135,7 +132,6 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {});
-
         break;
     }
 

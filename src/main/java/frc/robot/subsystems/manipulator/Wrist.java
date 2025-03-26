@@ -45,11 +45,11 @@ public class Wrist extends Joint {
         gearRatio,
         maxJointSpeed,
         1.0,
-        true,
         false,
+        true,
         152.0,
         52,
-        20.0,
+        75.0,
         new SparkFlex(jointMotorCANID, MotorType.kBrushless),
         new SparkFlexConfig());
 
