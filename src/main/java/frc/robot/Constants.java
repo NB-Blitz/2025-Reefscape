@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -31,15 +32,19 @@ public final class Constants {
         new Pose2d(0.6, 0.1, Rotation2d.fromDegrees(180.0)),
         new Pose2d(0.5, 0.1, Rotation2d.fromDegrees(180.0)),
         new Pose2d(0.4, 0.1, Rotation2d.fromDegrees(180.0)),
-        new Pose2d(0.3, 0.1, Rotation2d.fromDegrees(180.0))
+        new Pose2d(1, 0.1, Rotation2d.fromDegrees(180.0))
       };
   public static final Pose2d[] leftReef =
       new Pose2d[] {
         new Pose2d(0.6, -0.1, Rotation2d.fromDegrees(180.0)),
         new Pose2d(0.5, -0.1, Rotation2d.fromDegrees(180.0)),
         new Pose2d(0.4, -0.1, Rotation2d.fromDegrees(180.0)),
-        new Pose2d(0.3, -0.1, Rotation2d.fromDegrees(180.0))
+        new Pose2d(1, -0.1, Rotation2d.fromDegrees(180.0))
       };
+
+  public static final PIDController xController = new PIDController(6, 0, 0);
+  public static final PIDController yController = new PIDController(4, 0, 0);
+  public static final PIDController thetaController = new PIDController(7, 0, 0);
 
   public static enum Mode {
     /** Running on a real robot. */

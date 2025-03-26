@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 // import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ManipulatorCommands;
+import frc.robot.commands.ReefAlign;
 import frc.robot.commands.auto.ExpelCoral;
 import frc.robot.commands.auto.GoToPreset;
 import frc.robot.commands.auto.IntakeCoral;
@@ -201,37 +202,33 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> drive.resetGyro(), drive).ignoringDisable(true));
 
     // Auto aim command example
-    @SuppressWarnings("resource")
-    PIDController aimController = new PIDController(1.0, 0.0, 0.0);
-    aimController.enableContinuousInput(-Math.PI, Math.PI);
-    joystick
-        .button(6)
-        .whileTrue(
-            Commands.startRun(
-                () -> {
-                  aimController.reset();
-                },
-                () -> {
-                  drive.runVelocity(
-                      new ChassisSpeeds(
-                          0.0, aimController.calculate(vision.getTargetX(0).getRadians()), 0.0));
-                },
-                drive));
+    // @SuppressWarnings("resource")
+    // PIDController aimController = new PIDController(1.0, 0.0, 0.0);
+    // aimController.enableContinuousInput(-Math.PI, Math.PI);
+    // joystick
+    //     .button(6)
+    //     .whileTrue(
+    //         Commands.startRun(
+    //             () -> {
+    //               aimController.reset();
+    //             },
+    //             () -> {
+    //               drive.runVelocity(
+    //                   new ChassisSpeeds(
+    //                       0.0, aimController.calculate(vision.getTargetX(0).getRadians()), 0.0));
+    //             },
+    //             drive));
     joystick.button(8).onTrue(Commands.runOnce(() -> climber.deploy(), climber));
     joystick.button(9).onTrue(Commands.runOnce(() -> climber.retract(), climber));
     joystick.button(8).onFalse(Commands.runOnce(() -> climber.stop(), climber));
     joystick.button(9).onFalse(Commands.runOnce(() -> climber.stop(), climber));
 
     joystick
-        .button(3)
-        .onTrue(
-            DriveCommands.getPathFromNearestTag(
-                drive, () -> vision.getReefTags(0), Constants.rightReef[3]));
+        .button(6)
+        .whileTrue(new ReefAlign(drive, () -> vision.getReefTags(0), Constants.rightReef[3]));
     joystick
-        .button(2)
-        .onTrue(
-            DriveCommands.getPathFromNearestTag(
-                drive, () -> vision.getReefTags(0), Constants.leftReef[3]));
+        .button(5)
+        .whileTrue(new ReefAlign(drive, () -> vision.getReefTags(0), Constants.leftReef[3]));
 
     if (useSecondController) {
       manipulator.setDefaultCommand(

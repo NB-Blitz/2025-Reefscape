@@ -82,7 +82,9 @@ public class Vision extends SubsystemBase {
     }
 
     for (int tagId : inputs[cameraIndex].tagIds) {
-      if ((tagId <= 22 && tagId >= 17) || (tagId <= 11 && tagId >= 6)) { // Only add reef tags
+      if (tagId
+          == 8) { // (tagId <= 22 && tagId >= 17) || (tagId <= 11 && tagId >= 6)) { // Only add reef
+        // tags
         Optional<Pose3d> tagPose = aprilTagLayout.getTagPose(tagId);
         if (tagPose.isPresent()) {
           tags.add(tagPose.get().toPose2d());

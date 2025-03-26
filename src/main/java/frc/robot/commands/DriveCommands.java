@@ -13,8 +13,6 @@
 
 package frc.robot.commands;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -295,23 +293,6 @@ public class DriveCommands {
                               + formatter.format(Units.metersToInches(wheelRadius))
                               + " inches");
                     })));
-  }
-
-  public static Command getPathFromNearestTag(
-      Drive drive, Supplier<List<Pose2d>> reefTags, Pose2d offsetPose2d) {
-    if (reefTags.get().isEmpty()) {
-      return Commands.none();
-    }
-    Pose2d nearestTag = drive.getPose().nearest(reefTags.get());
-    Pose2d fieldRelativeTarget = offsetPose2d.relativeTo(nearestTag);
-    // Create the constraints to use while pathfinding
-    PathConstraints constraints =
-        new PathConstraints(2.5, 3.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
-
-    // Since AutoBuilder is configured, we can use it to build pathfinding commands
-    return AutoBuilder.pathfindToPose(
-        fieldRelativeTarget, constraints, 0.25 // Goal end velocity in meters/sec
-        );
   }
 
   private static class WheelRadiusCharacterizationState {
