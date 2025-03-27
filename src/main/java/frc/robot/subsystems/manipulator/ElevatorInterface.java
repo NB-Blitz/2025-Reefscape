@@ -13,7 +13,7 @@ public interface ElevatorInterface {
     algaeInReefL2(0.5),
     coralL3(0.66),
     algaeInReefL3(0.7),
-    coralL4(0.57),
+    coralL4(0.62),
     algaeBarge(0.75);
 
     public final double position;

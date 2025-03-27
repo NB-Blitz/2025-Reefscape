@@ -24,7 +24,7 @@ public class Joint {
   private RelativeEncoder jointEncoder;
   private AbsoluteEncoder jointAbsoluteEncoder;
   private SparkClosedLoopController jointController;
-  private final int currentLimit = 200;
+  private final int currentLimit = 300;
   private final double maxJointSpeed;
   private final double angleIncrement;
   private final double topLimit;

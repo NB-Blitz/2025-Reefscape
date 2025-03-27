@@ -25,7 +25,7 @@ public class ReefAlign extends InstantCommand {
 
   private boolean aligned = false;
 
-  private ChassisSpeeds maximumSpeeds = new ChassisSpeeds(0.95, 1.0, 1.85);
+  private ChassisSpeeds maximumSpeeds = new ChassisSpeeds(1.0, 1.0, 1.85);
   private Translation3d goalErrors = new Translation3d(0.015, 0.015, 0.01);
 
   private Pose2d cachedTarget = null;
