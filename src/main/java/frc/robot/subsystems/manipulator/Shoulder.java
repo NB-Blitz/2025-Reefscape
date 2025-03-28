@@ -23,8 +23,9 @@ public class Shoulder extends Joint {
   public enum ShoulderAngle {
     bottom(0),
     algaeProcessor(0),
+    coralStation(3.06),
     coralL1(12),
-    coralIntake(53.6),
+    frontIntake(53.6),
     coralL2(45),
     algaeInReefL2(45),
     coralL3(66.5),

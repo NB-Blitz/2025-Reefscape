@@ -20,8 +20,9 @@ public class Wrist extends Joint {
   public enum WristAngle {
     bottom(152),
     algaeProcessor(149),
+    coralStation(130),
     coralL1(142),
-    coralIntake(150),
+    frontIntake(150),
     coralL2(115),
     algaeInReefL2(115),
     coralL3(91),

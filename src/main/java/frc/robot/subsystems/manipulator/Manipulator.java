@@ -18,13 +18,16 @@ public class Manipulator extends SubsystemBase {
 
   // private final double elevatorHeightTolerance = 0.025; // meters
   private final double shoulderNoFoulTolerance = 28.0; // degrees
+  private final double elevatorTargetTolerance = 0.025;
+  private final double jointTargetTolerance = 1.25;
   private int cachedWristIndex = 0;
 
   private final String[] presetNames = {
     "Bottom",
     // "Processor",
+    "Intake Ramp",
     "Coral L1",
-    "Coral Station",
+    "Front Intake",
     "Coral L2",
     // "Algae L2",
     "Coral L3",
@@ -36,8 +39,9 @@ public class Manipulator extends SubsystemBase {
   private final ElevatorPosition[] elevatorPositions = {
     ElevatorPosition.bottom,
     // ElevatorPosition.algaeProcessor,
+    ElevatorPosition.coralStation,
     ElevatorPosition.coralL1,
-    ElevatorPosition.coralIntake,
+    ElevatorPosition.frontIntake,
     ElevatorPosition.coralL2,
     // ElevatorPosition.algaeInReefL2,
     ElevatorPosition.coralL3,
@@ -49,8 +53,9 @@ public class Manipulator extends SubsystemBase {
   private final ShoulderAngle[] shoulderAngles = {
     ShoulderAngle.bottom,
     // ShoulderAngle.algaeProcessor,
+    ShoulderAngle.coralStation,
     ShoulderAngle.coralL1,
-    ShoulderAngle.coralIntake,
+    ShoulderAngle.frontIntake,
     ShoulderAngle.coralL2,
     // ShoulderAngle.algaeInReefL2,
     ShoulderAngle.coralL3,
@@ -62,8 +67,9 @@ public class Manipulator extends SubsystemBase {
   private final WristAngle[] wristAngles = {
     WristAngle.bottom,
     // WristAngle.algaeProcessor,
+    WristAngle.coralStation,
     WristAngle.coralL1,
-    WristAngle.coralIntake,
+    WristAngle.frontIntake,
     WristAngle.coralL2,
     // WristAngle.algaeInReefL2,
     WristAngle.coralL3,
@@ -78,6 +84,7 @@ public class Manipulator extends SubsystemBase {
   private boolean joystickCommand = true;
   private boolean isIntakingCoral = false;
   private boolean isExpellingCoral = false;
+  private boolean forwardLimit = false;
 
   public void periodic() {
     /**
@@ -87,6 +94,10 @@ public class Manipulator extends SubsystemBase {
     elevator.move();
     shoulder.updateJoint();
     wrist.updateJoint();
+
+    if (!forwardLimit && !hand.holdingCoral()) {
+      forwardLimit = true;
+    }
 
     // SmartDashboard.putString("Preset Level", presetNames[levelIndex]);
     String display = "";
@@ -161,7 +172,8 @@ public class Manipulator extends SubsystemBase {
     if (isIntakingCoral) {
       hand.stopMotors();
     } else {
-      if (hand.holdingCoral() && shoulder.getPosition() > 130 && wrist.getPosition() > 100) {
+      if (hand.holdingCoral()
+          && (forwardLimit || (shoulder.getPosition() > 130 && wrist.getPosition() > 100))) {
         hand.stopMotors();
       } else {
         hand.expelCoral();
@@ -181,6 +193,7 @@ public class Manipulator extends SubsystemBase {
     if (!isIntakingCoral) {
       hand.stopMotors();
     }
+    forwardLimit = false;
   }
 
   public void emergencyStop() {
@@ -228,9 +241,15 @@ public class Manipulator extends SubsystemBase {
   }
 
   public boolean isAtTarget() {
-    boolean elevatorAtTarget = elevator.getHeight() == elevator.getTarget();
-    boolean shoulderAtTarget = shoulder.getPosition() == shoulder.getTarget();
-    boolean wristAtTarget = wrist.getPosition() == wrist.getTarget();
+    boolean elevatorAtTarget =
+        elevator.getHeight() < elevator.getTarget() + elevatorTargetTolerance
+            && elevator.getHeight() > elevator.getTarget() - elevatorTargetTolerance;
+    boolean shoulderAtTarget =
+        shoulder.getPosition() < shoulder.getTarget() + jointTargetTolerance
+            && shoulder.getPosition() > shoulder.getTarget() - jointTargetTolerance;
+    boolean wristAtTarget =
+        wrist.getPosition() < wrist.getTarget() + jointTargetTolerance
+            && wrist.getPosition() > wrist.getTarget() - jointTargetTolerance;
     return elevatorAtTarget && shoulderAtTarget && wristAtTarget;
   }
 

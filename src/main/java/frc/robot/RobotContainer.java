@@ -30,7 +30,6 @@ import frc.robot.commands.ReefAlign;
 import frc.robot.commands.auto.ExpelCoral;
 import frc.robot.commands.auto.GoToPreset;
 import frc.robot.commands.auto.IntakeCoral;
-import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -43,6 +42,7 @@ import frc.robot.subsystems.manipulator.Manipulator;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -57,7 +57,6 @@ public class RobotContainer {
   private final Vision vision;
   private final Drive drive;
   private final Manipulator manipulator;
-  private final Climber climber;
 
   // Constant to switch between the practice SDS base and the competition Flex base
   private final boolean useSecondController = true;
@@ -77,7 +76,7 @@ public class RobotContainer {
       xBoxController = null;
     }
     manipulator = new Manipulator();
-    climber = new Climber();
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -101,8 +100,8 @@ public class RobotContainer {
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                new VisionIOLimelight(camera0Name, drive::getRotation));
-        // new VisionIOPhotonVision(camera1Name, robotToCamera1));
+                new VisionIOLimelight(camera0Name, drive::getRotation),
+                new VisionIOPhotonVision(camera1Name, robotToCamera1));
         break;
 
       case SIM:
@@ -197,28 +196,7 @@ public class RobotContainer {
         .button(7)
         .onTrue(Commands.runOnce(() -> drive.resetGyro(), drive).ignoringDisable(true));
 
-    // Auto aim command example
-    // @SuppressWarnings("resource")
-    // PIDController aimController = new PIDController(1.0, 0.0, 0.0);
-    // aimController.enableContinuousInput(-Math.PI, Math.PI);
-    // joystick
-    //     .button(6)
-    //     .whileTrue(
-    //         Commands.startRun(
-    //             () -> {
-    //               aimController.reset();
-    //             },
-    //             () -> {
-    //               drive.runVelocity(
-    //                   new ChassisSpeeds(
-    //                       0.0, aimController.calculate(vision.getTargetX(0).getRadians()), 0.0));
-    //             },
-    //             drive));
-    joystick.button(8).onTrue(Commands.runOnce(() -> climber.deploy(), climber));
-    joystick.button(9).onTrue(Commands.runOnce(() -> climber.retract(), climber));
-    joystick.button(8).onFalse(Commands.runOnce(() -> climber.stop(), climber));
-    joystick.button(9).onFalse(Commands.runOnce(() -> climber.stop(), climber));
-
+    // Align to reef positions
     joystick
         .button(6)
         .whileTrue(new ReefAlign(drive, () -> vision.getReefTags(0), Constants.rightReef[3]));

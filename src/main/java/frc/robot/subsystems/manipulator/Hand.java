@@ -32,9 +32,6 @@ public class Hand implements HandInterface {
 
   private final DigitalInput coralSensor;
 
-  // private final double p = 0.0001;
-  // private final double RPM = 60 * 5;
-
   public Hand() {
 
     topMotor = new SparkFlex(topMotorCANID, MotorType.kBrushless);
@@ -48,7 +45,6 @@ public class Hand implements HandInterface {
         .inverted(motorInverted)
         .smartCurrentLimit(currentLimit)
         .voltageCompensation(12.0);
-    // bottomMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pidf(p, 0, 0, 0);
     bottomMotorConfig
         .signals
         .appliedOutputPeriodMs(20)
@@ -67,7 +63,6 @@ public class Hand implements HandInterface {
         .inverted(!motorInverted)
         .smartCurrentLimit(currentLimit)
         .voltageCompensation(12.0);
-    // topMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pidf(p, 0, 0, 0);
     topMotorConfig
         .signals
         .appliedOutputPeriodMs(20)
