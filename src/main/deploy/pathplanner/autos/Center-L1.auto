@@ -9,15 +9,15 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "Middle - Reef"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "GoToL1"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Center-Reef"
                 }
               }
             ]

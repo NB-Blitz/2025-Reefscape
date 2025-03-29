@@ -19,8 +19,8 @@ import edu.wpi.first.math.util.Units;
 
 public class FlexConstants {
   public static final double maxSpeedMetersPerSec = Units.inchesToMeters(19.8 * 12);
-  public static final double trackWidth = Units.inchesToMeters(23.0);
-  public static final double wheelBase = Units.inchesToMeters(23.0);
+  public static final double trackWidth = Units.inchesToMeters(28.0);
+  public static final double wheelBase = Units.inchesToMeters(28.0);
 
   // Zeroed rotation values for each module (not necessary, calibration done with client)
   public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0); // 0.2106459
@@ -30,7 +30,7 @@ public class FlexConstants {
 
   // Drive motor configuration
   public static final boolean driveInverted = true;
-  public static final int driveMotorCurrentLimit = 300;
+  public static final int driveMotorCurrentLimit = 60;
   public static final double wheelRadiusMeters = Units.inchesToMeters(2);
   public static final double driveMotorReduction =
       5.14; // ThriftyBot with 14 pinion teeth and 16 spur teeth
@@ -49,7 +49,7 @@ public class FlexConstants {
 
   // Turn motor configuration
   public static final boolean turnInverted = false;
-  public static final int turnMotorCurrentLimit = 300;
+  public static final int turnMotorCurrentLimit = 40;
   public static final double turnMotorReduction = 25.0;
   public static final DCMotor turnGearbox = DCMotor.getNeoVortex(1);
 
@@ -61,7 +61,7 @@ public class FlexConstants {
       absoluteTurnEncoderPositionFactor / 60.0; // RPM -> Rad/Sec
 
   // Turn PID configuration
-  public static final double turnKp = 1.8;
+  public static final double turnKp = 1.6;
   public static final double turnKd = 1.8;
 
   public static final double turnSimP = 8.0;

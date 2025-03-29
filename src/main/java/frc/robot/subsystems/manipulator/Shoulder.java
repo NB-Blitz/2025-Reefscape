@@ -31,7 +31,7 @@ public class Shoulder extends Joint {
     coralL3(66.5),
     algaeInReefL3(45),
     coralL4(150),
-    algaeBarge(165);
+    algaeBarge(175);
 
     public final double angle;
 

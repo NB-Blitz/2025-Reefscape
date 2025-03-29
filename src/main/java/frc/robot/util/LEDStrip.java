@@ -30,8 +30,8 @@ public class LEDStrip {
       pattern = setSolid(Color.kGreen);
     } else {
       pattern = setSolid(Color.kYellow);
-      pattern = progressMask(pattern, ledRatio);
     }
+    pattern = progressMask(pattern, ledRatio);
 
     pattern.applyTo(m_leftBuffer);
     pattern.applyTo(m_rightBuffer);

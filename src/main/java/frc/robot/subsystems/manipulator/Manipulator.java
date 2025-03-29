@@ -18,30 +18,30 @@ public class Manipulator extends SubsystemBase {
 
   // private final double elevatorHeightTolerance = 0.025; // meters
   private final double shoulderNoFoulTolerance = 28.0; // degrees
-  private final double elevatorTargetTolerance = 0.025;
+  private final double elevatorTargetTolerance = 0.035;
   private final double jointTargetTolerance = 1.25;
   private int cachedWristIndex = 0;
 
-  private final String[] presetNames = {
-    "Bottom",
-    // "Processor",
-    "Intake Ramp",
-    "Coral L1",
-    "Front Intake",
-    "Coral L2",
-    // "Algae L2",
-    "Coral L3",
-    // "Algae L3",
-    "Coral L4",
-    "Barge"
-  };
+  // private final String[] presetNames = {
+  //   "Bottom",
+  //   // "Processor",
+  //   "Intake Ramp",
+  //   "Coral L1",
+  //   // "Front Intake",
+  //   "Coral L2",
+  //   // "Algae L2",
+  //   "Coral L3",
+  //   // "Algae L3",
+  //   "Coral L4",
+  //   "Barge"
+  // };
 
   private final ElevatorPosition[] elevatorPositions = {
     ElevatorPosition.bottom,
     // ElevatorPosition.algaeProcessor,
     ElevatorPosition.coralStation,
     ElevatorPosition.coralL1,
-    ElevatorPosition.frontIntake,
+    // ElevatorPosition.frontIntake,
     ElevatorPosition.coralL2,
     // ElevatorPosition.algaeInReefL2,
     ElevatorPosition.coralL3,
@@ -55,7 +55,7 @@ public class Manipulator extends SubsystemBase {
     // ShoulderAngle.algaeProcessor,
     ShoulderAngle.coralStation,
     ShoulderAngle.coralL1,
-    ShoulderAngle.frontIntake,
+    // ShoulderAngle.frontIntake,
     ShoulderAngle.coralL2,
     // ShoulderAngle.algaeInReefL2,
     ShoulderAngle.coralL3,
@@ -69,7 +69,7 @@ public class Manipulator extends SubsystemBase {
     // WristAngle.algaeProcessor,
     WristAngle.coralStation,
     WristAngle.coralL1,
-    WristAngle.frontIntake,
+    // WristAngle.frontIntake,
     WristAngle.coralL2,
     // WristAngle.algaeInReefL2,
     WristAngle.coralL3,
@@ -99,58 +99,44 @@ public class Manipulator extends SubsystemBase {
       forwardLimit = true;
     }
 
-    // SmartDashboard.putString("Preset Level", presetNames[levelIndex]);
-    String display = "";
-    for (int i = 0; i < presetNames.length; i++) {
-      if (i == levelIndex) {
-        display += ">>>" + presetNames[i] + "<<<";
-      } else {
-        display += presetNames[i];
-      }
-      if (i != presetNames.length - 1) {
-        display += " -- ";
+    if (joystickCommand) {
+      double smallestDiff = Integer.MAX_VALUE;
+      double height = elevator.getHeight();
+      for (int i = 0; i < elevatorPositions.length; i++) {
+        double diff = elevatorPositions[i].position - height;
+        if (Math.abs(diff) < smallestDiff) {
+          levelIndex = i;
+          smallestDiff = Math.abs(diff);
+        }
       }
     }
-    SmartDashboard.putString("Preset Level", display);
+
+    SmartDashboard.putBoolean("Home", levelIndex == 0);
+    SmartDashboard.putBoolean("Intake", levelIndex == 1);
+    SmartDashboard.putBoolean("L1", levelIndex == 2);
+    SmartDashboard.putBoolean("L2", levelIndex == 3);
+    SmartDashboard.putBoolean("L3", levelIndex == 4);
+    SmartDashboard.putBoolean("L4", levelIndex == 5);
+    SmartDashboard.putBoolean("Barge", levelIndex == 6);
+
+    SmartDashboard.putBoolean("Elevator Switch", elevator.getLimit());
     SmartDashboard.putBoolean("Coral Sensor", hand.holdingCoral());
+    // SmartDashboard.putBoolean("Preset Control", positionCommand);
+    SmartDashboard.putBoolean("Manual Control", joystickCommand);
 
     double ledRatio = elevator.getHeight() / elevator.getTopLimit();
     ledStrip.updateLEDs(hand.holdingCoral(), ledRatio);
   }
 
   public void incrementLevel() {
-    if (joystickCommand) {
-      double smallestDiff = Integer.MAX_VALUE;
-      double height = elevator.getHeight();
-      for (int i = 1; i < elevatorPositions.length; i++) {
-        double diff = elevatorPositions[i].position - height;
-        if (diff > 0 && Math.abs(diff) < smallestDiff) {
-          levelIndex = i;
-          smallestDiff = diff;
-        }
-      }
-      joystickCommand = false;
-    } else {
-      if (levelIndex < elevatorPositions.length - 1) levelIndex++;
-    }
+    if (levelIndex < elevatorPositions.length - 1) levelIndex++;
+    joystickCommand = false;
     positionCommand = true;
   }
 
   public void decrementLevel() {
-    if (joystickCommand) {
-      double smallestDiff = Integer.MAX_VALUE;
-      double height = elevator.getHeight();
-      for (int i = elevatorPositions.length - 2; i >= 0; i--) {
-        double diff = elevatorPositions[i].position - height;
-        if (diff < 0 && Math.abs(diff) < smallestDiff) {
-          levelIndex = i;
-          smallestDiff = diff;
-        }
-      }
-      joystickCommand = false;
-    } else {
-      if (levelIndex > 0) levelIndex--;
-    }
+    if (levelIndex > 0) levelIndex--;
+    joystickCommand = false;
     positionCommand = true;
   }
 
@@ -236,8 +222,12 @@ public class Manipulator extends SubsystemBase {
   // Autonomous utility functions
   public void goToPreset(int presetIndex) {
     levelIndex = presetIndex;
-    positionCommand = true;
     joystickCommand = false;
+    positionCommand = true;
+    elevator.setPosition(elevatorPositions[levelIndex]);
+    shoulder.setJointAngle(shoulderAngles[levelIndex].ordinal());
+    wrist.setJointAngle(wristAngles[levelIndex].ordinal());
+    cachedWristIndex = levelIndex;
   }
 
   public boolean isAtTarget() {

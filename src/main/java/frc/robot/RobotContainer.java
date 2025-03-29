@@ -139,8 +139,8 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "StopHand", Commands.runOnce(() -> manipulator.stopHand(), manipulator));
     NamedCommands.registerCommand("GoToL1", new GoToPreset(manipulator, 2));
-    NamedCommands.registerCommand("GoToCoralStation", new GoToPreset(manipulator, 3));
-    NamedCommands.registerCommand("GoToL2", new GoToPreset(manipulator, 4));
+    NamedCommands.registerCommand("GoToCoralStation", new GoToPreset(manipulator, 1));
+    NamedCommands.registerCommand("GoToL2", new GoToPreset(manipulator, 3));
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());

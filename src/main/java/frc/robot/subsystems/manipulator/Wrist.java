@@ -28,7 +28,7 @@ public class Wrist extends Joint {
     coralL3(91),
     algaeInReefL3(115),
     coralL4(120),
-    algaeBarge(52);
+    algaeBarge(25);
 
     public final double angle;
 
@@ -49,7 +49,7 @@ public class Wrist extends Joint {
         false,
         true,
         152.0,
-        52,
+        25,
         75.0,
         new SparkFlex(jointMotorCANID, MotorType.kBrushless),
         new SparkFlexConfig());

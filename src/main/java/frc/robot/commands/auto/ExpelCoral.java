@@ -15,17 +15,20 @@ public class ExpelCoral extends Command {
 
   @Override
   public void initialize() {
+    timer.reset();
     timer.start();
   }
 
   @Override
   public void execute() {
-    manipulator.expelCoralIntakeAlgae();
+    while (timer.get() < 3) {
+      manipulator.expelCoralIntakeAlgae();
+    }
   }
 
   @Override
   public boolean isFinished() {
-    boolean isDone = timer.get() >= 1;
+    boolean isDone = timer.get() >= 3;
     if (isDone) {
       timer.stop();
       manipulator.stopHand();
