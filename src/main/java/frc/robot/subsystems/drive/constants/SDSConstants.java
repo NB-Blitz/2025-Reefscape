@@ -6,6 +6,8 @@ import edu.wpi.first.math.util.Units;
 
 public class SDSConstants {
   public static final double maxSpeedMetersPerSec = 3.81;
+  public static final double maxAcceleration = 3.0;
+  public static final double allowedError = 0.03;
   public static final double trackWidth = Units.inchesToMeters(18.5);
   public static final double wheelBase = Units.inchesToMeters(19.5);
 

@@ -24,6 +24,10 @@ public class DriveConstants {
 
   public static final double maxSpeedMetersPerSec =
       compRobot ? FlexConstants.maxSpeedMetersPerSec : SDSConstants.maxSpeedMetersPerSec;
+  public static final double maxAcceleration =
+      compRobot ? FlexConstants.maxAcceleration : SDSConstants.maxAcceleration;
+  public static final double allowedError =
+      compRobot ? FlexConstants.allowedError : SDSConstants.allowedError;
   public static final double odometryFrequency = 100.0; // Hz
   public static final double trackWidth =
       compRobot ? FlexConstants.trackWidth : SDSConstants.trackWidth;

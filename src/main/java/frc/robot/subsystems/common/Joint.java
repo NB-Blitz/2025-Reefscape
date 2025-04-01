@@ -43,6 +43,8 @@ public class Joint {
       double FF,
       double gearRatio,
       double maxSpeed,
+      double maxAcceleration,
+      double allowedError,
       double absGearRatio,
       boolean absInvert,
       boolean invert,
@@ -84,7 +86,11 @@ public class Joint {
         .pidf(
             P, I,
             D, FF)
-        .positionWrappingEnabled(true);
+        .positionWrappingEnabled(true)
+        .maxMotion
+        .maxVelocity(maxSpeed)
+        .maxAcceleration(maxAcceleration)
+        .allowedClosedLoopError(allowedError);
     jointConfig
         .softLimit
         .forwardSoftLimit(kForwardSoftLimit + angleOffset)
@@ -151,7 +157,11 @@ public class Joint {
         .pidf(
             P, I,
             D, FF)
-        .positionWrappingEnabled(true);
+        .positionWrappingEnabled(true)
+        .maxMotion
+        .maxVelocity(0)
+        .maxAcceleration(0)
+        .allowedClosedLoopError(0);
     jointConfig
         .softLimit
         .forwardSoftLimit(180) // TODO update max height in meters
@@ -258,7 +268,7 @@ public class Joint {
     if (controlMode == "estop") {
       jointController.setReference(0, ControlType.kDutyCycle);
     } else {
-      jointController.setReference(targetAngle, ControlType.kPosition);
+      jointController.setReference(targetAngle, ControlType.kMAXMotionPositionControl);
     }
   }
 }

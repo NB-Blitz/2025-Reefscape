@@ -67,6 +67,8 @@ public class Elevator implements ElevatorInterface {
   private final SparkClosedLoopController m_PIDController = m_leadMotor.getClosedLoopController();
 
   private final double maxElevatorSpeed = 0.7; // meters per second
+  private final double maxAcceleration = 0.55;
+  private final double allowedError = 0.01;
   private final double positionIncrement = maxElevatorSpeed / 50;
   private final double topLimit = 0.75;
   private final double bottomLimit = 0;
@@ -93,7 +95,14 @@ public class Elevator implements ElevatorInterface {
         .positionConversionFactor(kPositionConversionFactor * 5)
         .velocityConversionFactor(kVelocityConversionFactor * 5)
         .averageDepth(2);
-    leadMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder).pidf(kP, kI, kD, kFF);
+    leadMotorConfig
+        .closedLoop
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        .pidf(kP, kI, kD, kFF)
+        .maxMotion
+        .maxVelocity(maxElevatorSpeed)
+        .maxAcceleration(maxAcceleration)
+        .allowedClosedLoopError(allowedError);
     leadMotorConfig
         .signals
         .primaryEncoderPositionAlwaysOn(true)
@@ -201,7 +210,7 @@ public class Elevator implements ElevatorInterface {
     if (controlMode == "estop") {
       m_PIDController.setReference(0, ControlType.kDutyCycle);
     } else {
-      m_PIDController.setReference(targetPosition, ControlType.kPosition);
+      m_PIDController.setReference(targetPosition, ControlType.kMAXMotionPositionControl);
     }
 
     Logger.recordOutput("Manipulator/Elevator/Height", getHeight());

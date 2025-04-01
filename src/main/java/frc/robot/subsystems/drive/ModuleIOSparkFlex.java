@@ -116,7 +116,11 @@ public class ModuleIOSparkFlex implements ModuleIO {
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pidf(
             driveKp, 0.0,
-            driveKd, 0.0);
+            driveKd, 0.0)
+        .maxMotion
+        .maxVelocity(maxSpeedMetersPerSec)
+        .maxAcceleration(maxAcceleration)
+        .allowedClosedLoopError(allowedError);
     driveConfig
         .signals
         .primaryEncoderPositionAlwaysOn(true)
@@ -244,7 +248,7 @@ public class ModuleIOSparkFlex implements ModuleIO {
     double ffVolts = driveKs * Math.signum(velocityRadPerSec) + driveKv * velocityRadPerSec;
     driveController.setReference(
         velocityRadPerSec,
-        ControlType.kVelocity,
+        ControlType.kMAXMotionVelocityControl,
         ClosedLoopSlot.kSlot0,
         ffVolts,
         ArbFFUnits.kVoltage);

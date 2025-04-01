@@ -18,7 +18,9 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class FlexConstants {
-  public static final double maxSpeedMetersPerSec = Units.inchesToMeters(19.8 * 12);
+  public static final double maxSpeedMetersPerSec = Units.inchesToMeters(19.8 * 12); // 6.035
+  public static final double maxAcceleration = 3.3;
+  public static final double allowedError = 0.05;
   public static final double trackWidth = Units.inchesToMeters(28.0);
   public static final double wheelBase = Units.inchesToMeters(28.0);
 
