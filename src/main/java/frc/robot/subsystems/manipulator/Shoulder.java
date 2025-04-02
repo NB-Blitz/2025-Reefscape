@@ -66,7 +66,8 @@ public class Shoulder extends Joint {
 
   @Override
   public void setJointAngle(int enumIndex) {
-    super.endTargetAngle = ShoulderAngle.values()[enumIndex].angle + angleOffset;
+    // super.endTargetAngle
+    targetAngle = ShoulderAngle.values()[enumIndex].angle + angleOffset;
     super.controlMode = "preset";
   }
 

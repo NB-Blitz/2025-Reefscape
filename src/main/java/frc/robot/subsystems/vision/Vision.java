@@ -37,6 +37,7 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+  private int startingIndex = 0;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -93,6 +94,14 @@ public class Vision extends SubsystemBase {
     return tags;
   }
 
+  public void disableFrontCameraOdometery() {
+    startingIndex = 1;
+  }
+
+  public void enableFrontCameraOdometery() {
+    startingIndex = 0;
+  }
+
   @Override
   public void periodic() {
     for (int i = 0; i < io.length; i++) {
@@ -107,7 +116,7 @@ public class Vision extends SubsystemBase {
     List<Pose3d> allRobotPosesRejected = new LinkedList<>();
 
     // Loop over cameras
-    for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
+    for (int cameraIndex = startingIndex; cameraIndex < io.length; cameraIndex++) {
       // Update disconnected alert
       disconnectedAlerts[cameraIndex].set(!inputs[cameraIndex].connected);
 

@@ -63,7 +63,8 @@ public class Wrist extends Joint {
 
   @Override
   public void setJointAngle(int enumIndex) {
-    super.endTargetAngle = WristAngle.values()[enumIndex].angle + angleOffset;
+    // super.endTargetAngle
+    targetAngle = WristAngle.values()[enumIndex].angle + angleOffset;
     super.controlMode = "preset";
   }
 

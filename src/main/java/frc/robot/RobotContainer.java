@@ -199,10 +199,12 @@ public class RobotContainer {
     // Align to reef positions
     joystick
         .button(6)
-        .whileTrue(new ReefAlign(drive, () -> vision.getReefTags(0), Constants.rightReef[3]));
+        .whileTrue(
+            new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.rightReef[3]));
     joystick
         .button(5)
-        .whileTrue(new ReefAlign(drive, () -> vision.getReefTags(0), Constants.leftReef[3]));
+        .whileTrue(
+            new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.leftReef[3]));
 
     if (useSecondController) {
       manipulator.setDefaultCommand(

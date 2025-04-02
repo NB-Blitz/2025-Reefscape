@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
 public class Joint {
 
   protected String controlMode = "manual";
-  protected double endTargetAngle = 0;
+  // protected double endTargetAngle = 0;
   protected double targetAngle = 0;
 
   protected SparkBase jointMotor;
@@ -216,7 +216,8 @@ public class Joint {
   }
 
   public void setJointAngleRaw(double angle) {
-    endTargetAngle = angle + angleOffset;
+    // endTargetAngle
+    targetAngle = angle + angleOffset;
     controlMode = "preset";
   }
 
@@ -230,10 +231,10 @@ public class Joint {
   }
 
   public double getTarget() {
-    if (controlMode == "preset") {
-      return endTargetAngle;
-    }
-    return targetAngle;
+    // if (controlMode == "preset") {
+    //   return endTargetAngle;
+    // }
+    return targetAngle - angleOffset;
   }
 
   public void updateJoint() {
@@ -245,19 +246,19 @@ public class Joint {
       }
     }
 
-    if (controlMode == "preset") {
-      double targetDiff = endTargetAngle - targetAngle;
-      double diffAbs = Math.abs(targetDiff);
-      if (diffAbs > angleIncrement) {
-        if (targetDiff > 0) {
-          targetAngle += angleIncrement;
-        } else if (targetDiff < 0) {
-          targetAngle -= angleIncrement;
-        }
-      } else {
-        targetAngle = endTargetAngle;
-      }
-    }
+    // if (controlMode == "preset") {
+    //   double targetDiff = endTargetAngle - targetAngle;
+    //   double diffAbs = Math.abs(targetDiff);
+    //   if (diffAbs > angleIncrement) {
+    //     if (targetDiff > 0) {
+    //       targetAngle += angleIncrement;
+    //     } else if (targetDiff < 0) {
+    //       targetAngle -= angleIncrement;
+    //     }
+    //   } else {
+    //     targetAngle = endTargetAngle;
+    //   }
+    // }
 
     if (targetAngle < bottomLimit) {
       targetAngle = bottomLimit;

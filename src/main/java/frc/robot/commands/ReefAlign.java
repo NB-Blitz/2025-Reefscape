@@ -9,11 +9,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.vision.Vision;
 import java.util.List;
 import java.util.function.Supplier;
 
 public class ReefAlign extends InstantCommand {
   private Drive driveRef;
+  private Vision visionRef;
   private Supplier<List<Pose2d>> reefTagSupplier;
   private Transform2d offsetFromTag;
 
@@ -30,8 +32,10 @@ public class ReefAlign extends InstantCommand {
 
   private Pose2d cachedTarget = null;
 
-  public ReefAlign(Drive drive, Supplier<List<Pose2d>> reefTags, Transform2d offsetPose2d) {
+  public ReefAlign(
+      Drive drive, Vision vision, Supplier<List<Pose2d>> reefTags, Transform2d offsetPose2d) {
     driveRef = drive;
+    visionRef = vision;
     reefTagSupplier = reefTags;
     offsetFromTag = offsetPose2d;
   }
@@ -39,11 +43,17 @@ public class ReefAlign extends InstantCommand {
   @Override
   public void initialize() {
     cachedTarget = null;
+    visionRef.disableFrontCameraOdometery();
   }
 
   @Override
   public void execute() {
     aligned = runRobotRelativeAlign(maximumSpeeds, goalErrors);
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    visionRef.enableFrontCameraOdometery();
   }
 
   @Override

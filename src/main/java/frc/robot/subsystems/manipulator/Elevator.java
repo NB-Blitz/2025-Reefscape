@@ -40,7 +40,7 @@ public class Elevator implements ElevatorInterface {
   public static final double kFF = 0.0;
 
   private String controlMode = "manual";
-  private double endTargetPos = 0;
+  // private double endTargetPos = 0;
   private double targetPosition = 0;
 
   public static final double kPositionConversionFactor =
@@ -167,7 +167,8 @@ public class Elevator implements ElevatorInterface {
   // moves the elevator to a preset position specified by the Position parameter (created in the
   // enum)
   public void setPosition(ElevatorPosition position) {
-    endTargetPos = position.position;
+    // endTargetPos =
+    targetPosition = position.position;
     controlMode = "preset";
   }
 
@@ -189,19 +190,19 @@ public class Elevator implements ElevatorInterface {
       }
     }
 
-    if (controlMode == "preset") {
-      double targetDiff = endTargetPos - targetPosition;
-      double diffAbs = Math.abs(targetDiff);
-      if (diffAbs > positionIncrement) {
-        if (targetDiff > 0) {
-          targetPosition += positionIncrement;
-        } else if (targetDiff < 0) {
-          targetPosition -= positionIncrement;
-        }
-      } else {
-        targetPosition = endTargetPos;
-      }
-    }
+    // if (controlMode == "preset") {
+    //   double targetDiff = endTargetPos - targetPosition;
+    //   double diffAbs = Math.abs(targetDiff);
+    //   if (diffAbs > positionIncrement) {
+    //     if (targetDiff > 0) {
+    //       targetPosition += positionIncrement;
+    //     } else if (targetDiff < 0) {
+    //       targetPosition -= positionIncrement;
+    //     }
+    //   } else {
+    //     targetPosition = endTargetPos;
+    //   }
+    // }
 
     if (targetPosition > topLimit) {
       targetPosition = topLimit;
@@ -227,9 +228,9 @@ public class Elevator implements ElevatorInterface {
   }
 
   public double getTarget() {
-    if (controlMode == "preset") {
-      return endTargetPos;
-    }
+    // if (controlMode == "preset") {
+    //   return endTargetPos;
+    // }
     return targetPosition;
   }
 
