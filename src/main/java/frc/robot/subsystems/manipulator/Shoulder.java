@@ -15,7 +15,7 @@ public class Shoulder extends Joint {
   private static final double gearRatio = 1 / (64 * 3.6);
   private static final int jointMotorCANID = 11;
   private static final double maxJointSpeed = 120.0; // degrees per second
-  private static final double maxAcceleration = 80;
+  private static final double maxAcceleration = maxJointSpeed * 1.5;
   private static final double allowedError = 1;
   private static final double forwardLimit = 180.0;
   private static final double reverseLimit = 0;

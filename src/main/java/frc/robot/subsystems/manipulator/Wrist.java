@@ -15,7 +15,7 @@ public class Wrist extends Joint {
   private static final double gearRatio = 1 / 90.0;
   private static final int jointMotorCANID = 12;
   private static final double maxJointSpeed = 90.0; // degrees per second
-  private static final double maxAcceleration = 60;
+  private static final double maxAcceleration = maxJointSpeed * 1.5;
   private static final double allowedError = 1;
 
   // create an enum for preset elevator heights (ex. coral level 1, 2, 3, 4)

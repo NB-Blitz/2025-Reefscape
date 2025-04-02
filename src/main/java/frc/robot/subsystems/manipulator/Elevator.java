@@ -34,8 +34,8 @@ public class Elevator implements ElevatorInterface {
   public static final int kMotorCurrentLimit = 140;
 
   // these are values for the PID controller
-  public static final double kP = 4.5;
-  public static final double kI = 0.0005;
+  public static final double kP = 200; // 4.5
+  public static final double kI = 0.0;
   public static final double kD = 0.0;
   public static final double kFF = 0.0;
 
@@ -66,8 +66,8 @@ public class Elevator implements ElevatorInterface {
   // create the PID controller (only for the left motor)
   private final SparkClosedLoopController m_PIDController = m_leadMotor.getClosedLoopController();
 
-  private final double maxElevatorSpeed = 0.7; // meters per second
-  private final double maxAcceleration = 0.55;
+  private final double maxElevatorSpeed = 2.6; // meters per second
+  private final double maxAcceleration = maxElevatorSpeed / 3;
   private final double allowedError = 0.01;
   private final double positionIncrement = maxElevatorSpeed / 50;
   private final double topLimit = 0.75;
