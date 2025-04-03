@@ -7,8 +7,8 @@ public interface ElevatorInterface {
   public enum ElevatorPosition {
     bottom(0),
     algaeProcessor(0),
-    coralStation(0.16),
-    coralL1(0.24),
+    coralStation(0.055),
+    coralL1(0.25),
     frontIntake(0.3),
     coralL2(0.39),
     algaeInReefL2(0.5),

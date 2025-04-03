@@ -34,13 +34,13 @@ public class Elevator implements ElevatorInterface {
   public static final int kMotorCurrentLimit = 140;
 
   // these are values for the PID controller
-  public static final double kP = 200; // 4.5
-  public static final double kI = 0.0;
+  public static final double kP = 4.5; // MAXMotion: 0.5
+  public static final double kI = 0.0005; // MAXMotion: 0
   public static final double kD = 0.0;
   public static final double kFF = 0.0;
 
   private String controlMode = "manual";
-  // private double endTargetPos = 0;
+  private double endTargetPos = 0;
   private double targetPosition = 0;
 
   public static final double kPositionConversionFactor =
@@ -66,9 +66,9 @@ public class Elevator implements ElevatorInterface {
   // create the PID controller (only for the left motor)
   private final SparkClosedLoopController m_PIDController = m_leadMotor.getClosedLoopController();
 
-  private final double maxElevatorSpeed = 2.6; // meters per second
-  private final double maxAcceleration = maxElevatorSpeed / 3;
-  private final double allowedError = 0.01;
+  private final double maxElevatorSpeed = 0.7; // meters per second
+  private final double maxAcceleration = maxElevatorSpeed / 4;
+  private final double allowedError = 0.001;
   private final double positionIncrement = maxElevatorSpeed / 50;
   private final double topLimit = 0.75;
   private final double bottomLimit = 0;
@@ -100,8 +100,8 @@ public class Elevator implements ElevatorInterface {
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pidf(kP, kI, kD, kFF)
         .maxMotion
-        .maxVelocity(maxElevatorSpeed)
-        .maxAcceleration(maxAcceleration)
+        .maxVelocity(maxElevatorSpeed * 60 / kPositionConversionFactor)
+        .maxAcceleration(maxAcceleration * 60 / kPositionConversionFactor)
         .allowedClosedLoopError(allowedError);
     leadMotorConfig
         .signals
@@ -167,8 +167,7 @@ public class Elevator implements ElevatorInterface {
   // moves the elevator to a preset position specified by the Position parameter (created in the
   // enum)
   public void setPosition(ElevatorPosition position) {
-    // endTargetPos =
-    targetPosition = position.position;
+    endTargetPos = position.position;
     controlMode = "preset";
   }
 
@@ -190,19 +189,19 @@ public class Elevator implements ElevatorInterface {
       }
     }
 
-    // if (controlMode == "preset") {
-    //   double targetDiff = endTargetPos - targetPosition;
-    //   double diffAbs = Math.abs(targetDiff);
-    //   if (diffAbs > positionIncrement) {
-    //     if (targetDiff > 0) {
-    //       targetPosition += positionIncrement;
-    //     } else if (targetDiff < 0) {
-    //       targetPosition -= positionIncrement;
-    //     }
-    //   } else {
-    //     targetPosition = endTargetPos;
-    //   }
-    // }
+    if (controlMode == "preset") {
+      double targetDiff = endTargetPos - targetPosition;
+      double diffAbs = Math.abs(targetDiff);
+      if (diffAbs > positionIncrement) {
+        if (targetDiff > 0) {
+          targetPosition += positionIncrement;
+        } else if (targetDiff < 0) {
+          targetPosition -= positionIncrement;
+        }
+      } else {
+        targetPosition = endTargetPos;
+      }
+    }
 
     if (targetPosition > topLimit) {
       targetPosition = topLimit;
@@ -211,7 +210,7 @@ public class Elevator implements ElevatorInterface {
     if (controlMode == "estop") {
       m_PIDController.setReference(0, ControlType.kDutyCycle);
     } else {
-      m_PIDController.setReference(targetPosition, ControlType.kMAXMotionPositionControl);
+      m_PIDController.setReference(targetPosition, ControlType.kPosition);
     }
 
     Logger.recordOutput("Manipulator/Elevator/Height", getHeight());
@@ -228,9 +227,9 @@ public class Elevator implements ElevatorInterface {
   }
 
   public double getTarget() {
-    // if (controlMode == "preset") {
-    //   return endTargetPos;
-    // }
+    if (controlMode == "preset") {
+      return endTargetPos;
+    }
     return targetPosition;
   }
 

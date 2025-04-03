@@ -25,7 +25,7 @@ public class Shoulder extends Joint {
   public enum ShoulderAngle {
     bottom(0),
     algaeProcessor(0),
-    coralStation(3.06),
+    coralStation(0),
     coralL1(12),
     frontIntake(53.6),
     coralL2(45),
@@ -66,8 +66,7 @@ public class Shoulder extends Joint {
 
   @Override
   public void setJointAngle(int enumIndex) {
-    // super.endTargetAngle
-    targetAngle = ShoulderAngle.values()[enumIndex].angle + angleOffset;
+    super.endTargetAngle = ShoulderAngle.values()[enumIndex].angle + angleOffset;
     super.controlMode = "preset";
   }
 

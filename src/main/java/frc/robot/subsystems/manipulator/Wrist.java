@@ -22,7 +22,7 @@ public class Wrist extends Joint {
   public enum WristAngle {
     bottom(152),
     algaeProcessor(149),
-    coralStation(130),
+    coralStation(135),
     coralL1(142),
     frontIntake(150),
     coralL2(115),
@@ -63,8 +63,7 @@ public class Wrist extends Joint {
 
   @Override
   public void setJointAngle(int enumIndex) {
-    // super.endTargetAngle
-    targetAngle = WristAngle.values()[enumIndex].angle + angleOffset;
+    super.endTargetAngle = WristAngle.values()[enumIndex].angle + angleOffset;
     super.controlMode = "preset";
   }
 

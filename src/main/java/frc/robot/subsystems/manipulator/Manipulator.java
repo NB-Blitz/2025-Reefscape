@@ -18,8 +18,8 @@ public class Manipulator extends SubsystemBase {
 
   // private final double elevatorHeightTolerance = 0.025; // meters
   private final double shoulderNoFoulTolerance = 28.0; // degrees
-  private final double elevatorTargetTolerance = 0.035;
-  private final double jointTargetTolerance = 1.25;
+  private final double elevatorTargetTolerance = 0.025;
+  private final double jointTargetTolerance = 1.0;
   private int cachedWristIndex = 0;
 
   // private final String[] presetNames = {

@@ -19,7 +19,7 @@ import edu.wpi.first.math.util.Units;
 
 public class FlexConstants {
   public static final double maxSpeedMetersPerSec = Units.inchesToMeters(19.8 * 12); // 6.035
-  public static final double maxAcceleration = 2.5;
+  public static final double maxAcceleration = 2.0;
   public static final double allowedError = 0.05;
   public static final double trackWidth = Units.inchesToMeters(28.0);
   public static final double wheelBase = Units.inchesToMeters(28.0);
@@ -41,8 +41,8 @@ public class FlexConstants {
   // Drive PID configuration for the robot
   public static final double driveKp = 0.005;
   public static final double driveKd = 0.02;
-  public static final double driveKs = 0.09544;
-  public static final double driveKv = 0.08476;
+  public static final double driveKs = 0.14819;
+  public static final double driveKv = 0.0898;
 
   public static final double driveSimP = 0.05;
   public static final double driveSimD = 0.0;
