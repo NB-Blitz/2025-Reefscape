@@ -200,11 +200,11 @@ public class RobotContainer {
     joystick
         .button(6)
         .whileTrue(
-            new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.rightReef[3]));
+            new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.rightReef[1]));
     joystick
         .button(5)
         .whileTrue(
-            new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.leftReef[3]));
+            new ReefAlign(drive, vision, () -> vision.getReefTags(0), Constants.leftReef[1]));
 
     if (useSecondController) {
       manipulator.setDefaultCommand(
