@@ -244,11 +244,17 @@ public class RobotContainer {
                   },
                   manipulator));
       driverStation // L4 Preset
-          .button(1)
+          .button(5)
           .onTrue(Commands.runOnce(() -> manipulator.goToPreset(5), manipulator));
       driverStation // Rainbow LEDs
-          .button(5)
-          .onTrue(Commands.run(() -> ledStrip.setRainbow(), manipulator));
+          .button(1)
+          .onTrue(
+              Commands.runOnce(
+                  () -> {
+                    ledStrip.setRainbowOverride(true);
+                  },
+                  manipulator))
+          .onFalse(Commands.runOnce(() -> ledStrip.setRainbowOverride(false), manipulator));
     }
   }
 

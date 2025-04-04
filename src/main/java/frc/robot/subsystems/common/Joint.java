@@ -231,7 +231,7 @@ public class Joint {
 
   public double getTarget() {
     if (controlMode == "preset") {
-      return endTargetAngle;
+      return endTargetAngle - angleOffset;
     }
     return targetAngle - angleOffset;
   }
