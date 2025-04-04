@@ -1,5 +1,8 @@
 package frc.robot.util;
 
+import static edu.wpi.first.units.Units.Percent;
+import static edu.wpi.first.units.Units.Seconds;
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AddressableLEDBufferView;
@@ -13,6 +16,8 @@ public class LEDStrip {
   private AddressableLEDBufferView m_leftBuffer;
   private AddressableLEDBufferView m_rightBuffer;
 
+  private int blinkCount;
+
   public LEDStrip(int pwmPort, int numPixels) {
     m_led = new AddressableLED(pwmPort);
     m_ledBuffer = new AddressableLEDBuffer(numPixels);
@@ -22,16 +27,22 @@ public class LEDStrip {
     m_led.setLength(m_ledBuffer.getLength());
     m_led.setData(m_ledBuffer);
     m_led.start();
+
+    blinkCount = 0;
   }
 
-  public void updateLEDs(boolean holdingCoral, double ledRatio) {
+  public void updateLEDs(int presetLevel, boolean holdingCoral, double ledRatio) {
     LEDPattern pattern;
-    if (holdingCoral) {
-      pattern = setSolid(Color.kGreen);
+    if (presetLevel == 1 && !holdingCoral) {
+      pattern = setSolid(Color.kRed);
+      blinkCount = 0;
+    } else if (holdingCoral && blinkCount < 5) {
+      pattern = setBlinking(Color.kGreen);
+      blinkCount++;
     } else {
-      pattern = setSolid(Color.kYellow);
+      pattern = setSolid(Color.kGold);
+      pattern = progressMask(pattern, ledRatio);
     }
-    pattern = progressMask(pattern, ledRatio);
 
     pattern.applyTo(m_leftBuffer);
     pattern.applyTo(m_rightBuffer);
@@ -50,5 +61,10 @@ public class LEDStrip {
 
   public LEDPattern setSolid(Color color) {
     return LEDPattern.solid(color);
+  }
+
+  public LEDPattern setBlinking(Color color) {
+    LEDPattern base = LEDPattern.solid(Color.kGreen);
+    return base.blink(Seconds.of(0.3)).atBrightness(Percent.of(50));
   }
 }

@@ -64,6 +64,7 @@ public class RobotContainer {
   // Controllers
   private final CommandJoystick joystick = new CommandJoystick(0);
   private final CommandXboxController xBoxController;
+  // private final CommandGenericHID driverStation = new CommandGenericHID(2);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;

@@ -101,12 +101,17 @@ public class Manipulator extends SubsystemBase {
 
     if (joystickCommand) {
       double smallestDiff = Integer.MAX_VALUE;
-      double height = elevator.getHeight();
+      double elevatorHeight = elevator.getHeight();
+      double shoulderPos = shoulder.getPosition();
+      double wristPos = wrist.getPosition();
       for (int i = 0; i < elevatorPositions.length; i++) {
-        double diff = elevatorPositions[i].position - height;
-        if (Math.abs(diff) < smallestDiff) {
+        double elevatorDiff = Math.abs(elevatorPositions[i].position - elevatorHeight);
+        double shoulderDiff = Math.abs(shoulderAngles[i].angle - shoulderPos);
+        double wristDiff = Math.abs(wristAngles[i].angle - wristPos);
+        double totalDiff = elevatorDiff + shoulderDiff + wristDiff;
+        if (totalDiff < smallestDiff) {
           levelIndex = i;
-          smallestDiff = Math.abs(diff);
+          smallestDiff = totalDiff;
         }
       }
     }
@@ -125,7 +130,7 @@ public class Manipulator extends SubsystemBase {
     SmartDashboard.putBoolean("Manual Control", joystickCommand);
 
     double ledRatio = elevator.getHeight() / elevator.getTopLimit();
-    ledStrip.updateLEDs(hand.holdingCoral(), ledRatio);
+    ledStrip.updateLEDs(levelIndex, hand.holdingCoral(), ledRatio);
   }
 
   public void incrementLevel() {
