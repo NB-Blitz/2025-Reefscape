@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 // import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -44,6 +45,7 @@ import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import frc.robot.util.LEDStrip;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -64,7 +66,9 @@ public class RobotContainer {
   // Controllers
   private final CommandJoystick joystick = new CommandJoystick(0);
   private final CommandXboxController xBoxController;
-  // private final CommandGenericHID driverStation = new CommandGenericHID(2);
+  private final CommandGenericHID driverStation = new CommandGenericHID(2);
+
+  private final LEDStrip ledStrip = new LEDStrip(9, 58);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -76,7 +80,7 @@ public class RobotContainer {
     } else {
       xBoxController = null;
     }
-    manipulator = new Manipulator();
+    manipulator = new Manipulator(ledStrip);
 
     switch (Constants.currentMode) {
       case REAL:
@@ -239,6 +243,12 @@ public class RobotContainer {
                     }
                   },
                   manipulator));
+      driverStation // L4 Preset
+          .button(1)
+          .onTrue(Commands.runOnce(() -> manipulator.goToPreset(5), manipulator));
+      driverStation // Rainbow LEDs
+          .button(5)
+          .onTrue(Commands.run(() -> ledStrip.setRainbow(), manipulator));
     }
   }
 

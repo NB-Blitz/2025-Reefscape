@@ -14,7 +14,7 @@ public class Manipulator extends SubsystemBase {
   private final Joint shoulder = new Shoulder();
   private final Joint wrist = new Wrist();
   private final HandInterface hand = new Hand();
-  private final LEDStrip ledStrip = new LEDStrip(9, 58);
+  private final LEDStrip ledStrip;
 
   // private final double elevatorHeightTolerance = 0.025; // meters
   private final double shoulderNoFoulTolerance = 28.0; // degrees
@@ -85,6 +85,10 @@ public class Manipulator extends SubsystemBase {
   private boolean isIntakingCoral = false;
   private boolean isExpellingCoral = false;
   private boolean forwardLimit = false;
+
+  public Manipulator(LEDStrip ledStrip) {
+    this.ledStrip = ledStrip;
+  }
 
   public void periodic() {
     /**

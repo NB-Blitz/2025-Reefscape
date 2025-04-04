@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import static edu.wpi.first.units.Units.Percent;
+import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.wpilibj.AddressableLED;
@@ -66,5 +67,9 @@ public class LEDStrip {
   public LEDPattern setBlinking(Color color) {
     LEDPattern base = LEDPattern.solid(Color.kGreen);
     return base.blink(Seconds.of(0.3)).atBrightness(Percent.of(50));
+  }
+
+  public LEDPattern setRainbow() {
+    return LEDPattern.rainbow(255, 128).scrollAtRelativeSpeed(Percent.per(Second).of(25));
   }
 }
