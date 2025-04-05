@@ -243,9 +243,6 @@ public class RobotContainer {
                     }
                   },
                   manipulator));
-      driverStation // L4 Preset
-          .button(5)
-          .onTrue(Commands.runOnce(() -> manipulator.goToPreset(5), manipulator));
       driverStation // Rainbow LEDs
           .button(1)
           .onTrue(
@@ -255,6 +252,12 @@ public class RobotContainer {
                   },
                   manipulator))
           .onFalse(Commands.runOnce(() -> ledStrip.setRainbowOverride(false), manipulator));
+      driverStation // Intake Preset
+          .button(5)
+          .onTrue(Commands.runOnce(() -> manipulator.goToPreset(1), manipulator));
+      driverStation // L4 Preset
+          .button(6)
+          .onTrue(Commands.runOnce(() -> manipulator.goToPreset(5), manipulator));
     }
   }
 

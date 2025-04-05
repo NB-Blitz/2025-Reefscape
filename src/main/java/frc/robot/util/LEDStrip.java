@@ -17,8 +17,12 @@ public class LEDStrip {
   private AddressableLEDBufferView m_leftBuffer;
   private AddressableLEDBufferView m_rightBuffer;
 
+  private final double BLINK_TIME = 0.5;
+
   private int blinkCount;
-  private boolean rainbowOverride = false;
+  private int timerCount;
+  private boolean blinking;
+  private boolean rainbowOverride;
 
   public LEDStrip(int pwmPort, int numPixels) {
     m_led = new AddressableLED(pwmPort);
@@ -31,16 +35,28 @@ public class LEDStrip {
     m_led.start();
 
     blinkCount = 0;
+    timerCount = 0;
+    blinking = false;
+    rainbowOverride = false;
   }
 
   public void updateLEDs(int atIntake, boolean holdingCoral, double ledRatio) {
+    double blinkLoops = (BLINK_TIME * 1000) / 20;
+    if (blinking && timerCount < blinkLoops) {
+      timerCount++;
+      return;
+    } else if (timerCount >= blinkLoops) {
+      blinking = false;
+      timerCount = 0;
+    }
+
     LEDPattern pattern;
     if (rainbowOverride) {
       pattern = setRainbow();
     } else if (atIntake == 1 && !holdingCoral) {
       pattern = setSolid(Color.kRed);
       blinkCount = 0;
-    } else if (holdingCoral && blinkCount < 5) {
+    } else if (holdingCoral && blinkCount < 3) {
       pattern = setBlinking(Color.kGreen);
       blinkCount++;
     } else {
@@ -68,8 +84,9 @@ public class LEDStrip {
   }
 
   public LEDPattern setBlinking(Color color) {
+    blinking = true;
     LEDPattern base = LEDPattern.solid(Color.kGreen);
-    return base.blink(Seconds.of(0.3)).atBrightness(Percent.of(50));
+    return base.blink(Seconds.of(BLINK_TIME / 2)).atBrightness(Percent.of(50));
   }
 
   public LEDPattern setRainbow() {
