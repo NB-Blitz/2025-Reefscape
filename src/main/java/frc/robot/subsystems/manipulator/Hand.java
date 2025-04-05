@@ -108,6 +108,11 @@ public class Hand implements HandInterface {
     bottomMotor.set(coralExpelSpeed);
   }
 
+  public void expelCoralAuto() {
+    topMotor.set(coralExpelSpeed * 0.5);
+    bottomMotor.set(coralExpelSpeed * 0.5);
+  }
+
   public void intakeAlgae() {
     topMotor.set(algaeIntakeSpeed);
     bottomMotor.set(0);

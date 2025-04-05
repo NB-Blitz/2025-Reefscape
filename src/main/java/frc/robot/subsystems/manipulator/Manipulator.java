@@ -176,6 +176,20 @@ public class Manipulator extends SubsystemBase {
     }
   }
 
+  public void expelCoralIntakeAlgaeAuto() {
+    isExpellingCoral = true;
+    if (isIntakingCoral) {
+      hand.stopMotors();
+    } else {
+      if (hand.holdingCoral()
+          && (forwardLimit || (shoulder.getPosition() > 130 && wrist.getPosition() > 100))) {
+        hand.stopMotors();
+      } else {
+        hand.expelCoralAuto();
+      }
+    }
+  }
+
   public void stopIntakeCoral() {
     isIntakingCoral = false;
     if (!isExpellingCoral) {

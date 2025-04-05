@@ -15,7 +15,7 @@ public class ExpelCoral extends Command {
 
   @Override
   public void execute() {
-    manipulator.expelCoralIntakeAlgae();
+    manipulator.expelCoralIntakeAlgaeAuto();
   }
 
   @Override

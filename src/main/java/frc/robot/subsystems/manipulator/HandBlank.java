@@ -16,6 +16,8 @@ public class HandBlank implements HandInterface {
 
   public void expelCoral() {}
 
+  public void expelCoralAuto() {}
+
   public void intakeAlgae() {}
 
   public void expelAlgaeNet() {}

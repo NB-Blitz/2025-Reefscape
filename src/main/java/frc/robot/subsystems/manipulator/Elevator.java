@@ -2,7 +2,6 @@ package frc.robot.subsystems.manipulator;
 
 import static frc.robot.util.SparkUtil.*;
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -59,7 +58,7 @@ public class Elevator implements ElevatorInterface {
   // create the relative encoders (one for each motor)
   // they track the position of the motors
   private final RelativeEncoder m_leadEncoder = m_leadMotor.getEncoder();
-  private final AbsoluteEncoder m_leadAbsEncoder = m_leadMotor.getAbsoluteEncoder();
+  // private final AbsoluteEncoder m_leadAbsEncoder = m_leadMotor.getAbsoluteEncoder();
 
   // set the input for the elevator
   private final SparkLimitSwitch m_bottomSwitch = m_leadMotor.getReverseLimitSwitch();
@@ -131,7 +130,7 @@ public class Elevator implements ElevatorInterface {
                 leadMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
 
     // resets the right encoder position to 0.0
-    tryUntilOk(m_leadMotor, 5, () -> m_leadEncoder.setPosition(m_leadAbsEncoder.getPosition()));
+    // tryUntilOk(m_leadMotor, 5, () -> m_leadEncoder.setPosition(m_leadAbsEncoder.getPosition()));
 
     Timer.delay(0.1);
     targetPosition = getHeight();
