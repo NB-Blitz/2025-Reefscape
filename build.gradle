@@ -48,7 +48,7 @@ deploy {
                     // Change to true to delete files on roboRIO that no
                     // longer exist in deploy directory on roboRIO
                     // (includes old autos that still appear on the dropdown)
-                    deleteOldFiles = false
+                    deleteOldFiles = true
                 }
             }
         }

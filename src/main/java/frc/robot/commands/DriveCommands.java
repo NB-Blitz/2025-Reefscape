@@ -26,6 +26,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
@@ -96,6 +97,11 @@ public class DriveCommands {
                       * drive.getMaxLinearSpeedMetersPerSec()
                       * speedScaler.getAsDouble(),
                   omega * drive.getMaxAngularSpeedRadPerSec() * speedScaler.getAsDouble());
+          boolean demoMode = SmartDashboard.getBoolean("Demo Mode", true);
+          // Not correctly reading from Shuffleboard, not sure why
+          if (demoMode) {
+            speeds = speeds.times(.5);
+          }
           boolean isFlipped =
               DriverStation.getAlliance().isPresent()
                   && DriverStation.getAlliance().get() == Alliance.Red;
