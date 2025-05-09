@@ -259,6 +259,19 @@
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
+          },
+          "7,2": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Toggle Switch",
+              "_source0": "network_table:///SmartDashboard/Demo Mode",
+              "_title": "Demo Mode",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
