@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 // import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ManipulatorCommands;
@@ -141,6 +142,9 @@ public class RobotContainer {
     }
 
     SmartDashboard.putBoolean("Demo Mode", false);
+    Trigger demoModeToggle = new Trigger(() -> SmartDashboard.getBoolean("Demo Mode", false));
+    demoModeToggle.onTrue(Commands.runOnce(() -> drive.demoMode = true, drive));
+    demoModeToggle.onFalse(Commands.runOnce(() -> drive.demoMode = false, drive));
 
     NamedCommands.registerCommand("IntakeCoral", new IntakeCoral(manipulator));
     NamedCommands.registerCommand("ExpelCoral", new ExpelCoral(manipulator));

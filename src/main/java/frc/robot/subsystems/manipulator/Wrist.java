@@ -23,7 +23,7 @@ public class Wrist extends Joint {
     bottom(152),
     algaeProcessor(149),
     coralStation(135),
-    coralL1(142),
+    coralL1(147),
     frontIntake(150),
     coralL2(115),
     algaeInReefL2(115),
