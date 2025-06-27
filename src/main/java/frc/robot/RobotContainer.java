@@ -44,8 +44,6 @@ import frc.robot.subsystems.drive.constants.DriveConstants;
 import frc.robot.subsystems.manipulator.Manipulator;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
-import frc.robot.subsystems.vision.VisionIOLimelight;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
 import frc.robot.util.LEDStrip;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -104,11 +102,7 @@ public class RobotContainer {
                   new ModuleIOSparkMax(2),
                   new ModuleIOSparkMax(3));
         }
-        vision =
-            new Vision(
-                drive::addVisionMeasurement,
-                new VisionIOLimelight(camera0Name, drive::getRotation),
-                new VisionIOPhotonVision(camera1Name, robotToCamera1));
+        vision = new Vision(drive::addVisionMeasurement);
         break;
 
       case SIM:

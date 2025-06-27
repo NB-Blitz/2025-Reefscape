@@ -23,6 +23,7 @@ public class LEDStrip {
   private int timerCount;
   private boolean blinking;
   private boolean rainbowOverride;
+  private int mericaStep;
 
   public LEDStrip(int pwmPort, int numPixels) {
     m_led = new AddressableLED(pwmPort);
@@ -38,20 +39,24 @@ public class LEDStrip {
     timerCount = 0;
     blinking = false;
     rainbowOverride = false;
+    mericaStep = 0;
   }
 
   public void updateLEDs(int atIntake, boolean holdingCoral, double ledRatio) {
     double blinkLoops = (BLINK_TIME * 1000) / 20;
-    if (blinking && timerCount < blinkLoops) {
+    mericaStep++;
+    if (mericaStep > 300) mericaStep = 0;
+    /*if (blinking && timerCount < blinkLoops) {
       timerCount++;
       return;
     } else if (timerCount >= blinkLoops) {
       blinking = false;
       timerCount = 0;
-    }
+    }*/
 
     LEDPattern pattern;
-    if (rainbowOverride) {
+    pattern = MERICA();
+    /*if (rainbowOverride) {
       pattern = setRainbow();
     } else if (atIntake == 1 && !holdingCoral) {
       pattern = setSolid(Color.kRed);
@@ -62,7 +67,7 @@ public class LEDStrip {
     } else {
       pattern = setSolid(Color.kGold);
       pattern = progressMask(pattern, ledRatio);
-    }
+    }*/
 
     pattern.applyTo(m_leftBuffer);
     pattern.applyTo(m_rightBuffer);
@@ -91,6 +96,12 @@ public class LEDStrip {
 
   public LEDPattern setRainbow() {
     return LEDPattern.rainbow(255, 128).scrollAtRelativeSpeed(Percent.per(Second).of(25));
+  }
+
+  public LEDPattern MERICA() {
+    if (mericaStep >= 200) return LEDPattern.solid(Color.kRed);
+    else if (mericaStep >= 100) return LEDPattern.solid(Color.kWhite);
+    return LEDPattern.solid(Color.kBlue);
   }
 
   public void setRainbowOverride(boolean override) {
