@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -66,7 +65,7 @@ public class RobotContainer {
   // Controllers
   private final CommandJoystick joystick = new CommandJoystick(0);
   private final CommandXboxController xBoxController;
-  private final CommandGenericHID driverStation = new CommandGenericHID(2);
+  // private final CommandGenericHID driverStation = new CommandGenericHID(2);
 
   private final LEDStrip ledStrip = new LEDStrip(9, 58);
 
@@ -244,21 +243,21 @@ public class RobotContainer {
                     }
                   },
                   manipulator));
-      driverStation // Rainbow LEDs
-          .button(1)
-          .onTrue(
-              Commands.runOnce(
-                  () -> {
-                    ledStrip.setRainbowOverride(true);
-                  },
-                  manipulator))
-          .onFalse(Commands.runOnce(() -> ledStrip.setRainbowOverride(false), manipulator));
-      driverStation // Intake Preset
-          .button(5)
-          .onTrue(Commands.runOnce(() -> manipulator.goToPreset(1), manipulator));
-      driverStation // L4 Preset
-          .button(6)
-          .onTrue(Commands.runOnce(() -> manipulator.goToPreset(5), manipulator));
+      // driverStation // Rainbow LEDs
+      //     .button(1)
+      //     .onTrue(
+      //         Commands.runOnce(
+      //             () -> {
+      //               ledStrip.setRainbowOverride(true);
+      //             },
+      //             manipulator))
+      //     .onFalse(Commands.runOnce(() -> ledStrip.setRainbowOverride(false), manipulator));
+      // driverStation // Intake Preset
+      //     .button(5)
+      //     .onTrue(Commands.runOnce(() -> manipulator.goToPreset(1), manipulator));
+      // driverStation // L4 Preset
+      //     .button(6)
+      //     .onTrue(Commands.runOnce(() -> manipulator.goToPreset(5), manipulator));
     }
   }
 

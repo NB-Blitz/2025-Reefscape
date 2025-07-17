@@ -99,9 +99,9 @@ public class LEDStrip {
   }
 
   public LEDPattern MERICA() {
-    if (mericaStep >= 200) return LEDPattern.solid(Color.kRed);
+    if (mericaStep >= 200) return LEDPattern.solid(Color.kBlue);
     else if (mericaStep >= 100) return LEDPattern.solid(Color.kWhite);
-    return LEDPattern.solid(Color.kBlue);
+    return LEDPattern.solid(Color.kRed);
   }
 
   public void setRainbowOverride(boolean override) {
